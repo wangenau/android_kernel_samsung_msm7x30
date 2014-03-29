@@ -152,7 +152,7 @@ EXPORT_SYMBOL(sec_class);
 struct device *switch_dev;
 EXPORT_SYMBOL(switch_dev);
 
-#define MSM_PMEM_SF_SIZE	0x1D00000
+#define MSM_PMEM_SF_SIZE	0x1A00000
 #ifdef CONFIG_FB_MSM_TRIPLE_BUFFER
 #define MSM_FB_PRIM_BUF_SIZE	(roundup((800 * 480 * 4), 4096) * 3) /* 4bpp * 3 Pages */
 #else
@@ -161,7 +161,7 @@ EXPORT_SYMBOL(switch_dev);
 
 #define MSM_FB_SIZE roundup(MSM_FB_PRIM_BUF_SIZE, 4096)
 
-#define MSM_PMEM_ADSP_SIZE		0x1400000
+#define MSM_PMEM_ADSP_SIZE		0x1A00000
 #define MSM_FLUID_PMEM_ADSP_SIZE	0x2800000
 #define PMEM_KERNEL_EBI0_SIZE		0x0600000
 #define MSM_PMEM_AUDIO_SIZE		0x0200000
@@ -170,7 +170,7 @@ EXPORT_SYMBOL(switch_dev);
 static struct platform_device ion_dev;
 #define MSM_ION_AUDIO_SIZE	MSM_PMEM_AUDIO_SIZE
 #define MSM_ION_SF_SIZE		MSM_PMEM_SF_SIZE
-#define MSM_ION_MM_SIZE		0x1C80000
+#define MSM_ION_MM_SIZE		0x1B00000
 
 #define MSM_ION_MM_HEAP_BASE	0x0
 #define MSM_ION_MM_HEAP_LIMIT	0x20000000
