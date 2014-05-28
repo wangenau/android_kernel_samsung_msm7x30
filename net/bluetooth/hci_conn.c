@@ -371,7 +371,12 @@ void hci_read_rssi(struct hci_conn *conn)
 	memset(&cp, 0, sizeof(cp));
 	cp.handle   = cpu_to_le16(conn->handle);
 
-	hci_send_cmd(hdev, HCI_OP_READ_RSSI, sizeof(cp), &cp);
+	cp.handle = cpu_to_le16(conn->handle);
+	memcpy(cp.ltk, ltk, sizeof(*ltk));
+	cp.ediv = ediv;
+	memcpy(cp.rand, rand, sizeof(rand));
+
+	hci_send_cmd(hdev, HCI_OP_LE_START_ENC, sizeof(cp), &cp);
 }
 EXPORT_SYMBOL(hci_read_rssi);
 
