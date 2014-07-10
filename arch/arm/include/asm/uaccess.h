@@ -122,6 +122,14 @@ extern int __get_user_8(void *);
 		: "0" (__p), "r" (__l)					\
 		: __GUP_CLOBBER_##__s)
 
+/* narrowing a double-word get into a single 32bit word register: */
+#ifdef __ARMEB__
+#define __get_user_xb(__r2, __p, __e, __l, __s)				\
+	__get_user_x(__r2, __p, __e, __l, lo8)
+#else
+#define __get_user_xb __get_user_x
+#endif
+
 #define __get_user_check(x,p)							\
 	({								\
 		unsigned long __limit = current_thread_info()->addr_limit - 1; \
