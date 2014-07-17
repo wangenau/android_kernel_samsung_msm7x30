@@ -859,4 +859,8 @@ asmlinkage long sys_process_vm_writev(pid_t pid,
 				      unsigned long flags);
 
 asmlinkage long sys_finit_module(int fd, const char __user *uargs, int flags);
+
+asmlinkage long sys_getrandom(char __user *buf, size_t count,
+			      unsigned int flags);
+
 #endif
