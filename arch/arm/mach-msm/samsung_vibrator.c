@@ -353,7 +353,7 @@ static int __devinit msm_vibrator_probe(struct platform_device *pdev)
 	}
 
 #if defined(CONFIG_MACH_ANCORA) || defined(CONFIG_MACH_APACHE)
-	rc = vreg_set_level(vreg_vib, 3300);
+	rc = vreg_set_level(vreg_vib, 2800);
 	if (rc) {
 		pr_err("%s: vreg_set_level failed \n", __func__);
 	}
@@ -380,7 +380,7 @@ static int __devinit msm_vibrator_probe(struct platform_device *pdev)
     				__func__, PTR_ERR(vreg_vib));
     	}
 
-    	rc = vreg_set_level(vreg_vib, 3300);
+    	rc = vreg_set_level(vreg_vib, 2800);
     	if (rc) {
     		pr_err("%s: vreg_set_level failed \n", __func__);
     	}
