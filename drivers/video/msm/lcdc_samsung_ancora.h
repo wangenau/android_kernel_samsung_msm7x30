@@ -91,9 +91,9 @@ enum {
 #define SMD_LCDC_VPW		1
 #define SMD_LCDC_VBP		7
 #define SMD_LCDC_VFP		6
-#define HYDIS_LCDC_HPW		23
+#define HYDIS_LCDC_HPW		4
 #define HYDIS_LCDC_HBP		10
-#define HYDIS_LCDC_HFP		5
+#define HYDIS_LCDC_HFP		100
 #define HYDIS_LCDC_VPW		12
 #define HYDIS_LCDC_VBP		5
 #define HYDIS_LCDC_VFP		5
