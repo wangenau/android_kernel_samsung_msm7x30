@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/arm 3.4.96 Kernel Configuration
+# Linux/arm 3.4.105 Kernel Configuration
 #
 CONFIG_ARM=y
 CONFIG_ARM_HAS_SG_CHAIN=y
@@ -2497,6 +2497,8 @@ CONFIG_SOUND=y
 CONFIG_SND=y
 CONFIG_SND_TIMER=y
 CONFIG_SND_PCM=y
+CONFIG_SND_HWDEP=y
+CONFIG_SND_RAWMIDI=y
 CONFIG_SND_JACK=y
 # CONFIG_SND_SEQUENCER is not set
 # CONFIG_SND_MIXER_OSS is not set
@@ -2617,6 +2619,7 @@ CONFIG_USB_ANNOUNCE_NEW_DEVICES=y
 # CONFIG_USB_DEVICEFS is not set
 CONFIG_USB_DEVICE_CLASS=y
 # CONFIG_USB_DYNAMIC_MINORS is not set
+# CONFIG_USB_SUSPEND is not set
 # CONFIG_USB_OTG_WHITELIST is not set
 # CONFIG_USB_OTG_BLACKLIST_HUB is not set
 # CONFIG_USB_DWC3 is not set
@@ -3027,14 +3030,14 @@ CONFIG_HAVE_CLK_PREPARE=y
 CONFIG_DPRAM=y
 # CONFIG_ENABLE_TTY_CIQ is not set
 CONFIG_DPRAM_WHITELIST=y
-
-#
-# Samsung Galaxy W/Exhibit 4G/Rugby Smart sensor drivers
-#
 CONFIG_SENSORS_BMA023_ACCEL=y
 CONFIG_INPUT_BMA023_POSITION=0
 CONFIG_OPTICAL_GP2A=y
 CONFIG_SENSORS_AK8975=y
+
+#
+# Samsung Galaxy W/Exhibit 4G/Rugby Smart sensor drivers
+#
 
 #
 # File systems
