@@ -164,21 +164,15 @@ static u64 msm_dmamask = DMA_BIT_MASK(32);
 
 #ifdef CONFIG_ION_MSM
 static struct platform_device ion_dev;
-#ifdef CONFIG_MSM_MEMORY_HIGH				// +8 MB of free RAM
-#define MSM_ION_SF_SIZE			0x1200000	//    18.874.368 Bytes =  18 MB
-#elif defined(CONFIG_MSM_MEMORY_VERY_HIGH)	// +18 MB of free RAM
-#define MSM_ION_SF_SIZE			0x0800000	//     8.388.608 Bytes =   8 MB
-#else										// Default free RAM
-#define MSM_ION_SF_SIZE			0x1A00000	//    27.262.976 Bytes =  26 MB
-#endif
-#define MSM_ION_AUDIO_SIZE		0x0200000	//     2.097.152 Bytes =   2 MB
+#define MSM_ION_AUDIO_SIZE		0x0200000
+#define MSM_ION_SF_SIZE			0x1A00000
 
 #ifdef CONFIG_MSM_ION_MM_USE_CMA
-#define MSM_ION_MM_SIZE			0x3000000	//    50.331.648 Bytes =  48 MB
+#define MSM_ION_MM_SIZE			0x3000000
 #define MSM_ION_MM_HEAP_TYPE	ION_HEAP_TYPE_DMA
 #define MSM_ION_MM_SIZE_CARVING	0x0
 #else
-#define MSM_ION_MM_SIZE			0x1C80000	//    29.884.416 Bytes = 28,5 MB
+#define MSM_ION_MM_SIZE			0x1C80000
 #define MSM_ION_MM_HEAP_TYPE	ION_HEAP_TYPE_CARVEOUT
 #define MSM_ION_MM_SIZE_CARVING	MSM_ION_MM_SIZE
 #endif
