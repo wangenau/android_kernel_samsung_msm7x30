@@ -1578,19 +1578,25 @@ static int mass_storage_function_init(struct android_usb_function *f,
 
 	config->fsg.nluns = 1;
 	name[0] = "lun";
-	if (dev->pdata && dev->pdata->cdrom) {
-		config->fsg.luns[config->fsg.nluns].cdrom = 1;
-		config->fsg.luns[config->fsg.nluns].ro = 1;
-		config->fsg.luns[config->fsg.nluns].removable = 0;
-		name[config->fsg.nluns] = "lun0";
-		config->fsg.nluns++;
-	}
-	if (dev->pdata && dev->pdata->internal_ums) {
-		config->fsg.luns[config->fsg.nluns].cdrom = 0;
-		config->fsg.luns[config->fsg.nluns].ro = 0;
-		config->fsg.luns[config->fsg.nluns].removable = 1;
-		name[config->fsg.nluns] = "lun1";
-		config->fsg.nluns++;
+
+	if (dev->pdata) {
+		printk(KERN_DEBUG "usb: %s cdrom=%d, internal_ums = %d\n",
+				__func__, dev->pdata->cdrom, dev->pdata->internal_ums);
+
+		if (dev->pdata->cdrom) {
+			config->fsg.luns[config->fsg.nluns].cdrom = 1;
+			config->fsg.luns[config->fsg.nluns].ro = 1;
+			config->fsg.luns[config->fsg.nluns].removable = 0;
+			name[config->fsg.nluns] = "lun0";
+			config->fsg.nluns++;
+		}
+		if (dev->pdata->internal_ums) {
+			config->fsg.luns[config->fsg.nluns].cdrom = 0;
+			config->fsg.luns[config->fsg.nluns].ro = 0;
+			config->fsg.luns[config->fsg.nluns].removable = 1;
+			name[config->fsg.nluns] = "lun1";
+			config->fsg.nluns++;
+		}
 	}
 
 	config->fsg.luns[0].removable = 1;
