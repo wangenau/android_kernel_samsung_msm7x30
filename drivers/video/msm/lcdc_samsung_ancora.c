@@ -88,7 +88,6 @@ static void HYDIS_LG4573B_Data(UINT8 param);
 	LCD_CS_N_HIGH
 	LCD_SCLK_HIGH
 	LCD_CS_N_LOW
-	
 	LCD_SCLK_LOW   
 	LCD_SDI_LOW	
 	LCD_SCLK_HIGH
@@ -131,7 +130,6 @@ void HYDIS_LG4573B_Data(UINT8 param)
 	LCD_CS_N_HIGH
 	LCD_SCLK_HIGH
 	LCD_CS_N_LOW
-	
 	LCD_SCLK_LOW   
 	LCD_SDI_LOW	
 	LCD_SCLK_HIGH
@@ -198,23 +196,19 @@ void Setting_Table_HYDIS(void)
 	HYDIS_LG4573B_write(0x00, 0x1F);
 
 	// Power On Sequence 
-	HYDIS_LG4573B_write(0xC2, 0x00);
-			
+	HYDIS_LG4573B_write(0xC2, 0x00);	
 	HYDIS_LG4573B_write(0xC3, 0x03);
 	HYDIS_LG4573B_write(0x00, 0x04);
 	HYDIS_LG4573B_write(0x00, 0x05);
 	HYDIS_LG4573B_write(0x00, 0x06);
-	HYDIS_LG4573B_write(0x00, 0x01)
-		;
+	HYDIS_LG4573B_write(0x00, 0x01);
 	HYDIS_LG4573B_write(0xC4, 0x02);
 	HYDIS_LG4573B_write(0x00, 0x23);
 	HYDIS_LG4573B_write(0x00, 0x16);
 	HYDIS_LG4573B_write(0x00, 0x16);
 	HYDIS_LG4573B_write(0x00, 0x02);
 	HYDIS_LG4573B_write(0x00, 0x7A);
-	
 	HYDIS_LG4573B_write(0xC5, 0x77);
-	
 	HYDIS_LG4573B_write(0xC6, 0x24);
 	HYDIS_LG4573B_write(0x00, 0x60);
 	HYDIS_LG4573B_write(0x00, 0x00);
@@ -308,15 +302,15 @@ struct brt_value brt_table_aat[] = {
 		{ 97, 	22	}, 
 		{ 90, 	23	}, 
 		{ 82, 	24	},  
-		{ 75,   25  }, 
+		{ 75,   25	}, 
 		{ 67, 	26	}, 
 		{ 60, 	27	}, 
-		{ 52,   28  }, 
-		{ 45,   29  }, 
-		{ 37,   30  }, 
+		{ 52,   28	}, 
+		{ 45,   29	}, 
+		{ 37,   30	}, 
 		{ 30, 	31	}, // min
 		{ 20, 	31	}, // dimming
-		{ 0, 	32	  }, // Off
+		{ 0, 	32	}, // Off
 };
 
 struct brt_value brt_table_aat_hysys[] = {
@@ -338,11 +332,11 @@ struct brt_value brt_table_aat_hysys[] = {
 		{ 108, 	22	}, 
 		{ 98, 	23	}, 
 		{ 89, 	24	},  
-		{ 79,   26  }, 
+		{ 79,   26	}, 
 		{ 69, 	27	}, 
 		{ 59, 	28	}, 
-		{ 50,   29  }, 
-		{ 40,   30  }, 
+		{ 50,   29	}, 
+		{ 40,   30	}, 
 		{ 30, 	31	}, // min
 		{ 20, 	31	}, // dimming
 		{ 0, 	32	}, // Off
@@ -406,52 +400,6 @@ static void samsung_spi_write_byte(boolean dc, u8 data)
 	gpio_set_value(spi_mosi, 0);
 
 }
-
-#if 0
-static void samsung_spi_read_bytes(u8 cmd, u8 *data, int num)
-{
-	int bnum;
-
-	/* Chip Select - low */
-	gpio_set_value(spi_cs, 0);
-	udelay(2);
-
-	/* command byte first */
-	samsung_spi_write_byte(0, cmd);
-	udelay(2);
-
-	gpio_direction_input(spi_mosi);
-
-	if (num > 1) {
-		/* extra dummy clock */
-		gpio_set_value(spi_sclk, 0);
-		udelay(1);
-		gpio_set_value(spi_sclk, 1);
-		udelay(1);
-	}
-
-	/* followed by data bytes */
-	bnum = num * 8;	/* number of bits */
-	*data = 0;
-	while (bnum) {
-		gpio_set_value(spi_sclk, 0); /* clk low */
-		udelay(1);
-		*data <<= 1;
-		*data |= gpio_get_value(spi_mosi) ? 1 : 0;
-		gpio_set_value(spi_sclk, 1); /* clk high */
-		udelay(1);
-		--bnum;
-		if ((bnum % 8) == 0)
-			++data;
-	}
-
-	gpio_direction_output(spi_mosi, 0);
-
-	/* Chip Select - high */
-	udelay(2);
-	gpio_set_value(spi_cs, 1);
-}
-#endif
 
 static int samsung_serigo(struct samsung_spi_data data)
 {
@@ -667,9 +615,7 @@ static void samsung_disp_powerup(void)
 		mdelay(20);
 		gpio_set_value(lcd_reset, 1);
 		mdelay(10);
-//		mdelay(20);
 
-		
 		samsung_state.disp_powered_up = TRUE;
 	}
 }
@@ -753,8 +699,7 @@ static int lcdc_samsung_panel_on(struct platform_device *pdev)
 
 		acpuclk_usr_set_max();
 		lcdc_samsung_pdata->panel_config_gpio(1);
-		samsung_spi_init();
-//		mdelay(50);	
+		samsung_spi_init();	
 		samsung_disp_powerup();
 		samsung_disp_on();
 		samsung_state.disp_initialized = TRUE;
@@ -984,7 +929,7 @@ static void lcdc_samsung_shutdown(struct platform_device *pdev)
 
 static struct platform_driver this_driver = {
 	.probe		= samsung_probe,
-	.shutdown = lcdc_samsung_shutdown,
+	.shutdown 	= lcdc_samsung_shutdown,
 	.driver.name	= "lcdc_samsung_ancora",
 };
 
@@ -1033,7 +978,7 @@ if (board_lcd_hw_revision==1) { //for  smd
 	pinfo->wait_cycle = 0;
 	pinfo->bpp = 24;
 	pinfo->fb_num = 2;
-	pinfo->clk_rate = 24576 * 1000;
+	pinfo->clk_rate = 24576000;
 	pinfo->bl_max = 255;
 	pinfo->bl_min = 1;
 
@@ -1062,7 +1007,7 @@ if (board_lcd_hw_revision==1) { //for  smd
 	pinfo->wait_cycle = 0;
 	pinfo->bpp = 24;
 	pinfo->fb_num = 2;
-	pinfo->clk_rate = 24576 * 1000;
+	pinfo->clk_rate = 24576000;
 	pinfo->bl_max = 255;
 	pinfo->bl_min = 1;
 
@@ -1091,7 +1036,7 @@ if (board_lcd_hw_revision==1) { //for  smd
 	pinfo->wait_cycle = 0;
 	pinfo->bpp = 24;
 	pinfo->fb_num = 2;
-	pinfo->clk_rate = 24576 * 1000;
+	pinfo->clk_rate = 24576000;
 	pinfo->bl_max = 255;
 	pinfo->bl_min = 1;
 
@@ -1105,8 +1050,6 @@ if (board_lcd_hw_revision==1) { //for  smd
 	pinfo->lcdc.underflow_clr = 0xff;       /* blue */
 	pinfo->lcdc.hsync_skew = 0;
 }
-
-
 
 	ret = platform_device_register(&this_device);
 	if (ret) {
@@ -1133,7 +1076,6 @@ static int lcdc_samsung_panel_on_esd(struct platform_device *pdev)
 		acpuclk_usr_set_max();
 		lcdc_samsung_pdata->panel_config_gpio(1);
 		samsung_spi_init();
-//		mdelay(50);	
 		samsung_disp_powerup();
 		samsung_disp_on();
 		samsung_state.disp_initialized = TRUE;
@@ -1173,7 +1115,6 @@ static DECLARE_WORK(lcd_esd_work, s6d16a0x_esd);
 
 static irqreturn_t s6d16a0x_esd_irq_handler(int irq, void *handle)
 {
-	//pr_info("%s - IRQ\n", __func__ );
 
 	if( samsung_state.disp_initialized ) {
 		schedule_work ( &lcd_esd_work );
