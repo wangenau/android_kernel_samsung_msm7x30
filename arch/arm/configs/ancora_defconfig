@@ -1291,6 +1291,9 @@ CONFIG_SAMSUNG_FM_SI4709=y
 CONFIG_BLX=y
 # CONFIG_C2PORT is not set
 
+# Samsung Vibrator
+CONFIG_SAMSUNG_VIBRATOR=y
+
 #
 # EEPROM support
 #
