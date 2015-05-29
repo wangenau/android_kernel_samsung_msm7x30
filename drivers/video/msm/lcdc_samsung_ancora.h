@@ -57,8 +57,6 @@ enum {
     GPIO_DISABLE,
 };
 
-//#define DEBUG
-//#define SYSFS_DEBUG_CMD
 #define SYSFS_POWER_CONTROL
 
 #define GPIO_BL_CTRL	16

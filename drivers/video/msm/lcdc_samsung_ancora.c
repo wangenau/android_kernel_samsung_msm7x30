@@ -37,10 +37,10 @@ static int lcd_brightness = -1;
 
 extern unsigned long acpuclk_usr_set_max(void);
 
-
 static struct samsung_state_type samsung_state = { .brightness = 180 };
 static struct msm_panel_common_pdata *lcdc_samsung_pdata;
 extern unsigned int board_lcd_hw_revision;
+
 #define LCD_RESET_N_HI	gpio_set_value(lcd_reset, 1);			
 #define LCD_RESET_N_LO	gpio_set_value(lcd_reset, 0);
 #define LCD_CS_N_HIGH	gpio_set_value(spi_cs, 1);
@@ -48,12 +48,16 @@ extern unsigned int board_lcd_hw_revision;
 #define LCD_SCLK_HIGH	gpio_set_value(spi_sclk, 1);
 #define LCD_SCLK_LOW	gpio_set_value(spi_sclk, 0);
 #define LCD_SDI_HIGH	gpio_set_value(spi_mosi, 1);
-#define LCD_SDI_LOW		gpio_set_value(spi_mosi, 0);
+#define LCD_SDI_LOW	gpio_set_value(spi_mosi, 0);
+
 #if defined(CONFIG_MACH_ANCORA_TMO) || defined(CONFIG_MACH_ANCORA)
 #define LCD_DET_ENABLE
 #endif
+
 #ifdef LCD_DET_ENABLE
 #define LCD_DET_ENABLE_IRQ PM8058_GPIO_IRQ(PMIC8058_IRQ_BASE, 25)
+#define PM8058_GPIO_PM_TO_SYS(pm_gpio)     (pm_gpio + NR_GPIO_IRQS)
+
 boolean irq_disabled = FALSE;
 boolean panel_initialized = FALSE;
 static int ESD_count = 0;
@@ -62,7 +66,6 @@ static struct timer_list lcd_esd_timer;
 static void lcd_esd_timer_handler(unsigned long data);
 static struct timer_list lcd_esd_timer2;
 static void lcd_esd_timer_handler2(unsigned long data);
-#define PM8058_GPIO_PM_TO_SYS(pm_gpio)     (pm_gpio + NR_GPIO_IRQS)
 
 #endif
 
@@ -80,7 +83,7 @@ static void HYDIS_LG4573B_Data(UINT8 param);
  void HYDIS_LG4573B_Index(UINT8 cmd)
 {
 	int j;
-	if(cmd != 0x0000){
+	if(cmd != 0x0000) {
 	LCD_SDI_HIGH
 	LCD_CS_N_HIGH
 	LCD_SCLK_HIGH
@@ -109,8 +112,7 @@ static void HYDIS_LG4573B_Data(UINT8 param);
 	LCD_SCLK_HIGH	
 	LCD_SCLK_LOW   
 	LCD_SDI_LOW	
-	LCD_SCLK_HIGH			
-	// Command
+	LCD_SCLK_HIGH
 	for (j = 7 ; j >= 0; j--){
 		LCD_SCLK_LOW   
 		if ((cmd >> j) & 0x01)
@@ -154,8 +156,7 @@ void HYDIS_LG4573B_Data(UINT8 param)
 	LCD_SCLK_LOW   
 	LCD_SDI_LOW	
 	LCD_SCLK_HIGH
-	// parameter
-	for (j = 7 ; j >= 0; j--){
+	for (j = 7 ; j >= 0; j--) {
 		LCD_SCLK_LOW   
 		if ((param >> j) & 0x01)
 			LCD_SDI_HIGH
@@ -283,7 +284,7 @@ void Setting_Table_HYDIS(void)
 	HYDIS_LG4573B_Index(0x29);  // Display On		
 }
 
-struct brt_value{
+struct brt_value {
 	int level;				// Platform setting values
 	int tune_level;			// Chip Setting values
 };
@@ -499,8 +500,9 @@ static int samsung_serigo_list(struct samsung_spi_data *data, int count)
 	for (i = 0; i < count; ++i, ++data) {
 		rc = samsung_serigo(*data);
 		if(data->delay)mdelay(data->delay);
-		if (rc)
+		if (rc) {
 			return rc;
+		}
 	}
 	return 0;
 }
@@ -582,12 +584,13 @@ static void lcdc_samsung_set_backlight(struct msm_fb_data_type *mfd)
 	int i;
 
 #ifdef __LCD_ON_EARLY__
-	if(tune_level > 0)
-	{
-		if(!samsung_state.disp_powered_up)
+	if(tune_level > 0) {
+		if(!samsung_state.disp_powered_up) {
 			samsung_disp_powerup();
-		if(!samsung_state.display_on)
+		}
+		if(!samsung_state.display_on) {
 			samsung_disp_on();
+		}
 	}
 #endif
 
@@ -597,62 +600,56 @@ static void lcdc_samsung_set_backlight(struct msm_fb_data_type *mfd)
 		if(level > 0) {
 			if(level < MIN_BRIGHTNESS_VALUE) {
 				tune_level = AAT_DIMMING_VALUE; //DIMMING
-				} else {
-					
-					for(i = 0; i < MAX_BRT_STAGE_AAT_SMD; i++) {
-						if(level <= brt_table_aat_smd[i].level && level > brt_table_aat_smd[i+1].level) {
-							tune_level = brt_table_aat_smd[i].tune_level;
-							break;
-						}
+			} else {
+				for(i = 0; i < MAX_BRT_STAGE_AAT_SMD; i++) {
+					if(level <= brt_table_aat_smd[i].level && level > brt_table_aat_smd[i+1].level) {
+						tune_level = brt_table_aat_smd[i].tune_level;
+						break;
 					}
 				}
-			} /*  BACKLIGHT is AAT1402 model */
-	}else if ( board_lcd_hw_revision == 2 ){ //SONY
+			}
+		}
+	} else if ( board_lcd_hw_revision == 2 ) { //SONY
 		if(level > 0) {
 			if(level < MIN_BRIGHTNESS_VALUE) {
 				tune_level = AAT_DIMMING_VALUE; //DIMMING
-				} else {
-					
-					for(i = 0; i < MAX_BRT_STAGE_AAT; i++) {
-						if(level <= brt_table_aat[i].level && level > brt_table_aat[i+1].level) {
-							tune_level = brt_table_aat[i].tune_level;
-							break;
-						}
+			} else {
+				for(i = 0; i < MAX_BRT_STAGE_AAT; i++) {
+					if(level <= brt_table_aat[i].level && level > brt_table_aat[i+1].level) {
+						tune_level = brt_table_aat[i].tune_level;
+						break;
 					}
 				}
-			} /*  BACKLIGHT is AAT1402 model */
-	}else{ //HYSYS, 3
+			}
+		}
+	} else { //HYSYS, 3
 		if(level > 0) {
 			if(level < MIN_BRIGHTNESS_VALUE) {
 				tune_level = AAT_DIMMING_VALUE; //DIMMING
-				} else {
-					for(i = 0; i < MAX_BRT_STAGE_AAT_HYSYS; i++) {
-						if(level <= brt_table_aat_hysys[i].level && level > brt_table_aat_hysys[i+1].level) {
-							tune_level = brt_table_aat_hysys[i].tune_level;
-							break;
-						}
+			} else {
+				for(i = 0; i < MAX_BRT_STAGE_AAT_HYSYS; i++) {
+					if(level <= brt_table_aat_hysys[i].level && level > brt_table_aat_hysys[i+1].level) {
+						tune_level = brt_table_aat_hysys[i].tune_level;
+						break;
 					}
 				}
-			} /*  BACKLIGHT is AAT1402 model */
+			}
+		}
 	}		
-
-	pr_info("%s:%d,%d\n", __func__, level, tune_level);//20 31
 
 	if(!tune_level) {
 			gpio_set_value(GPIO_BL_CTRL, 0);
 			mdelay(3);
 	} else {
-		for(;tune_level>0;tune_level--) 
-		{
+		for(;tune_level>0;tune_level--) {
 			gpio_set_value(GPIO_BL_CTRL, 0);
 			udelay(3);
 			gpio_set_value(GPIO_BL_CTRL, 1);
 			udelay(3);
-
 		}
 	}
-		mdelay(1);
 
+	mdelay(1);
 	spin_unlock(&bl_ctrl_lock);
 
 }
@@ -694,10 +691,9 @@ static void samsung_disp_powerdown(void)
 static struct work_struct disp_on_delayed_work;
 static void samsung_disp_on_delayed_work(struct work_struct *work_ptr)
 {
-	if(board_lcd_hw_revision==3) //for HYDIS
+	if(board_lcd_hw_revision==3) { //for HYDIS
 		Setting_Table_HYDIS();
-	
-	else{
+	} else {
 		samsung_serigo_list(panel_on_sequence,
 			sizeof(panel_on_sequence)/sizeof(*panel_on_sequence));
 	}
@@ -721,25 +717,19 @@ static void samsung_disp_on(void)
 		schedule_work(&disp_on_delayed_work);
 		samsung_state.display_on = TRUE;
 #else
-	if(board_lcd_hw_revision==1) //for SMD
-	{
+	if(board_lcd_hw_revision==1) { //for SMD
 		if (samsung_state.disp_powered_up && !samsung_state.display_on) {
 			samsung_serigo_list(panel_on_sequence_smd,
 				sizeof(panel_on_sequence_smd)/sizeof(*panel_on_sequence_smd));
 				samsung_state.display_on = TRUE;
 		}
-	}
-	else if(board_lcd_hw_revision==3) //for HYDIS
-	{
+	} else if(board_lcd_hw_revision==3) { //for HYDIS
 		if (samsung_state.disp_powered_up && !samsung_state.display_on) {
 			Setting_Table_HYDIS();
 			samsung_state.display_on = TRUE;
 		}
-	}
-	else
-	{
+	} else {
 		if (samsung_state.disp_powered_up && !samsung_state.display_on) {
-			//mdelay(20);
 			samsung_serigo_list(panel_on_sequence,
 				sizeof(panel_on_sequence)/sizeof(*panel_on_sequence));
 			samsung_state.display_on = TRUE;
@@ -769,10 +759,8 @@ static int lcdc_samsung_panel_on(struct platform_device *pdev)
 		samsung_disp_on();
 		samsung_state.disp_initialized = TRUE;
 #ifdef LCD_DET_ENABLE
-		if((board_lcd_hw_revision==3)||(board_lcd_hw_revision==1))  //for HYDIS and SMD
-		{
-			if (irq_disabled) 
-			{      
+		if((board_lcd_hw_revision==3) || (board_lcd_hw_revision==1)) { //for HYDIS and SMD
+			if (irq_disabled) {      
 				enable_irq ( LCD_DET_ENABLE_IRQ );
 				irq_disabled = FALSE;
 				pr_info("%s - enable_irq, ESD_count is %d\n", __func__, ESD_count );
@@ -795,8 +783,7 @@ static int lcdc_samsung_panel_off(struct platform_device *pdev)
 	pr_info("%s\n", __func__);
 
 #ifdef LCD_DET_ENABLE
-	if((board_lcd_hw_revision==3)||(board_lcd_hw_revision==1))  //for HYDIS and SMD
-	{
+	if((board_lcd_hw_revision==3) || (board_lcd_hw_revision==1)) { //for HYDIS and SMD
   		disable_irq_nosync ( LCD_DET_ENABLE_IRQ);
   		irq_disabled = TRUE;
 		pr_info("%s - disable_irq_nosync\n", __func__ );
@@ -805,10 +792,9 @@ static int lcdc_samsung_panel_off(struct platform_device *pdev)
 
 	if (samsung_state.disp_powered_up && samsung_state.display_on) {
 #ifdef LCD_DET_ENABLE
-		if((board_lcd_hw_revision==3)||(board_lcd_hw_revision==1))  //for HYDIS and SMD
-		{
+		if((board_lcd_hw_revision==3) || (board_lcd_hw_revision==1)) { //for HYDIS and SMD
 			del_timer(&lcd_esd_timer);
-      	          panel_initialized = FALSE;
+      	          	panel_initialized = FALSE;
 		}
 #endif
 		/* 0x10: Sleep In */
@@ -902,21 +888,20 @@ static int samsung_lcd_read_type_show(struct device *dev, struct device_attribut
 }
 
 static DEVICE_ATTR(lcd_read_type, 0664, samsung_lcd_read_type_show, NULL);
+
 static int samsung_lcdtype_file_show(struct device *dev, struct device_attribute *attr, char *buf)
 {
     int count = 0;
     
-	if(board_lcd_hw_revision == 1)  //for SMD
+	if(board_lcd_hw_revision == 1) { //for SMD
 		count = sprintf(buf, "SMD_LMS369KF01\n");
-	
-	else if(board_lcd_hw_revision == 2)  //for SONY
+	} else if(board_lcd_hw_revision == 2) { //for SONY
 		count = sprintf(buf, "SON_S6D16A0x22\n");
-	
-	else if(board_lcd_hw_revision == 3) //for HYDIS
+	} else if(board_lcd_hw_revision == 3) { //for HYDIS
 		count = sprintf(buf, "HYD_HVA37WV1\n");
-	
-	else
+	} else {
 	      count = sprintf(buf, "lcdtype error\n");
+	}
 
 	return count;
 }
@@ -931,10 +916,6 @@ static int samsung_probe(struct platform_device *pdev)
 	int rc;
 #endif
 
-#ifdef SYSFS_LCD_CONNECT_CHECK
-    int dcferr;
-#endif
-
 #ifdef SYSFS_POWER_CONTROL
 	int err;
 	err = device_create_file(&(pdev->dev), &dev_attr_lcd_power);
@@ -943,10 +924,11 @@ static int samsung_probe(struct platform_device *pdev)
 #endif
 
 #ifdef SYSFS_LCD_CONNECT_CHECK
-    dcferr = device_create_file(&(pdev->dev), &dev_attr_lcd_connected);
-    if (dcferr <0) {
-        pr_err("%s: failed to add 'lcd_connected' entry\n", __func__);
-    }
+	int dcferr;
+	dcferr = device_create_file(&(pdev->dev), &dev_attr_lcd_connected);
+	if (dcferr < 0) {
+     		pr_err("%s: failed to add 'lcd_connected' entry\n", __func__);
+	}
 #endif
 
 	err = device_create_file(&(pdev->dev), &dev_attr_lcd_read_type);
@@ -964,17 +946,14 @@ static int samsung_probe(struct platform_device *pdev)
 
 
 #ifdef LCD_DET_ENABLE
-	if((board_lcd_hw_revision==3)||(board_lcd_hw_revision==1))  //for HYDIS and SMD
-	{
+	if((board_lcd_hw_revision==3) || (board_lcd_hw_revision==1)) { //for HYDIS and SMD
 		irq_set_irq_type(LCD_DET_ENABLE_IRQ, IRQ_TYPE_EDGE_FALLING);
 		err = request_threaded_irq(LCD_DET_ENABLE_IRQ, NULL,s6d16a0x_esd_irq_handler, IRQF_TRIGGER_FALLING, "LCD_ESD_DET", (void*)pdev->dev.platform_data);
 
-		if (err)
-		{
-		pr_info ( "%s, request_irq failed ESD_DET, ret= %d\n", __func__, err);
-		}
-		else{
-		pr_info ( "%s - irq is requested normally\n", __func__ );
+		if (err) {
+			pr_info ( "%s, request_irq failed ESD_DET, ret= %d\n", __func__, err);
+		} else {
+			pr_info ( "%s - irq is requested normally\n", __func__ );
 		}
 	}
 #endif
@@ -1038,11 +1017,10 @@ static int __init lcdc_samsung_panel_init(void)
 		return 0;
 	}
 #endif
-if (board_lcd_hw_revision==1)  //for  smd 
-{
+if (board_lcd_hw_revision==1) { //for  smd 
+
 	ret = platform_driver_register(&this_driver);
-	if (ret)
-	{
+	if (ret) {
 		pr_err("%s: driver register failed, rc=%d\n", __func__, ret);
 		return ret;
 	}
@@ -1069,14 +1047,10 @@ if (board_lcd_hw_revision==1)  //for  smd
 	pinfo->lcdc.underflow_clr = 0xff;       /* blue */
 	pinfo->lcdc.hsync_skew = 0;
 
-}
-
-else if(board_lcd_hw_revision==3) //for HYDIS
-{
+} else if(board_lcd_hw_revision==3) { //for HYDIS
 	
 	ret = platform_driver_register(&this_driver);
-	if (ret)
-	{
+	if (ret) {
 		pr_err("%s: driver register failed, rc=%d\n", __func__, ret);
 		return ret;
 	}
@@ -1101,12 +1075,11 @@ else if(board_lcd_hw_revision==3) //for HYDIS
 	pinfo->lcdc.border_clr = 0;     /* blk */
 	pinfo->lcdc.underflow_clr = 0xff;       /* blue */
 	pinfo->lcdc.hsync_skew = 0;
-}	
-else //for etc...
-{
+
+} else { //for etc...
+
 	ret = platform_driver_register(&this_driver);
-	if (ret)
-	{
+	if (ret) {
 		pr_err("%s: driver register failed, rc=%d\n", __func__, ret);
 		return ret;
 	}
@@ -1165,8 +1138,7 @@ static int lcdc_samsung_panel_on_esd(struct platform_device *pdev)
 		samsung_disp_on();
 		samsung_state.disp_initialized = TRUE;
 #ifdef LCD_DET_ENABLE
-		if (irq_disabled) 
-		{      
+		if (irq_disabled) {      
 			enable_irq ( LCD_DET_ENABLE_IRQ );
 			irq_disabled = FALSE;
 			pr_info("%s - enable_irq, ESD_count is %d\n", __func__, ESD_count );
@@ -1183,8 +1155,7 @@ static int lcdc_samsung_panel_on_esd(struct platform_device *pdev)
 
 static void s6d16a0x_esd(struct work_struct *work)
 {
-	if ( panel_initialized )
-	{
+	if ( panel_initialized ) {
 		++ESD_count;
 		pr_info("%s - ESD count - %d.\n", __func__, ESD_count );
 		lcdc_samsung_panel_off ( NULL );
@@ -1192,9 +1163,9 @@ static void s6d16a0x_esd(struct work_struct *work)
 		lcdc_samsung_panel_on_esd ( NULL );
 		del_timer(&lcd_esd_timer2);
 		init_timer(&lcd_esd_timer2);
-	       lcd_esd_timer2.function = lcd_esd_timer_handler2;
-	       lcd_esd_timer2.expires = jiffies + 4*HZ;  // make panel_initialized true after 2 sec
-	       add_timer(&lcd_esd_timer2);
+	        lcd_esd_timer2.function = lcd_esd_timer_handler2;
+	        lcd_esd_timer2.expires = jiffies + 4*HZ;  // make panel_initialized true after 2 sec
+	        add_timer(&lcd_esd_timer2);
 	}
 }
 
@@ -1204,8 +1175,7 @@ static irqreturn_t s6d16a0x_esd_irq_handler(int irq, void *handle)
 {
 	//pr_info("%s - IRQ\n", __func__ );
 
-	if( samsung_state.disp_initialized )
-	{
+	if( samsung_state.disp_initialized ) {
 		schedule_work ( &lcd_esd_work );
 	}
 
@@ -1214,19 +1184,15 @@ static irqreturn_t s6d16a0x_esd_irq_handler(int irq, void *handle)
 
 static void lcd_esd_timer_handler(unsigned long data)
 {
-       if (samsung_state.disp_initialized) 
-	{      
+       if (samsung_state.disp_initialized) {      
 		panel_initialized = TRUE;
-       	}
+       }
 }
 
 static void lcd_esd_timer_handler2(unsigned long data)
 {
-       if (samsung_state.disp_initialized) 
-	{      
-		if(gpio_get_value(PM8058_GPIO_PM_TO_SYS(25)) == 0)
-		{
-			
+       if (samsung_state.disp_initialized) {      
+		if(gpio_get_value(PM8058_GPIO_PM_TO_SYS(25)) == 0) {
 			pr_info("%s - ESD 2 count - %d.\n", __func__, gpio_get_value(PM8058_GPIO_PM_TO_SYS(25)) );
 			schedule_work ( &lcd_esd_work );
 
