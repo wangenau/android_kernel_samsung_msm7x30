@@ -32,6 +32,14 @@
 #include "s5k4ecgx_I847.h"
 #endif
 
+#ifdef CONFIG_LOAD_FILE
+#include <linux/vmalloc.h>
+#include <linux/fs.h>
+#include <linux/mm.h>
+#include <linux/slab.h>
+#include <asm/uaccess.h>
+#endif
+
 #include <mach/camera.h>
 #include <mach/vreg.h>
 #include <linux/io.h>
@@ -41,10 +49,8 @@
 #define SENSOR_SECCESS  (0)
 
 #undef CONFIG_LOAD_FILE
-//#define CONFIG_LOAD_FILE
 #ifndef CONFIG_LOAD_FILE
 #define S5K4ECGX_USE_BURSTMODE
-//#define WORKAROUND_FOR_LOW_SPEED_I2C
 #endif
 
 #ifdef  S5K4ECGX_USE_BURSTMODE
@@ -226,8 +232,6 @@ static int s5k4ecgx_sensor_read(unsigned short subaddr, unsigned short *data)
         goto error;
 
     *data = ((buf[0] << 8) | buf[1]);
-    /*  [Arun c]Data should be written in Little Endian in parallel mode; So there is no need for byte swapping here */
-    //*data = *(unsigned long *)(&buf);
 error:
     return ret;
 }
@@ -258,9 +262,6 @@ static int s5k4ecgx_sensor_write(unsigned short subaddr, unsigned short val)
     unsigned char buf[4];
     struct i2c_msg msg = { s5k4ecgx_client->addr, 0, 4, buf };
 
-    //CAMDRV_DEBUG("[PGH] on write func s5k4ecgx_client->addr : %x\n", s5k4ecgx_client->addr);
-    //CAMDRV_DEBUG("[PGH] on write func  s5k4ecgx_client->adapter->nr : %d\n", s5k4ecgx_client->adapter->nr);
-
     buf[0] = (subaddr >> 8);
     buf[1] = (subaddr & 0xFF);
     buf[2] = (val >> 8);
@@ -284,7 +285,6 @@ static int s5k4ecgx_sensor_write_list(struct s5k4ecgx_reg *list,int size, char *
       
     for (i = 0; i < size; i++)
     {
-        //CAMDRV_DEBUG("[PGH] %x      %x\n", list[i].subaddr, list[i].value);
         subaddr = ((list[i].value)>> 16); //address
         value = ((list[i].value)& 0xFFFF); //value
         if(subaddr == 0xffff)
@@ -350,7 +350,6 @@ I2C_RETRY:
                 {
                     msg.len = idx;
                     err = i2c_transfer(s5k4ecgx_client->adapter, &msg, 1) == 1 ? 0 : -EIO;
-//                    printk("s5k4ecgx_sensor_burst_write, idx = %d\n",idx);
                     idx=0;
                 }
             break;
@@ -362,7 +361,6 @@ I2C_RETRY:
                 // Set Address
                 idx=0;
                 err = s5k4ecgx_sensor_write(subaddr,value);
-//                printk("s5k4ecgx_sensor_burst_write, %x,%x\n",subaddr,value);
             break;
         }
         if(err < 0)
@@ -375,8 +373,7 @@ I2C_RETRY:
             return err;
         }
     }
-    
-    //CAMDRV_DEBUG("s5k4ecgx_sensor_burst_write end!\n");
+
     return 0;
 }
 #endif /*S5K4ECGX_USE_BURSTMODE*/
@@ -947,7 +944,6 @@ void s5k4ecgx_set_fps(char value)
     switch(value)
     {
         case EXT_CFG_FRAME_AUTO :
-            //S5K4ECGX_WRITE_LIST(s5k4ecgx_FPS_15);
         break;
         case EXT_CFG_FRAME_FIX_15 :
             S5K4ECGX_WRITE_LIST(s5k4ecgx_FPS_15);
@@ -991,8 +987,6 @@ static  int s5k4ecgx_set_flash(int lux_val)
     int i = 0;
 
     CAMDRV_DEBUG("%s, flash set is %d\n", __func__, lux_val);
-    
-//    if(s5k4ecgx_status.flash_mode == EXT_CFG_FLASH_OFF)return 0;
 
     /* initailize falsh IC */
     gpio_set_value(CAM_FLASH_ENSET,0);
@@ -1246,13 +1240,7 @@ static void s5k4ecgx_set_touchAF(unsigned short touch_X, unsigned short touch_Y)
     inner_window_start_Y = mapped_Y - inner_window_height/2;
     outer_window_start_Y = mapped_Y - outer_window_height/2;
   }
-  
-  /*S5K5CCGX_TOUCH_AF[3].value = (outer_window_start_X * (2^10) / sensor_display_H);
-  S5K5CCGX_TOUCH_AF[4].value = (outer_window_start_Y * (2^10) / sensor_display_V);
-  
-  S5K5CCGX_TOUCH_AF[7].value = (inner_window_start_X * (2^10) / sensor_display_H);
-  S5K5CCGX_TOUCH_AF[8].value = (inner_window_start_Y * (2^10) / sensor_display_V);*/
-  //TELECA_TOUCHAF
+
   S5K4ECGX_TOUCH_AF[3].value = (outer_window_start_X * (1024) / sensor_display_H);
   S5K4ECGX_TOUCH_AF[4].value = (outer_window_start_Y * (1024) / sensor_display_V);
   S5K4ECGX_TOUCH_AF[7].value = (inner_window_start_X * (1024) / sensor_display_H);
@@ -1286,7 +1274,6 @@ int s5k4ecgx_set_af(char value)
 {
     int val = 0, ret = 0;
     static int pre_flash_on = 0;
-    //CAMDRV_DEBUG("%s : %d\n", __func__, value);
 
 #ifdef SECOND_AF_SKIP
     if(!g_AF_expired)
@@ -1433,16 +1420,6 @@ int s5k4ecgx_set_af(char value)
         case EXT_CFG_AF_DO :
             CAMDRV_DEBUG("%s : EXT_CFG_AF_DO \n", __func__);
             s5k4ecgx_status.afcanceled = false;
-#if 0
-            s5k4ecgx_sensor_write(0x002C, 0x7000);
-            s5k4ecgx_sensor_write(0x002E, 0x2B30);
-            s5k4ecgx_sensor_read(0x0F12, &val);
-            
-            if(val < 0x001E)
-                S5K4ECGX_WRITE_LIST(s5k4ecgx_Low_Cap_On);
-            else
-                S5K4ECGX_WRITE_LIST(s5k4ecgx_Low_Cap_Off);
-#endif
             S5K4ECGX_WRITE_LIST(s5k4ecgx_Single_AF_Start);
         break;
         case EXT_CFG_AF_SET_AE_FOR_FLASH :
@@ -1553,8 +1530,6 @@ void s5k4ecgx_set_scene(char value)
     if(value != EXT_CFG_SCENE_OFF)
     {
         S5K4ECGX_WRITE_LIST(s5k4ecgx_Scene_Default);
-        //if(value == EXT_CFG_SCENE_TEXT)s5k4ecgx_set_af(EXT_CFG_AF_SET_MACRO);
-        //else s5k4ecgx_set_af(EXT_CFG_AF_SET_NORMAL);
         if( s5k4ecgx_status.auto_contrast != EXT_CFG_AUTO_CONTRAST_OFF)s5k4ecgx_set_auto_contrast(EXT_CFG_AUTO_CONTRAST_OFF);
     }
     
@@ -1611,8 +1586,6 @@ void s5k4ecgx_set_scene(char value)
 #ifndef CONFIG_MACH_APACHE
             S5K4ECGX_WRITE_LIST(s5k4ecgx_Scene_Backlight);
 #endif
-            //if(s5k4ecgx_status.flash_mode == EXT_CFG_FLASH_ON ||s5k4ecgx_status.flash_mode == EXT_CFG_FLASH_AUTO)s5k4ecgx_set_metering(EXT_CFG_METERING_CENTER);
-            //else s5k4ecgx_set_metering(EXT_CFG_METERING_SPOT);
         break;
         case EXT_CFG_SCENE_FIREWORK :
             S5K4ECGX_WRITE_LIST(s5k4ecgx_Scene_Fireworks);
@@ -1743,7 +1716,6 @@ void s5k4ecgx_set_preview(void)
 #ifdef WORKAROUND_FOR_LOW_SPEED_I2C
     unsigned int before_time, after_time, time_gab;
     int *i2c_clk_addr;
-    //i2c_clk_addr = 0xd500c004;
     i2c_clk_addr = get_i2c_clock_addr(s5k4ecgx_client->adapter);
 #endif    
     printk("[S5K4ECGX]s5k4ecgx_set_preview start\n");
@@ -1783,13 +1755,11 @@ void s5k4ecgx_set_preview(void)
             isPreviewReturnWrite = true;
         }
     }
-    
-//#ifdef NOT_USE
+
     rc = s5k4ecgx_sensor_write(0x002C, 0x7000);
     s5k4ecgx_sensor_write(0x002E, 0x01A6);
     s5k4ecgx_sensor_read(0x0F12, (unsigned short*)&s5k4ecgx_status.id);
     CAMDRV_DEBUG("[S5K4ECGX] SENSOR FW VERSION : 0x%x \n",s5k4ecgx_status.id);
-//#endif
 
 #ifdef NOT_USE
     /* workaround code for late arrival preview frame on FIREWORK mode */
@@ -1800,23 +1770,7 @@ void s5k4ecgx_set_preview(void)
     }
 #endif    
     s5k4ecgx_check_REG_TC_GP_EnablePreviewChanged();
-    
-#if 0 //disable Frmae skip
-        if((s5k4ecgx_status.scene == EXT_CFG_SCENE_NIGHTSHOT) ||(s5k4ecgx_status.scene == EXT_CFG_SCENE_FIREWORK) )
-        {
-            for(cnt=0; cnt<450; cnt++)
-            {
-                vsync_value = gpio_get_value(14);
-                if(vsync_value)
-                    break;
-                else
-                {
-                    CAMDRV_DEBUG("wait cnt:%d vsync_value:%d\n", cnt, vsync_value);
-                    msleep(3);
-                }
-            }
-        }
-#endif
+
 #define DATA_LINE_CHECK
 #ifdef DATA_LINE_CHECK
     if(s5k4ecgx_status.need_configuration & CHECK_DTP&& s5k4ecgx_status.dtp != EXT_CFG_DTP_OFF)s5k4ecgx_set_DTP(s5k4ecgx_status.dtp);
@@ -1870,7 +1824,6 @@ void s5k4ecgx_set_preview(void)
 
     if(s5k4ecgx_status.camera_on == false)
     {
-//      mdelay(100);
       s5k4ecgx_status.camera_on = true;
       s5k4ecgx_check_REG_TC_GP_EnableAWBChanged();
     }
@@ -1994,12 +1947,7 @@ int s5k4ecgx_sensor_ext_config(void __user *arg)
     
     switch(cfg_data.cmd)
     {
-        //case EXT_CFG_AUTO_TUNNING:
-            //S5K4ECGX_WRITE_LIST(s5k4ecgx_Preview_Return);
-            //isPreviewReturnWrite = true;
-        //break;
-        //case EXT_CFG_SDCARD_DETECT:
-        //break;
+
         case EXT_CFG_GET_EXIF_INFO:{
             unsigned short lsb, msb,a_gain,d_gain;
             s5k4ecgx_sensor_write(0xFCFC, 0xD000);
@@ -2017,7 +1965,6 @@ int s5k4ecgx_sensor_ext_config(void __user *arg)
             cfg_data.cmd = a_gain;
             cfg_data.device_id = d_gain;
             CAMDRV_DEBUG("exposure %x %x \n", lsb, msb);
-            //CAMDRV_DEBUG("rough_iso %x \n", rough_iso);
             if(s5k4ecgx_status.nightcap_on== true)S5K4ECGX_WRITE_LIST(s5k4ecgx_Night_Mode_Off)
             else if(s5k4ecgx_status.lowcap_on== true)S5K4ECGX_WRITE_LIST(s5k4ecgx_Low_Cap_Off)
         }
@@ -2031,9 +1978,6 @@ int s5k4ecgx_sensor_ext_config(void __user *arg)
             }
             CAMDRV_DEBUG("EXT_CFG_FLASH_INFO %d \n", s5k4ecgx_status.flash_exifinfo);
             cfg_data.value_1 = s5k4ecgx_status.flash_exifinfo;
-        break;
-        //case EXT_CFG_LUX_INFO:
-            //cfg_data.value_1 = s5k4ecgx_status.current_lux;
         break;        
         case EXT_CFG_SET_FPS:
             s5k4ecgx_status.fps = cfg_data.value_1;
@@ -2122,44 +2066,8 @@ int s5k4ecgx_sensor_ext_config(void __user *arg)
         break;
      case EXT_CFG_SET_PREVIEW_SIZE:
          s5k4ecgx_status.preview_size = cfg_data.value_1;
-          //  if(!s5k4ecgx_status.camera_initailized)
-           //     s5k4ecgx_status.need_configuration |= CHECK_PREVIEW_SIZE;
-         //   else
-          //      s5k4ecgx_set_preview_size(s5k4ecgx_status.preview_size);
              break;
-/*
-        case EXT_CFG_CPU_CONTROL:
-            switch(cfg_data.value_1)
-            {
-                case EXT_CFG_CPU_CONSERVATIVE:
-                CAMDRV_DEBUG("now conservative\n");
-                cpufreq_direct_set_policy(0, "conservative");
-                break;
-                case EXT_CFG_CPU_ONDEMAND:
-                CAMDRV_DEBUG("now ondemand\n");
-                cpufreq_direct_set_policy(0, "ondemand");
-                break;
-                case EXT_CFG_CPU_PERFORMANCE:
-                CAMDRV_DEBUG("now performance\n");
-                cpufreq_direct_set_policy(0, "performance");
-                break;
-                default:
-                    printk("[S5K4ECGX] Unexpected CPU control on PCAM\n");
-                break;
-            }
-        break;
-        case EXT_CFG_SENSOR_RESET:
-                printk("[S5K4ECGX] ************************CAM frame timeout\n");
-                s5k4ecgx_status.camera_initailized = false;
-                s5k4ecgx_set_power(false);
-                s5k4ecgx_set_power(true);
-                msm_camio_clk_rate_set(24000000);
-                msm_camio_camif_pad_reg_reset();
-                msleep(5);            
-                s5k4ecgx_probe_init_sensor();
-                s5k4ecgx_set_preview();
-        break;
-*/
+
         case EXT_CFG_SET_DTP:
             s5k4ecgx_status.dtp = cfg_data.value_1;
         printk("********[diony]  cfg_data.value_1 = %d.\n", cfg_data.value_1);
@@ -2179,9 +2087,6 @@ int s5k4ecgx_sensor_ext_config(void __user *arg)
             else
                 s5k4ecgx_set_capture_size(s5k4ecgx_status.snapshot_size);
         break;
-        //case EXT_CFG_SET_CAPTURE_MODE:
-            //s5k4ecgx_set_capture();
-        //break;
         case EXT_CFG_SET_FLASH_MODE:
             CAMDRV_DEBUG("EXT_CFG_SET_FLASH_MODE: cmd=%d, value_1=%d, value_2=%d \n",cfg_data.cmd, cfg_data.value_1,cfg_data.value_2);
             if(cfg_data.value_2 != EXT_CFG_FLASH_TURN_ON && cfg_data.value_2 != EXT_CFG_FLASH_TURN_OFF)
@@ -2190,8 +2095,6 @@ int s5k4ecgx_sensor_ext_config(void __user *arg)
                 //P111026-1625:Appl Name : Tiny Flashlight, This third party app is sending the command EXT_CFG_FLASH_OFF
                 if(cfg_data.value_2 == EXT_CFG_FLASH_OFF)
                 s5k4ecgx_set_flash(FLASH_OFF);
-                //if(s5k4ecgx_status.scene == EXT_CFG_SCENE_BACKLIGHT && s5k4ecgx_status.flash_mode != EXT_CFG_FLASH_OFF)s5k4ecgx_set_metering(EXT_CFG_METERING_CENTER);
-                //else if(s5k4ecgx_status.scene == EXT_CFG_SCENE_BACKLIGHT && s5k4ecgx_status.flash_mode == EXT_CFG_FLASH_OFF)s5k4ecgx_set_metering(EXT_CFG_METERING_SPOT);
             }
             else if(cfg_data.value_2 == EXT_CFG_FLASH_TURN_ON)
             {
@@ -2614,141 +2517,18 @@ static int s5k4ecgx_probe_init_sensor()
     s5k4ecgx_status.id = 0x00;
 
 #ifndef CONFIG_LOAD_FILE
-    //S5K4ECGX_WRITE_LIST(s5k4ecgx_init_reg1);
     rc = s5k4ecgx_sensor_burst_write(s5k4ecgx_init_reg1,
             (sizeof(s5k4ecgx_init_reg1) / sizeof(s5k4ecgx_init_reg1[0])),
             "s5k4ecgx_init_reg1");
     msleep(50);
 #endif    
 
-
-
-#if 0//PGH I2C SPEED TEST
-    unsigned int    before_time, after_time, i;//I2C SPEED TEST
-    before_time = get_jiffies_64();
-    for (i = 0; i < 3000; i++) 
-    {
-        s5k4ecgx_sensor_write(0x002E, 0x0040);
-    }       
-    after_time = get_jiffies_64();
-    CAMDRV_DEBUG("Total Time 3000: %d\n",  jiffies_to_msecs(after_time-before_time));
-#endif//PGH I2C SPEED TEST
-
-#if 0
-    unsigned short id = 0; //CAM FOR FW
-    s5k4ecgx_sensor_write(0x002C, 0x7000);
-    s5k4ecgx_sensor_write(0x002E, 0x01AC);
-    s5k4ecgx_sensor_read(0x0F12, &id);
-    CAMDRV_DEBUG("SENSOR FW VERSION : 0x%x \n", id);
-#endif
     return rc;
 }
 
-#if 0//PGH
-static long s5k4ecgx_reg_init(void)
-{
-    int32_t array_length;
-    int32_t i;
-    long rc;
-
-    /* PLL Setup Start */
-    rc = s5k4ecgx_i2c_write_table(&s5k4ecgx_regs.plltbl[0],
-                    s5k4ecgx_regs.plltbl_size);
-
-    if (rc < 0)
-        return rc;
-    /* PLL Setup End   */
-
-    array_length = s5k4ecgx_regs.prev_snap_reg_settings_size;
-
-    /* Configure sensor for Preview mode and Snapshot mode */
-    for (i = 0; i < array_length; i++) {
-        rc = s5k4ecgx_i2c_write(s5k4ecgx_client->addr,
-          s5k4ecgx_regs.prev_snap_reg_settings[i].register_address,
-          s5k4ecgx_regs.prev_snap_reg_settings[i].register_value,
-          WORD_LEN);
-
-        if (rc < 0)
-            return rc;
-    }
-
-    /* Configure for Noise Reduction, Saturation and Aperture Correction */
-    array_length = s5k4ecgx_regs.noise_reduction_reg_settings_size;
-
-    for (i = 0; i < array_length; i++) {
-        rc = s5k4ecgx_i2c_write(s5k4ecgx_client->addr,
-            s5k4ecgx_regs.noise_reduction_reg_settings[i].register_address,
-            s5k4ecgx_regs.noise_reduction_reg_settings[i].register_value,
-            WORD_LEN);
-
-        if (rc < 0)
-            return rc;
-    }
-
-    /* Set Color Kill Saturation point to optimum value */
-    rc =
-    s5k4ecgx_i2c_write(s5k4ecgx_client->addr,
-    0x35A4,
-    0x0593,
-    WORD_LEN);
-    if (rc < 0)
-        return rc;
-
-    rc = s5k4ecgx_i2c_write_table(&s5k4ecgx_regs.stbl[0],
-                    s5k4ecgx_regs.stbl_size);
-    if (rc < 0)
-        return rc;
-
-    rc = s5k4ecgx_set_lens_roll_off();
-    if (rc < 0)
-        return rc;
-
-    return 0;
-}
-#endif//PGH
-
-//static int16_t s5k4ecgx_effect = CAMERA_EFFECT_OFF;
 static long s5k4ecgx_config_effect(int mode, int effect)
 {
     return 0;
-/*
-    long rc = 0;
-    switch (mode) {
-        case SENSOR_PREVIEW_MODE:
-            //CAMDRV_DEBUG("SENSOR_PREVIEW_MODE\n");
-        break;
-        case SENSOR_SNAPSHOT_MODE:
-            //CAMDRV_DEBUG("SENSOR_SNAPSHOT_MODE\n");
-        break;
-        default:
-            //CAMDRV_DEBUG("[PGH] %s default\n", __func__);
-        break;
-    }
-
-    switch (effect) {
-        case CAMERA_EFFECT_OFF: 
-            //CAMDRV_DEBUG("CAMERA_EFFECT_OFF\n");
-        break;
-        case CAMERA_EFFECT_MONO: 
-            //CAMDRV_DEBUG("CAMERA_EFFECT_MONO\n");
-        break;
-        case CAMERA_EFFECT_NEGATIVE:
-            //CAMDRV_DEBUG("CAMERA_EFFECT_NEGATIVE\n");
-        break;
-        case CAMERA_EFFECT_SOLARIZE:
-            //CAMDRV_DEBUG("CAMERA_EFFECT_SOLARIZE\n");
-        break;
-        case CAMERA_EFFECT_SEPIA:
-            //CAMDRV_DEBUG("CAMERA_EFFECT_SEPIA\n");
-        break;
-        default: 
-            //printk("[S5K4ECGX]unexpeceted effect  %s/%d\n", __func__, __LINE__);
-        return -EINVAL;
-    }
-    s5k4ecgx_effect = effect;
-    
-    return rc;
-    */
 }
 
 static long s5k4ecgx_set_sensor_mode(int mode)
@@ -2770,12 +2550,6 @@ static long s5k4ecgx_set_sensor_mode(int mode)
 }
 
 #ifdef CONFIG_LOAD_FILE
-#include <linux/vmalloc.h>
-#include <linux/fs.h>
-#include <linux/mm.h>
-#include <linux/slab.h>
-#include <asm/uaccess.h>
-
 static char *s5k4ecgx_regs_table = NULL;
 static int s5k4ecgx_regs_table_size;
 
@@ -2825,7 +2599,6 @@ void s5k4ecgx_regs_table_init(void)
     s5k4ecgx_regs_table = dp;
     s5k4ecgx_regs_table_size = l;
     *((s5k4ecgx_regs_table + s5k4ecgx_regs_table_size) - 1) = '\0';
-//    CAMDRV_DEBUG("s5k4ecgx_regs_table 0x%x, %ld\n", dp, l);
 }
 
 void s5k4ecgx_regs_table_exit(void)
@@ -2867,7 +2640,6 @@ static int s5k4ecgx_regs_table_write(char *name)
             memcpy(data_buf, (reg + 7), 4);
             addr = (unsigned short)simple_strtoul(reg_buf, NULL, 16); 
             value = (unsigned short)simple_strtoul(data_buf, NULL, 16); 
-            //CAMDRV_DEBUG("[S5K4ECGX]addr 0x%04x, value 0x%04x\n", addr, value);
             if (addr == 0xffff)
             {
                 msleep(value);
@@ -2913,7 +2685,6 @@ void s5k4ecgx_reg_init_60hz(void)
 
     COPY_FROM_60HZ_TABLE (s5k4ecgx_init_reg2, 60hz);
     COPY_FROM_60HZ_TABLE (s5k4ecgx_ISO_Auto, 60hz);
-//    COPY_FROM_60HZ_TABLE (s5k4ecgx_ISO_Auto_MWB_on, 60hz);
     COPY_FROM_60HZ_TABLE (s5k4ecgx_Scene_Default, 60hz);
 }
 
@@ -2924,7 +2695,6 @@ int s5k4ecgx_check_table_size(void)
 
     if ( !IS_SAME_NUM_OF_ROWS(s5k4ecgx_init_reg2) ) return (-1);
     if ( !IS_SAME_NUM_OF_ROWS(s5k4ecgx_ISO_Auto) ) return (-2);
-//    if ( !IS_SAME_NUM_OF_ROWS(s5k4ecgx_ISO_Auto_MWB_on) ) return (-3);
     if ( !IS_SAME_NUM_OF_ROWS(s5k4ecgx_Scene_Default) ) return (-4);
 
     return 0;
@@ -3079,14 +2849,6 @@ int s5k4ecgx_sensor_release(void)
 {
     int rc = 0;
 
-    /* down(&s5k4ecgx_sem); */
-    /*
-    CAMDRV_DEBUG("lens moving to Base before CAM OFF\n");
-    s5k4ecgx_sensor_write(0x0028, 0x7000);
-    s5k4ecgx_sensor_write(0x002A, 0x0254);
-    s5k4ecgx_sensor_write(0x0F12, 0x0030); //Lens Pistion (0x00 ~ 0xfF) normally (0x30 ~ 0x80)
-    */
-
     s5k4ecgx_set_power(false);
 
     s5k4ecgx_status.camera_initailized = false;
@@ -3106,12 +2868,8 @@ int s5k4ecgx_sensor_release(void)
     s5k4ecgx_status.flash_status = 0;
     s5k4ecgx_status.camera_on = false;
     
-//    s5k4ecgx_set_power(false);
-    //cpufreq_direct_set_policy(0, "ondemand");
-    
     CAMDRV_DEBUG("s5k4ecgx_sensor_release\n");
     kfree(s5k4ecgx_ctrl);
-    /* up(&s5k4ecgx_sem); */
 
 #ifdef CONFIG_LOAD_FILE
     s5k4ecgx_regs_table_exit();
@@ -3213,22 +2971,6 @@ static struct i2c_driver s5k4ecgx_i2c_driver = {
 ssize_t camtype_show(struct device *dev, struct device_attribute *attr, char *buf)
 {
     char *sensorname = "NG";
-#if 0
-    if( camera_back_check ){
-        switch (camera_active_type)
-        {
-            case CAMERA_ID_BACK:
-                sensorname = "SONY_ISX005_NONE";
-                break;
-            case CAMERA_ID_MAX:
-                sensorname = "SLSI_S5K5CCGX_NONE";
-                break;
-            default :
-                 sensorname = "NG";
-                 break;
-        }
-    }
-#endif
     sensorname = "LSI_S5K4ECGX_NONE";
     return sprintf(buf,"%s\n", sensorname);
 }
@@ -3295,8 +3037,6 @@ static int s5k4ecgx_sensor_probe(const struct msm_camera_sensor_info *info,
     
     /*sensor on/off for vfe initailization */
     s5k4ecgx_set_power(true);
-    /* Input MCLK = 24MHz */
-//    msm_camio_clk_rate_set(24000000);
    rc = s5k4ecgx_probe_init_sensor();
 
     s->s_init = s5k4ecgx_sensor_init;
