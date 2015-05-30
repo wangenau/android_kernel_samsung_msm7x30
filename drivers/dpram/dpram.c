@@ -20,20 +20,14 @@
 #include <linux/platform_device.h>
 #include <linux/mm.h>
 #include <linux/sched.h>
-
 #include <linux/tty.h>
 #include <linux/tty_driver.h>
 #include <linux/tty_flip.h>
 #include <linux/irq.h>
-
-#ifdef _ENABLE_ERROR_DEVICE
 #include <linux/poll.h>
 #include <linux/cdev.h>
-#endif	/* _ENABLE_ERROR_DEVICE */
-
 #include <asm/irq.h>
 #include <asm/io.h>
-
 #include <mach/hardware.h>
 #include <asm/uaccess.h>
 #include <mach/gpio.h>
@@ -61,12 +55,9 @@
 #define READ_FROM_DPRAM(dest, src, size) \
 	_memcpy(dest, (void *)(SmemBase + src), size)
 
-#ifdef _ENABLE_ERROR_DEVICE
 #define DPRAM_ERR_MSG_LEN			65
 #define DPRAM_ERR_DEVICE			"dpramerr"
-#endif	/* _ENABLE_ERROR_DEVICE */
 
-//#define MSM_A2M_INT(n) (MSM_CSR_BASE + 0x400 + (n) * 4)
 #define MSM_TRIG_A2M_DPRAM_INT     (writel(1 << 4, MSM_APCS_GCC_BASE + 0x8))
 
 static volatile unsigned char *SmemBase;
@@ -112,11 +103,6 @@ static struct ktermios *dpram_termios[MAX_INDEX];
 
 extern void *smem_alloc(unsigned, unsigned);
 
-//Get charging status & charger Connect value!!!
-//extern void get_charger_type(void);
-//extern void msm_batt_check_event(void);
-//extern int get_charging_status(void);
-
 static void print_smem(void);
 static void dpram_ramdump(void);
 
@@ -131,7 +117,6 @@ static DECLARE_TASKLET(fmt_res_ack_tasklet, res_ack_tasklet_handler,
 static DECLARE_TASKLET(raw_res_ack_tasklet, res_ack_tasklet_handler,
 		(unsigned long)&dpram_table[RAW_INDEX]);
 
-#ifdef _ENABLE_ERROR_DEVICE
 static unsigned int dpram_err_len;
 static char dpram_err_buf[DPRAM_ERR_MSG_LEN];
 
@@ -139,7 +124,6 @@ struct class *dpram_class;
 
 static DECLARE_WAIT_QUEUE_HEAD(dpram_err_wait_q);
 static struct fasync_struct *dpram_err_async_q;
-#endif	/* _ENABLE_ERROR_DEVICE */
 
 static DEFINE_SEMAPHORE(write_mutex);
 struct wake_lock imei_wake_lock;
@@ -159,30 +143,22 @@ static inline void byte_align(unsigned long dest, unsigned long src)
 		p_src = (u16 *)src;
 
 		*p_dest = (*p_dest & 0xFF00) | (*p_src & 0x00FF);
-	}
-
-	else if ((dest % 2) && (src % 2)) {
+	} else if ((dest % 2) && (src % 2)) {
 		p_dest = (u16 *)(dest - 1);
 		p_src = (u16 *)(src - 1);
 
 		*p_dest = (*p_dest & 0x00FF) | (*p_src & 0xFF00);
-	}
-
-	else if (!(dest % 2) && (src % 2)) {
+	} else if (!(dest % 2) && (src % 2)) {
 		p_dest = (u16 *)dest;
 		p_src = (u16 *)(src - 1);
 
 		*p_dest = (*p_dest & 0xFF00) | ((*p_src >> 8) & 0x00FF);
-	}
-
-	else if ((dest % 2) && !(src % 2)) {
+	} else if ((dest % 2) && !(src % 2)) {
 		p_dest = (u16 *)(dest - 1);
 		p_src = (u16 *)src;
 
 		*p_dest = (*p_dest & 0x00FF) | ((*p_src << 8) & 0xFF00);
-	}
-
-	else {
+	} else {
 		dprintk("oops.~\n");
 	}
 }
@@ -217,9 +193,7 @@ static inline void _memcpy(void *p_dest, const void *p_src, int size)
 			*d++ = s[0] | (s[1] << 8);
 			s += 2;
 		}
-	}
-
-	else {
+	} else {
 		u16 *s = (u16 *)src;
 		volatile u16 *d = (unsigned short *)dest;
 
@@ -274,7 +248,6 @@ static void send_interrupt_to_phone(u16 irq_mask)
 {
 	WRITE_TO_DPRAM(DPRAM_PDA2PHONE_INTERRUPT_ADDRESS, &irq_mask,
 			DPRAM_INTERRUPT_PORT_SIZE);
-	//writel(1, MSM_A2M_INT(4));
 	MSM_TRIG_A2M_DPRAM_INT;
 	dprintk("PDA -> Phone interrupt!\n");
 }
@@ -287,7 +260,6 @@ void yhexdump(const char *buf, int len)
 	char str[80], octet[10];
 	int ofs, i, l;
 
-//	printk("<yhexdump()> : ADDR - [0x%08x], len -[%d]\n", buf, len);
 	for (ofs = 0; ofs < len; ofs += 16) {
 		sprintf( str, "%03d: ", ofs );
 
@@ -319,7 +291,6 @@ static inline int dpram_tty_insert_data(dpram_device_t *device, const u8 *psrc, 
 
 int  multipdp_buf_copy(int index, char *dpram, int size)
 {
-//	int i;
 
 	if( index < 0 || index > sizeof(multipdp_rbuf) || (index + size) > sizeof(multipdp_rbuf))
 		return -1;
@@ -352,16 +323,12 @@ int	multipdp_rx_data(dpram_device_t *device, int len)
 		printk("***** inuse_flag = %d\n", inuse_flag);	
 		
 	inuse_flag ++;
-	
-	//yhexdump(multipdp_rbuf, len);	
-	//multipdp_rbuf
-	if( multipdp_rx_noti_func)
-	{
+
+	if( multipdp_rx_noti_func) {
 		dprintk("multipdp_rx_data Before(noti_func) : len=%d\n",len);
 		multipdp_rx_datalen = len;
 
 		ret = multipdp_rx_noti_func(multipdp_rbuf, len);
-		//memset(multipdp_rbuf, 0x00, len);
 		dprintk("multipdp_rx_data After(noti_func) : ret=%d\n",ret);
 	}
 
@@ -387,8 +354,7 @@ int multipdp_write(const unsigned char *buf, int len)
 	for(i =0; i<10; i++)
 	{
 		ret = dpram_write(device, buf, len);
-		if( ret > 0 )
-		{
+		if( ret > 0 ) {
 			break;
 		}
 		printk(KERN_DEBUG "dpram_write() failed: %d, i(%d)\n", ret, i);
@@ -403,7 +369,6 @@ int multipdp_write(const unsigned char *buf, int len)
 EXPORT_SYMBOL(multipdp_write);
 #endif
 
-//struct class *sec_class;
 struct device *dpram_dev;
 
 #define POWER_DOWN_TIME ( 30 * HZ )
@@ -520,8 +485,7 @@ static ssize_t store_power_down(struct device *d,
 	char *after;
 	unsigned long value = simple_strtoul(buf, &after, 10);
 
-	if (value == 1)
-	{
+	if (value == 1) {
 		printk("[dpram] %s(%d)\n", __func__, __LINE__);
 		power_down_registertimer(&power_down_timer, POWER_DOWN_TIME);	
 	}	
@@ -555,19 +519,13 @@ static int dpram_write(dpram_device_t *device,
 
 		WRITE_TO_DPRAM(device->out_buff_addr + head, buf, size);
 		retval = size;
-	}
-
-	// tail +++++++++++++++ head --------------- //
-	else if (tail == 0) {
+	} else if (tail == 0) {
 		size = device->out_buff_size - head - 1;
 		size = (len > size) ? size : len;
 
 		WRITE_TO_DPRAM(device->out_buff_addr + head, buf, size);
 		retval = size;
-	}
-
-	// ------ tail +++++++++++ head ------------ //
-	else {
+	} else {
 		size = device->out_buff_size - head;
 		size = (len > size) ? size : len;
 		
@@ -601,10 +559,12 @@ static int dpram_write(dpram_device_t *device,
 	return retval;
 }
 
+#define CLUSTER_SEGMENT 1550
+
 static inline
 int dpram_tty_insert_data(dpram_device_t *device, const u8 *psrc, u16 size)
 {
-#define CLUSTER_SEGMENT 1550
+
 	u16 copied_size = 0;
 	int retval = 0;
 	// ... ..... multipdp. .... raw data. ....
@@ -645,18 +605,15 @@ static int dpram_read(dpram_device_t *device, const u16 non_cmd)
 		if (head > tail) {
 			size = head - tail;
 #ifdef	NO_TTY_DPRAM
-      		if( tty->index != 1) {	//index : 0=dpram0, 1=dpram1	
+      			if( tty->index != 1) {	//index : 0=dpram0, 1=dpram1	
 				retval = dpram_tty_insert_data(device, (unsigned char *)(SmemBase + (device->in_buff_addr + tail)), size);
-			}else {	//2: dpram1
-		    	retval = multipdp_buf_copy( 0, (unsigned char *)(SmemBase + (device->in_buff_addr + tail)), size);
+			} else {	//2: dpram1
+		    		retval = multipdp_buf_copy( 0, (unsigned char *)(SmemBase + (device->in_buff_addr + tail)), size);
 			}
 #endif
 			if (retval != size)
 				dprintk("Size Mismatch : Real Size = %d, Returned Size = %d\n", size, retval);
-		}
-
-		// +++++++ head ------------ tail ++++++++ //
-		else {
+		} else {
 			int tmp_size = 0;
 
 			// Total Size.
@@ -665,11 +622,10 @@ static int dpram_read(dpram_device_t *device, const u16 non_cmd)
 			// 1. tail -> buffer end.
 			tmp_size = device->in_buff_size - tail;
 #ifdef	NO_TTY_DPRAM
-      			if( tty->index != 1) {	//index : 0=dpram0, 1=dpram1	
+      				if( tty->index != 1) {	//index : 0=dpram0, 1=dpram1	
 					retval = dpram_tty_insert_data(device, (unsigned char *)(SmemBase + (device->in_buff_addr + tail)), tmp_size);
-				}
-				else {
-		    		retval = multipdp_buf_copy( 0, (unsigned char *)(SmemBase + (device->in_buff_addr + tail)), tmp_size);
+				} else {
+		    			retval = multipdp_buf_copy( 0, (unsigned char *)(SmemBase + (device->in_buff_addr + tail)), tmp_size);
 				}
 #endif
 
@@ -678,8 +634,7 @@ static int dpram_read(dpram_device_t *device, const u16 non_cmd)
 #ifdef	NO_TTY_DPRAM
       			if( tty->index != 1) {	//index : 0=dpram0, 1=dpram1	
 					dpram_tty_insert_data(device, (unsigned char *)(SmemBase + device->in_buff_addr), size - tmp_size);
-			}
-			else {
+			} else {
 		       		multipdp_buf_copy( tmp_size, (unsigned char *)(SmemBase + device->in_buff_addr), size - tmp_size);
 			}
 #endif
@@ -730,24 +685,11 @@ static void dpram_clear(void)
 static void dpram_init_and_report(void)
 {
 	const u16 magic_code = 0x00aa;
-//	const u16 init_start = INT_COMMAND(INT_MASK_CMD_INIT_START);
-//	const u16 init_end = INT_COMMAND(INT_MASK_CMD_INIT_END);
 	const u16 init_end = INT_COMMAND(INT_MASK_CMD_INIT_END|INT_MASK_CP_AIRPLANE_BOOT|INT_MASK_CP_AP_ANDROID);
 
 	u16 ac_code = 0;
 
 	dprintk("start\n");
-
-#if 0
-	/* @LDK@ send init start code to phone */
-	WRITE_TO_DPRAM(DPRAM_PDA2PHONE_INTERRUPT_ADDRESS,
-			&init_start, DPRAM_INTERRUPT_PORT_SIZE);
-	//writel(1, MSM_A2M_INT(4));
-	MSM_TRIG_A2M_DPRAM_INT;
-
-	/* @LDK@ write DPRAM disable code */
-	WRITE_TO_DPRAM(DPRAM_ACCESS_ENABLE_ADDRESS, &ac_code, sizeof(ac_code));
-#endif
 
 	/* @LDK@ dpram clear */
 	dpram_clear();
@@ -843,8 +785,6 @@ static void dpram_mem_rw(struct _mem_param *param)
 static void dpram_ramdump(void)
 {
 	printk("[DPRAM] RAMDUMP MODE START!\n");
-//	printk("[DPRAM] write 0xCCCC flag at MSM_SHARED_RAM_BASE + 0x30 address\n");
-//	printk("[DPRAM] MSM_SHARED_RAM_BASE: 0x%08x\n", (unsigned int) MSM_SHARED_RAM_BASE);
 	writel(0xCCCC, MSM_SHARED_RAM_BASE + 0x30); 
 	printk("[DPRAM] call msm_proc_comm_reset_modem_now func\n");
 	msm_proc_comm_reset_modem_now();
@@ -857,18 +797,11 @@ static void print_smem(void)
 	u16 raw_in_head, raw_in_tail, raw_out_head, raw_out_tail;
 	u16 in_interrupt = 0, out_interrupt = 0;
 	u8 raw_out_buf;
-//	u16 dump_data = 0;
-#if 1
 	struct file *filp;
-//  int i;
 	int writelen;
 	mm_segment_t old_fs;
 	static char buf[1024*32];
-//	static int buf[1024];
 	int count, chr_count;
-//	char *src;
-//	fl_owner_t id;
-#endif
 
 	READ_FROM_DPRAM((void *)&magic, DPRAM_MAGIC_CODE_ADDRESS, sizeof(magic));
 	READ_FROM_DPRAM((void *)&enable, DPRAM_ACCESS_ENABLE_ADDRESS, sizeof(enable));
@@ -909,81 +842,21 @@ static void print_smem(void)
 			raw_in_head, raw_in_tail, raw_out_head, raw_out_tail, raw_out_buf,
 			in_interrupt, out_interrupt
 		);
-#if 1
-//		id = current->files;
 
 		count = 1024 * 8;
 		chr_count = 0;
 		old_fs = get_fs();
-        set_fs(KERNEL_DS);
+        	set_fs(KERNEL_DS);
 
 		filp = filp_open("/sdcard/dpram_dump",O_CREAT|O_WRONLY,0666);
-		if(!filp)
+		if(!filp) {
     		printk("Can't creat /sdcard/dpram_dump file\n");
-		else 
-		{
+		} else {
 			memcpy((void *)buf, (void *)SmemBase, DPRAM_SIZE/*1024*32*/);
 			writelen = filp->f_op->write(filp,(void *)buf,DPRAM_SIZE/*1024*32*/,&filp->f_pos);
 		}
-		set_fs(old_fs);
-#if 0
-		printk("\n");	
-		printk("#####################################\n");
-		printk("# PDA2PHONE FORMATTED BUFFER DUMP   #\n");
-		printk("#####################################\n");
-		printk("-------------------------------------\n");
-		printk("|\tADDRESS\t|\tVALUE\t|\n");
-		printk("-------------------------------------\n");
-		
-		for (i=DPRAM_PDA2PHONE_FORMATTED_HEAD_ADDRESS; i<DPRAM_PDA2PHONE_RAW_HEAD_ADDRESS; i=i+0x0002)
-		{    
-			READ_FROM_DPRAM((void *)&dump_data, i, sizeof(dump_data));
-			printk("|\t0x%04x\t|\t0x%04x\t\t\n", i, dump_data);
-		}    
-																															   
-		printk("\n");	
-		printk("#####################################\n");
-		printk("# PDA2PHONE RAW BUFFER DUMP         #\n");
-		printk("#####################################\n");
-		printk("-------------------------------------\n");
-		printk("|\tADDRESS\t|\tVALUE\t|\n");
-		printk("-------------------------------------\n");
-			
-		for (i=DPRAM_PDA2PHONE_RAW_HEAD_ADDRESS; i<DPRAM_PHONE2PDA_FORMATTED_HEAD_ADDRESS; i=i+0x0002)
-		{    
-			READ_FROM_DPRAM((void *)&dump_data, i, sizeof(dump_data));
-			printk("| 0x%04x\t\t| 0x%04x\t\n", i, dump_data);
-		}    
-																																											  
-		printk("\n");	
-		printk("#####################################\n");
-		printk("# PHONE2PDA FORMATTED BUFFER DUMP   #\n");
-		printk("#####################################\n");
-		printk("-------------------------------------\n");
-		printk("|\tADDRESS\t|\tVALUE\t|\n");
-		printk("-------------------------------------\n");
-			
-		for (i=DPRAM_PHONE2PDA_FORMATTED_HEAD_ADDRESS; i<DPRAM_PHONE2PDA_RAW_HEAD_ADDRESS; i=i+0x0002)
-		{    
-			READ_FROM_DPRAM((void *)&dump_data, i, sizeof(dump_data));
-			printk("| 0x%04x\t\t| 0x%04x\t\n", i, dump_data);
-		}    
-		
-		printk("\n");	
-		printk("#####################################\n");
-		printk("# PHONE2PDA RAW BUFFER DUMP         #\n");
-		printk("#####################################\n");
-		printk("-------------------------------------\n");
-		printk("|\tADDRESS\t|\tVALUE\t|\n");
-		printk("-------------------------------------\n");
-			
-		for (i=DPRAM_PHONE2PDA_RAW_HEAD_ADDRESS; i<DPRAM_PDA2PHONE_INTERRUPT_ADDRESS; i=i+0x0002)
-		{    
-			READ_FROM_DPRAM((void *)&dump_data, i, sizeof(dump_data));
-			printk("| 0x%04x\t\t| 0x%04x\t\n", i, dump_data);
-		}
-#endif		
-#endif
+		set_fs(old_fs);	
+
 }
 
 void request_phone_power_off_reset(int flag);
@@ -1002,8 +875,6 @@ static int dpram_tty_open(struct tty_struct *tty, struct file *file)
 		device->serial.open_count--;
 		return -EBUSY;
 	}
-
-	#if 1	// hobac.
 
 	if (tty->index == 1)	// dpram1
 	{
@@ -1034,7 +905,6 @@ static int dpram_tty_open(struct tty_struct *tty, struct file *file)
 		set_fs(oldfs);
 	}
 
-	#endif
 	tty->driver_data = (void *)device;
 	tty->low_latency = 1;
 
@@ -1092,8 +962,7 @@ static int dpram_tty_ioctl(struct tty_struct *tty, unsigned int cmd,
 
 	switch (cmd) {
 		case HN_DPRAM_PHONE_ON:
-			if (DpramInited) 
-			{
+			if (DpramInited) {
 				dprintk("Doubled Phone On Cmd : do nothing\n");
 				return 0;
 			}
@@ -1195,9 +1064,7 @@ static int dpram_err_read(struct file *filp, char *buf, size_t count, loff_t *pp
 
 			if (copy_to_user(buf, dpram_err_buf, ncopy)) {
 				ret = -EFAULT;
-			}
-
-			else {
+			} else {
 				ret = ncopy;
 			}
 
@@ -1279,9 +1146,7 @@ static void send_tasklet_handler(unsigned long data)
       if( tty->index != 1)	//index : 0=dpram0, 1=dpram1	
 #endif
 		tty_flip_buffer_push(tty);
-	}
-
-	else {
+	} else {
 		dpram_drop_data(device);
 	}
 }
@@ -1327,41 +1192,16 @@ static void cmd_phone_start_handler(void)
 	dpram_init_and_report();
 }
 
-static void cmd_req_time_sync_handler(void)
-{
-	/* TODO: add your codes here.. */
-}
-
-static void cmd_phone_deep_sleep_handler(void)
-{
-	/* TODO: add your codes here.. */
-}
-
-static void cmd_nv_rebuilding_handler(void)
-{
-	/* TODO: add your codes here.. */
-}
-
-static void cmd_emer_down_handler(void)
-{
-	/* TODO: add your codes here.. */
-}
-
 static void cmd_chg_detect_noti(void)
 {
 	u16 value;
 	u16 irq_clear = 0x0000;
 
-//	get_charger_type();
-//	get_charging_status();
-//	msm_batt_check_event();
-
 	READ_FROM_DPRAM(&value, DPRAM_PHONE2PDA_INTERRUPT_ADDRESS, sizeof(value));
 	if(value == 0x40C0) {
 		WRITE_TO_DPRAM(DPRAM_PHONE2PDA_INTERRUPT_ADDRESS, &irq_clear, DPRAM_INTERRUPT_PORT_SIZE);
 		printk("[DPRAM:%s] chg_detect irq: 0x%x cleared.\n", __func__, value);
-	}
-	else {
+	} else {
 		READ_FROM_DPRAM(&value, DPRAM_PHONE2PDA_INTERRUPT_ADDRESS, sizeof(value));
 		printk("[DPRAM:%s] changed irq: 0x%x detected.\n", __func__, value);
 	}
@@ -1372,16 +1212,12 @@ static void cmd_chg_state_changed(void)
 {
 	u16 value;
 	u16 irq_clear = 0x0000;
-
-//	get_charging_status();
-//	msm_batt_check_event();
 	
 	READ_FROM_DPRAM(&value, DPRAM_PHONE2PDA_INTERRUPT_ADDRESS, sizeof(value));
 	if(value == 0x50C0) {
 		WRITE_TO_DPRAM(DPRAM_PHONE2PDA_INTERRUPT_ADDRESS, &irq_clear, DPRAM_INTERRUPT_PORT_SIZE);
 		printk("[DPRAM:%s] chg_state irq: 0x%x cleared.\n", __func__, value);
-	}
-	else {
+	} else {
 		READ_FROM_DPRAM(&value, DPRAM_PHONE2PDA_INTERRUPT_ADDRESS, sizeof(value));
 		printk("[DPRAM:%s] changed irq: 0x%x detected.\n", __func__, value);
 	}
@@ -1400,22 +1236,6 @@ static void command_handler(u16 cmd)
 
 		case INT_MASK_CMD_PHONE_START:
 			cmd_phone_start_handler();
-			break;
-
-		case INT_MASK_CMD_REQ_TIME_SYNC:
-			cmd_req_time_sync_handler();
-			break;
-
-		case INT_MASK_CMD_PHONE_DEEP_SLEEP:
-			cmd_phone_deep_sleep_handler();
-			break;
-
-		case INT_MASK_CMD_NV_REBUILDING:
-			cmd_nv_rebuilding_handler();
-			break;
-
-		case INT_MASK_CMD_EMER_DOWN:
-			cmd_emer_down_handler();
 			break;
 		case INT_MASK_CMD_CHG_DETECT_NOTI:
 			cmd_chg_detect_noti();
@@ -1479,37 +1299,14 @@ static void non_command_handler(u16 non_cmd)
 	}
 }
 
-static inline
-void check_int_pin_level(void)
-{
-}
-
 /* @LDK@ interrupt handlers. */
 static irqreturn_t dpram_interrupt(int irq, void *dev_id)
 {
 	u16 irq_mask = 0;
-#if 0
-	u16 fih, fit, foh, fot;
-	u16 rih, rit, roh, rot;
-#endif
 
 	dprintk("%s : interrupt handler\n", __func__);	
-	
-//	wake_lock_timeout(&dpram_wake_lock, HZ/2);
 
 	READ_FROM_DPRAM(&irq_mask, DPRAM_PHONE2PDA_INTERRUPT_ADDRESS, sizeof(irq_mask));
-#if 0
-	printk("=====>[%s,%d] irq_mask: %x\n", __func__, __LINE__, irq_mask);	
-	READ_FROM_DPRAM_VERIFY(&fih, DPRAM_PHONE2PDA_FORMATTED_HEAD_ADDRESS, sizeof(fih));
-	READ_FROM_DPRAM_VERIFY(&fit, DPRAM_PHONE2PDA_FORMATTED_TAIL_ADDRESS, sizeof(fit));
-	READ_FROM_DPRAM_VERIFY(&foh, DPRAM_PDA2PHONE_FORMATTED_HEAD_ADDRESS, sizeof(foh));
-	READ_FROM_DPRAM_VERIFY(&fot, DPRAM_PDA2PHONE_FORMATTED_TAIL_ADDRESS, sizeof(fot));
-	READ_FROM_DPRAM_VERIFY(&rih, DPRAM_PHONE2PDA_RAW_HEAD_ADDRESS, sizeof(rih));
-	READ_FROM_DPRAM_VERIFY(&rit, DPRAM_PHONE2PDA_RAW_TAIL_ADDRESS, sizeof(rit));
-	READ_FROM_DPRAM_VERIFY(&roh, DPRAM_PDA2PHONE_RAW_HEAD_ADDRESS, sizeof(roh));
-	READ_FROM_DPRAM_VERIFY(&rot, DPRAM_PDA2PHONE_RAW_TAIL_ADDRESS, sizeof(rot));
-	printk("\n fmt_in  H:%4d, T:%4d\n fmt_out H:%4d, T:%4d\n raw_in  H:%4d, T:%4d\n raw out H:%4d, T:%4d\n", fih, fit, foh, fot, rih, rit, roh, rot);
-#endif
 
 	/* valid bit verification. @LDK@ */
 	if (!(irq_mask & INT_MASK_VALID)) {
@@ -1522,9 +1319,7 @@ static irqreturn_t dpram_interrupt(int irq, void *dev_id)
 		irq_mask &= ~(INT_MASK_VALID | INT_MASK_COMMAND);
 		wake_lock_timeout(&dpram_wake_lock, HZ/2);
 		command_handler(irq_mask);
-	}
-
-	else {
+	} else {
 		irq_mask &= ~INT_MASK_VALID;
 		non_command_handler(irq_mask);
 		//wake_lock_timeout(&dpram_wake_lock, 6*HZ);
@@ -1532,12 +1327,7 @@ static irqreturn_t dpram_interrupt(int irq, void *dev_id)
 
 	return IRQ_HANDLED;
 }
-#if 0
-static irqreturn_t phone_active_interrupt(int irq, void *dev_id)
-{
-	return IRQ_HANDLED;
-}
-#endif
+
 /* basic functions. */
 #ifdef _ENABLE_ERROR_DEVICE
 static struct file_operations dpram_err_ops = {
@@ -1547,7 +1337,6 @@ static struct file_operations dpram_err_ops = {
 	.poll = dpram_err_poll,
 	.llseek = no_llseek,
 
-	/* TODO: add more operations */
 };
 #endif	/* _ENABLE_ERROR_DEVICE */
 
@@ -1560,7 +1349,6 @@ static struct tty_operations dpram_tty_ops = {
 	.ioctl = dpram_tty_ioctl,
 	.chars_in_buffer = dpram_tty_chars_in_buffer,
 
-	/* TODO: add more operations */
 };
 
 #ifdef _ENABLE_ERROR_DEVICE
@@ -1576,15 +1364,13 @@ static int register_dpram_err_device(void)
 	struct device *dpram_err_dev_t;
 	int ret = register_chrdev(DRIVER_MAJOR_NUM, DPRAM_ERR_DEVICE, &dpram_err_ops);
 
-	if ( ret < 0 )
-	{
+	if ( ret < 0 ) {
 		return ret;
 	}
 
 	dpram_class = class_create(THIS_MODULE, "err");
 
-	if (IS_ERR(dpram_class))
-	{
+	if (IS_ERR(dpram_class)) {
 		unregister_dpram_err_device();
 		return -EFAULT;
 	}
@@ -1592,8 +1378,7 @@ static int register_dpram_err_device(void)
 	dpram_err_dev_t = device_create(dpram_class, NULL,
 			MKDEV(DRIVER_MAJOR_NUM, 0), NULL, DPRAM_ERR_DEVICE);
 
-	if (IS_ERR(dpram_err_dev_t))
-	{
+	if (IS_ERR(dpram_err_dev_t)) {
 		unregister_dpram_err_device();
 		return -EFAULT;
 	}
@@ -1692,18 +1477,6 @@ static int register_interrupt_handler(void)
 		return -1;
 	}
 	dprintk("INT_A9_M2A_4 interrupt handler success\n");
-#if 0
-	/* @LDK@ phone active interrupt */
-	retval = request_irq(phone_active_irq, phone_active_interrupt,
-			IRQF_DISABLED, "Phone Active", NULL);
-
-	if (retval) {
-		dprintk("Phone active interrupt handler failed.\n");
-		free_irq(dpram_irq, NULL);
-		unregister_dpram_driver();
-		return -1;
-	}
-#endif
 
 	return 0;
 }
@@ -1721,8 +1494,7 @@ static void check_miss_interrupt(void)
 	dprintk("%s : head = 0x%x\n", __func__, head);
 	dprintk("%s : tail = 0x%x\n", __func__, tail);
 
-	if (head != tail) 
-	{
+	if (head != tail) {
 		dprintk("there is a missed interrupt. try to read it!\n");
 		printk("[DPRAM:%s] there is a missed interrupt. try to read it!\n", __func__);
 
@@ -1780,9 +1552,8 @@ static int __devinit dpram_probe(struct platform_device *dev)
 
 	/* allocate smem dpram area */
 	dprintk("SMEM_DPRAM allocation\n");
-	SmemBase = (volatile unsigned char *)(smem_alloc(SMEM_ID_VENDOR0, DPRAM_SIZE/*0x4000*2*/));
-	if (!SmemBase)
-	{
+	SmemBase = (volatile unsigned char *)(smem_alloc(SMEM_ID_VENDOR0, DPRAM_SIZE));
+	if (!SmemBase) {
 		dprintk("smem_alloc failed : SmemBase = 0x%x\n", (unsigned int)SmemBase);
 		return -1;
 	}
@@ -1818,9 +1589,6 @@ static int __devinit dpram_probe(struct platform_device *dev)
 
 	/* @LDK@ initialize device table */
 	init_devices();
-
-	/* @LDK@ check out missing interrupt from the phone */
-	//check_miss_interrupt();
 
 	return 0;
 }
@@ -1873,8 +1641,7 @@ void power_down_registertimer(struct timer_list* ptimer, unsigned long timeover 
 void power_down_timeout(unsigned long arg)
 {
         printk("%s\n",__func__);
-        //smem_flag->info = 0xAEAEAEAE;
-        //msm_proc_comm_reset_modem_now();
+
         power_down = true;
         pm_power_off();
 }
@@ -1891,12 +1658,14 @@ static int silent_write_proc_debug(struct file *file, const char *buffer,
 {
 	char *buf;
 
-	if (count < 1)
+	if (count < 1) {
 		return -EINVAL;
+	}
 
 	buf = kmalloc(count, GFP_KERNEL);
-	if (!buf)
+	if (!buf) {
 		return -ENOMEM;
+	}
 
 	if (copy_from_user(buf, buffer, count)) {
 		kfree(buf);
@@ -1930,12 +1699,14 @@ static int dump_write_proc_debug(struct file *file, const char *buffer,
 {
 	char *buf;
 
-	if (count < 1)
+	if (count < 1) {
 		return -EINVAL;
+	}
 
 	buf = kmalloc(count, GFP_KERNEL);
-	if (!buf)
+	if (!buf) {
 		return -ENOMEM;
+	}
 
 	if (copy_from_user(buf, buffer, count)) {
 		kfree(buf);
@@ -1991,7 +1762,6 @@ static int nosim_proc_write(struct file *file, const char *buffer,
 	kfree(buf);
 	return count;
 }
-//#define AUTO_POWER_ON_OFF_FLAG //for auto Reset Test Sexykyu
 
 #ifdef AUTO_POWER_ON_OFF_FLAG
 /* init & cleanup. */
@@ -2040,8 +1810,7 @@ static int __init dpram_init(void)
 	ent = create_proc_entry("nosim_handler", S_IRWXUGO, NULL);
 	ent->read_proc = nosim_proc_read;
 	ent->write_proc = nosim_proc_write;
-	
-	//sec_class = class_create(THIS_MODULE, "sec");
+
 	if(IS_ERR(sec_class))
 		pr_err("Failed to create class(sec)!\n");
 	
