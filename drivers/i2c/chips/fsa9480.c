@@ -39,6 +39,8 @@
 #include <asm/io.h>
 #include <linux/uaccess.h>
 #include <asm/system_info.h>
+#include <linux/vmalloc.h>
+#include <linux/mm.h>
 
 #ifdef CONFIG_FORCE_FAST_CHARGE
 #include <linux/fastchg.h>
@@ -48,13 +50,12 @@ static int forced_usb_type = 0;
 // #define DEBUG 1
 #include <linux/device.h>
 
-#if defined(CONFIG_MACH_ARIESVE) || defined(CONFIG_MACH_ANCORA) || defined(CONFIG_MACH_GODART) || defined(CONFIG_MACH_ANCORA_TMO) || defined(CONFIG_MACH_APACHE)
 #include <linux/switch.h>
 #include <mach/parameters.h>
 extern struct device *switch_dev;
 static int usb_state = 0;
 #include <linux/usb/android_composite.h>
-#include <mach/devs.h>// MSM8255
+#include <mach/devs.h> // MSM8255
 
 extern int android_usb_get_current_mode(void);
 extern void android_usb_switch(int mode);
@@ -72,10 +73,8 @@ extern void android_usb_switch(int mode);
 extern int set_tsp_for_ta_detect(int state);
 
 extern int charging_boot;
-#if defined(CONFIG_MACH_ARIESVE) || defined(CONFIG_MACH_ANCORA) || defined(CONFIG_MACH_ANCORA_TMO) || defined(CONFIG_MACH_APACHE)
 extern int power_off_done;  // For Device Reset/Off
 extern bool power_down;
-#endif
 
 extern int android_probe_done; // for check  android probe done 
 
@@ -98,9 +97,8 @@ enum charger_types {
 };
 
 static int otg_charger_type = CHARGER_TYPE_NONE;
-#endif
 
-//#define _SUPPORT_SAMSUNG_AUTOINSTALLER_
+
 #define dmsg(arg,...) printk("[USB_SWITCH] %s(%d): "arg,__FUNCTION__,__LINE__,##__VA_ARGS__)
 
 #define DRIVER_NAME  "usb_mass_storage"   
@@ -505,9 +503,7 @@ void fsa9480_connect_charger(void)	// vbus connected
 		usb_switch_state(); // re-enable HUB_EN if it should be on
 			
 		pr_info("[FSA9480] %s: USB connected...\n", __func__);
-	}
-	else	// consider as dedicated charger any device with vbus power
-	{
+	} else { // consider as dedicated charger any device with vbus power
 		curr_ta_status = 1;
 		pr_info("[FSA9480] %s: TA connected...\n", __func__);
 	}
@@ -533,7 +529,6 @@ void fsa9480_disconnect_charger(void)	// vbus disconnected
 }
 EXPORT_SYMBOL(fsa9480_disconnect_charger);
 
-#if defined(CONFIG_MACH_ARIESVE) || defined(CONFIG_MACH_ANCORA) || defined(CONFIG_MACH_GODART) || defined(CONFIG_MACH_ANCORA_TMO) || defined(CONFIG_MACH_APACHE)
 static void fsa9480_read_interrupt_register(void);
 extern void usb_force_reset(void);
 
@@ -541,28 +536,12 @@ static void usb_switch_mode(int mode)
 {
 	curr_usb_path = SWITCH_MSM;
 	fsa9480_i2c_write(REGISTER_CONTROL, 0x1E);
-#if defined(CONFIG_MACH_ARIESVE) || defined(CONFIG_MACH_ANCORA) || defined(CONFIG_MACH_ANCORA_TMO) || defined(CONFIG_MACH_APACHE)
+
 	if(fsa9480_probe_done && curr_usb_status && !power_off_done) {
-#else
-	if(fsa9480_probe_done && curr_usb_status) {
-#endif
 		usb_force_reset();
 		fsa9480_read_interrupt_register();
 	}
 }
-
-#if 0
-static int get_current_mode(void)
-{
-	int mode = 0;
-	
-	mode = SWITCH_MSM;
-	
-	return mode;
-}
-#endif
-#include <linux/vmalloc.h>
-#include <linux/mm.h>
 
 /* for sysfs control (/sys/class/sec/switch/usb_sel) */
 static ssize_t usb_switch_show(struct device *dev, struct device_attribute *attr, char *buf)
@@ -628,25 +607,20 @@ static ssize_t usb_switch_store(
 	
 	printk("usb_switch_store ENTRY !! \n");
 
-	if ((fd = sys_open("/persist/usb_sel.bin", O_CREAT|O_WRONLY  ,0)) < 0){ 
-
+	if ((fd = sys_open("/persist/usb_sel.bin", O_CREAT|O_WRONLY  ,0)) < 0) { 
 		printk("%s :: open failed %s ,fd=0x%x\n",__func__,"/persist/usb_sel.bin",fd);
-	}
-	else{
+	} else{
 		printk("%s :: open success %s ,fd=0x%x\n",__func__,"/persist/usb_sel.bin",fd);
 	}
 
 	if(strncmp(buf, "PDA_AP", 6) == 0 || strncmp(buf, "pda_ap", 6) == 0) {
 		sprintf(buffer, "1");
-		//samsung_enable_function( USBSTATUS_SAMSUNG_KIES);
 		printk("usb_switch_store1 %s !! \n",buf);
-	}
-    else
-    {
+	} else {
 		sprintf(buffer, "2");
-		//samsung_enable_function( USBSTATUS_DM);
 		printk("usb_switch_store2 %s !! \n",buf);
-    }
+        }
+
 	sys_write(fd,buffer,strlen(buffer));
 
 	sys_close(fd); 
@@ -710,24 +684,19 @@ static ssize_t otg_charger_type_store(
 	if ((strncmp(buf, "NONE", 4) == 0) ||(strncmp(buf, "none", 4) == 0)) {
 		otg_charger_type = CHARGER_TYPE_NONE;
 		otg_charger_restart();
-	}
-	else if ((strncmp(buf, "SLOW", 4) == 0) ||(strncmp(buf, "slow", 4) == 0)) {
+	} else if ((strncmp(buf, "SLOW", 4) == 0) ||(strncmp(buf, "slow", 4) == 0)) {
 		otg_charger_type = CHARGER_TYPE_USB_PC;
 		otg_charger_restart();
-	}
-	else if ((strncmp(buf, "FAST", 4) == 0) ||(strncmp(buf, "fast", 4) == 0)) {
+	} else if ((strncmp(buf, "FAST", 4) == 0) ||(strncmp(buf, "fast", 4) == 0)) {
 		otg_charger_type = CHARGER_TYPE_WALL;
 		otg_charger_restart();
-	} 
-	else {
+	} else {
 		printk("otg_charger_type_store invalid ENTRY %s!! \n",buf);
 	}
 		
 	return size;
 }
 static DEVICE_ATTR(otg_charger_type, 0666, otg_charger_type_show, otg_charger_type_store);
-#endif
-
 
 static void uart_switch_mode(int mode)
 {
@@ -740,73 +709,11 @@ void uart_switch_mode_select(int mode) {
 	struct ariesve_parameter param_data;
 	memset(&param_data,0,sizeof(struct ariesve_parameter));
 
-	//msm_read_param(&param_data);
-
 	uart_switch_mode(mode);
 	param_data.uart_sel = mode;
 
-	//msm_write_param(&param_data);
 }
 EXPORT_SYMBOL(uart_switch_mode_select);
-
-#if 0
-static ssize_t DefaultESNStatus_switch_show(struct device *dev, struct device_attribute *attr, char *buf)
-{
-    if (g_default_ESN_status) {    
-        return sprintf(buf, "DefaultESNStatus : TRUE\n");
-    }
-    else{
-        return sprintf(buf, "DefaultESNStatus : FALSE\n");        
-    }
-}
-
-static ssize_t DefaultESNStatus_switch_store(struct device *dev, struct device_attribute *attr, const char *buf, size_t size)
-{		
-    if ((strncmp(buf, "TRUE", 4) == 0) ||(strncmp(buf, "true", 4) == 0)) {
-        g_default_ESN_status = 1;
-    }
-    if ((strncmp(buf, "FALSE", 5) == 0) ||(strncmp(buf, "false", 5) == 0)) {
-        g_default_ESN_status = 0;
-    }
-    
-    return 0;
-}
-
-static DEVICE_ATTR(DefaultESNStatus, S_IRUGO |S_IWUGO | S_IRUSR | S_IWUSR, DefaultESNStatus_switch_show, DefaultESNStatus_switch_store);
-
-static ssize_t dock_switch_show(struct device *dev, struct device_attribute *attr, char *buf)
-{
-	if (g_dock == DOCK_REMOVED)
-		return sprintf(buf, "0\n");
-	else if (g_dock == DESK_DOCK_CONNECTED)
-		return sprintf(buf, "1\n");
-	else if (g_dock == CAR_DOCK_CONNECTED)
-		return sprintf(buf, "2\n");
-}
-
-static ssize_t dock_switch_store(struct device *dev, struct device_attribute *attr, const char *buf, size_t size)
-{
-	if (strncmp(buf, "0", 1) == 0)
-	{
-		printk("remove dock\n");
-		g_dock = DOCK_REMOVED;
-	}
-	else if (strncmp(buf, "1", 1) == 0)
-	{
-		printk("dsek dock inserted\n");
-		g_dock = DESK_DOCK_CONNECTED;
-	}
-	else if (strncmp(buf, "2", 1) == 0)
-	{
-		printk("car dock inserted\n");
-		g_dock = CAR_DOCK_CONNECTED;
-	}
-
-	return size;
-}
-
-static DEVICE_ATTR(dock, S_IRUGO |S_IWUGO | S_IRUSR | S_IWUSR, dock_switch_show, dock_switch_store);
-#endif
 
 void usb_switch_state(void)
 {
@@ -822,14 +729,13 @@ static void fsa9480_process_device(u8 dev1, u8 dev2, u8 attach)
 	u8 vdev1 = dev1;
 	u8 vdev2 = dev2;
 #if defined(CONFIG_MACH_APACHE)
-	if(vdev1==0 && vdev2==CRB_JIG_USB_OFF){
+	if(vdev1==0 && vdev2==CRB_JIG_USB_OFF) {
 		vdev1 = CRA_USB;
 		vdev2 = 0;
 	}
 #endif
 	
-	if (vdev1)
-	{
+	if (vdev1) {
 #ifdef CONFIG_FORCE_FAST_CHARGE
 		if( !charging_boot && 
 			((vdev1 == CRA_USB) || (vdev1 == CRA_USB_CHARGER)) && 
@@ -850,12 +756,12 @@ static void fsa9480_process_device(u8 dev1, u8 dev2, u8 attach)
 		switch (vdev1)
 		{		
 			case CRA_AUDIO_TYPE1:
-				if(attach & ATTACH){                
+				if(attach & ATTACH) {                
 				    DEBUG_FSA9480("AUDIO_TYPE1(DESK_DOCK) --- ATTACH\n");
 				    switch_set_state(&switch_dock_detection, (int)DESK_DOCK_CONNECTED);
 				    g_dock = DESK_DOCK_CONNECTED;                   
 				}
-				else if(attach & DETACH){                
+				else if(attach & DETACH) {                
 				    DEBUG_FSA9480("AUDIO_TYPE1(DESK_DOCK) --- DETACH\n");
 				    switch_set_state(&switch_dock_detection, (int)DOCK_REMOVED);
 				    g_dock = DOCK_REMOVED;                    
@@ -867,21 +773,18 @@ static void fsa9480_process_device(u8 dev1, u8 dev2, u8 attach)
 			case CRA_USB:                
 				if(attach & ATTACH){
 					DEBUG_FSA9480("USB --- ATTACH\n");
-					if( disable_vbus_flag )
-					{
+					if( disable_vbus_flag ) {
 						msm_hsusb_set_vbus_state(1);  // if MTP blocked before. disable_vbus_store
 						disable_vbus_flag = 0;
 					}
-					if(!charging_boot)
-					{
-					DEBUG_FSA9480("USB ---!charging_boot && android_probe_done\n");
+					if(!charging_boot) {
+						DEBUG_FSA9480("USB ---!charging_boot && android_probe_done\n");
 						usb_switch_state();
 					}
 					curr_usb_status = 1;                    
 					MicroUSBStatus=1;
 					UsbIndicator(1);
-				}
-				else if(attach & DETACH){
+				} else if(attach & DETACH) {
 					DEBUG_FSA9480("USB --- DETACH\n");
 					msleep(200);
 					DEBUG_FSA9480("USB --- DETACH work around \n");
@@ -914,7 +817,6 @@ static void fsa9480_process_device(u8 dev1, u8 dev2, u8 attach)
 				break;
 			case CRA_CARKIT:
 				DEBUG_FSA9480("CARKIT \n");
-//				printk("[ssam] attach value : 0x%x\n", attach);
 				
 				if(attach & ATTACH){
 				    DEBUG_FSA9480("CARKIT_CHARGER --- ATTACH\n");
@@ -939,18 +841,16 @@ static void fsa9480_process_device(u8 dev1, u8 dev2, u8 attach)
 				break;                
 			case CRA_USB_CHARGER:
 				/* USB 3.0 Charging */
-				if(attach & ATTACH){
+				if(attach & ATTACH) {
 					DEBUG_FSA9480("USB CHARGER --- ATTACH\n");
-					if(!charging_boot)
-					{
-					DEBUG_FSA9480("USB CHARGER ---!charging_boot && android_probe_done\n");
+					if(!charging_boot) {
+						DEBUG_FSA9480("USB CHARGER ---!charging_boot && android_probe_done\n");
 						usb_switch_state();
 					}
 					curr_usb_status = 1;
 					MicroUSBStatus=1;
 					UsbIndicator(1);
-				}
-				else if(attach & DETACH){
+				} else if(attach & DETACH) {
 					DEBUG_FSA9480("USB CHARGER --- DETACH\n");
 					msleep(200);
 					DEBUG_FSA9480("USB CHARGER --- DETACH work around \n");
@@ -975,8 +875,7 @@ static void fsa9480_process_device(u8 dev1, u8 dev2, u8 attach)
 				if(attach & ATTACH){
 				    DEBUG_FSA9480("DEDICATED_CHARGER --- ATTACH\n");
 				    curr_ta_status = 1;                    
-				}
-				else if(attach & DETACH){
+				} else if(attach & DETACH) {
 				    DEBUG_FSA9480("DEDICATED_CHARGER --- DETACH\n");
 				    curr_ta_status = 0;                    
 				}
@@ -999,8 +898,7 @@ static void fsa9480_process_device(u8 dev1, u8 dev2, u8 attach)
 				if (attach & ATTACH) {
 					curr_otg_status = 1;
 					otg_set_mode(true);
-				}
-				else if (attach & DETACH) {
+				} else if (attach & DETACH) {
 					curr_otg_status = 0;
 					otg_set_mode(false);
 				}
@@ -1020,26 +918,24 @@ static void fsa9480_process_device(u8 dev1, u8 dev2, u8 attach)
 		switch (vdev2)
 		{
 			case CRB_JIG_USB_ON:
-				if(attach & ATTACH){                
+				if(attach & ATTACH) {                
 				    DEBUG_FSA9480("JIG_USB_ON --- ATTACH\n");
 				    usb_switch_state();  
                                     MicroJigUSBOnStatus=1;
                                     UsbIndicator(1);
-				}
-				else if(attach & DETACH){                
+				} else if(attach & DETACH) {                
 				    DEBUG_FSA9480("JIG_USB_ON --- DETACH\n");
                                     MicroJigUSBOnStatus=0;
                                     UsbIndicator(0);
 				}               
 				break;
 			case CRB_JIG_USB_OFF:
-				if(attach & ATTACH){                
+				if(attach & ATTACH) {                
 				    DEBUG_FSA9480("JIG_USB_OFF --- ATTACH\n");
 				    usb_switch_state();                    
                                     MicroJigUSBOffStatus=1;
                                     UsbIndicator(1);
-				}
-				else if(attach & DETACH){                
+				} else if(attach & DETACH) {                
 				    DEBUG_FSA9480("JIG_USB_OFF --- DETACH\n");                    
                                     MicroJigUSBOffStatus=0;
                                     UsbIndicator(0);
@@ -1048,25 +944,19 @@ static void fsa9480_process_device(u8 dev1, u8 dev2, u8 attach)
 			case CRB_JIG_UART_ON:
 #if defined(CONFIG_MACH_APACHE) || defined(CONFIG_MACH_ANCORA_TMO)
 				fsa9480_i2c_read(0x1D, &vbus_stat);
-				if ( vbus_stat & 0x02 )
-				{
+				if ( vbus_stat & 0x02 ) {
 					is_uart_jig_on_charger = 1;	
 				}
 
-				if(attach & ATTACH)
-				{                
+				if(attach & ATTACH) {                
 					MicroJigUARTOffStatus=1;
-					if (is_uart_jig_on_charger)
-					{
+					if (is_uart_jig_on_charger) {
 						curr_ta_status = 1; // FUEL GAUGE AUTO TEST
 						DEBUG_FSA9480("JIG_UART_ON --- ATTACH with  VBUS 5V INPUT! FORCE TA MODE!!! (reg = 0x%x)\n", vbus_stat);
-					}
-					else
-					{
+					} else {
 					    DEBUG_FSA9480("JIG_UART_ON --- ATTACH without  VBUS 5V INPUT! (reg = 0x%x\n");
 					}
-				}
-				else if(attach & DETACH){                
+				} else if(attach & DETACH) {                
 				    DEBUG_FSA9480("JIG_UART_ON --- DETACH\n");
 					MicroJigUARTOffStatus=0;
 					curr_ta_status = 0; // FUEL GAUGE AUTO TEST
@@ -1077,12 +967,11 @@ static void fsa9480_process_device(u8 dev1, u8 dev2, u8 attach)
 					batt_restart();
 				break;
 #else
-				if(attach & ATTACH){                
+				if(attach & ATTACH) {                
 				    DEBUG_FSA9480("JIG_UART_ON --- ATTACH\n");
                                     MicroJigUARTOffStatus=1;
 					curr_ta_status = 1; // FUEL GAUGE AUTO TEST
-				}
-				else if(attach & DETACH){                
+				} else if(attach & DETACH) {                
 				    DEBUG_FSA9480("JIG_UART_ON --- DETACH\n");
                                     MicroJigUARTOffStatus=0;
 					curr_ta_status = 0; // FUEL GAUGE AUTO TEST
@@ -1118,8 +1007,7 @@ static void fsa9480_process_device(u8 dev1, u8 dev2, u8 attach)
 				        switch_set_state(&switch_dock_detection, (int)CAR_DOCK_CONNECTED);
 				        g_dock = CAR_DOCK_CONNECTED;
                                          }
-				}
-				else if(attach & DETACH){                
+				} else if(attach & DETACH) {                
 				    DEBUG_FSA9480("AUDIO/VIDEO(CAR_DOCK) --- DETACH\n");
 				    switch_set_state(&switch_dock_detection, (int)DOCK_REMOVED);
 				    g_dock = DOCK_REMOVED;                    
@@ -1144,24 +1032,18 @@ static void fsa9480_process_device(u8 dev1, u8 dev2, u8 attach)
 		/* read button register */ 
 		fsa9480_i2c_read(REGISTER_BUTTON2, &button2);        
 
-		if( attach & KEY_PRESS ) 
-		{
+		if( attach & KEY_PRESS ) {
 			is_longkey = 0;
 
 			DEBUG_FSA9480("KEY PRESS\n");
-		}
-		else
-		{
+		} else {
 			is_longkey = 1;
 
-			if( attach & LONG_KEY_PRESS )
-			{
+			if( attach & LONG_KEY_PRESS ) {
 				is_press = 1;
 
 				DEBUG_FSA9480("LONG KEY PRESS\n");
-			}
-			else
-			{
+			} else {
 				is_press = 0;
 
 				DEBUG_FSA9480("LONG KEY RELEASE\n");
@@ -1179,14 +1061,10 @@ static void fsa9480_process_device(u8 dev1, u8 dev2, u8 attach)
 
     		        while(key_mask) 
     		        {
-    			    if( key_mask & 0x1 )
-			    {
-				if( is_longkey )
-				{
+    			    if( key_mask & 0x1 ) {
+				if( is_longkey ) {
     				    dock_keys_input(index, is_press);
-				}
-				else
-				{
+				} else {
 				    dock_keys_input(index, 1);
 				    dock_keys_input(index, 0);
 				}
@@ -1216,9 +1094,8 @@ static void fsa9480_read_interrupt_register(void)
 	intb_val = gpio_get_value(142);
 	deb_intb = intb_val;
 	msleep(5);     
-	// Check interrupt fired.
-	if(((int)intr1 <= 0)||(intr1 == 3)||(intr1 == 7)||(intb_val == 0))
-	{
+
+	if(((int)intr1 <= 0)||(intr1 == 3)||(intr1 == 7)||(intb_val == 0)) {
 		for(i=0; i<3; i++)
 		{			
 			printk("[FSA9480] Recheck intr1. intr1=0x%x,intb=%d\n",intr1,intb_val);
@@ -1231,8 +1108,7 @@ static void fsa9480_read_interrupt_register(void)
 			if((intr1 > 0)&&(intr1 != 3)&&(intr1 != 7)&&(intb_val == 1))
 				break;
 		}
-		if(((int)intr1 <= 0)||(intr1 == 3)||(intr1 == 7)||(intb_val == 0))
-		{			
+		if(((int)intr1 <= 0)||(intr1 == 3)||(intr1 == 7)||(intb_val == 0)) {			
 			printk("[FSA9480] %s : interrupt was fired. intr1= 0x%x,intb=%d\n", __func__, intr1,intb_val);
 			fsa9480_chip_init();
 			fsa9480_i2c_read(REGISTER_INTERRUPT1, &intr1);
@@ -1274,21 +1150,18 @@ static void fsa9480_read_interrupt_register(void)
 	}
 
 	/* Device attached */
-	if (intr1 & ATTACH)
-	{
+	if (intr1 & ATTACH) {
 		fsa9480_device1 = dev1;
 		fsa9480_device2 = dev2;
 	}
 	
-	if(!dev1 && !dev2 && !intr1 && !intr2)
-	{
+	if(!dev1 && !dev2 && !intr1 && !intr2) {
 		/* Force update USB status when reading intr failed. */
 		printk("[FSA9480] Force update!\n");
 		printk("[FSA9480] dev1=0x%x, dev2=0x%x, intr1=0x%x, intr2=0x%x\n",dev1,dev2,intr1,intr2);
 
 		// USB
-		if(curr_usb_status == 1)
-		{
+		if(curr_usb_status == 1) {
 		    curr_usb_status = 0;
 			MicroUSBStatus=0;
 			
@@ -1302,8 +1175,7 @@ static void fsa9480_read_interrupt_register(void)
 		}
 
 		// TA
-		if(curr_ta_status == 1)
-		{
+		if(curr_ta_status == 1) {
 			curr_ta_status =0;
 			batt_restart();         
 
@@ -1314,8 +1186,7 @@ static void fsa9480_read_interrupt_register(void)
 		}
 
 		// OTG
-		if(curr_otg_status == 1)
-		{
+		if(curr_otg_status == 1) {
 			curr_otg_status =0;
 			batt_restart();         
 
@@ -1326,56 +1197,13 @@ static void fsa9480_read_interrupt_register(void)
 		}
 	}
 
-#if defined(CONFIG_MACH_ARIESVE) || defined(CONFIG_MACH_ANCORA) || defined(CONFIG_MACH_GODART) || defined(CONFIG_MACH_ANCORA_TMO) || defined(CONFIG_MACH_APACHE)
+
 	fsa9480_process_device(fsa9480_device1, fsa9480_device2, intr1);
-#else
-	if (fsa9480_device1)
-	{
-		switch (fsa9480_device1)
-		{
-			case CRA_USB:
-			case CRA_USB_CHARGER:
-                
-#ifdef CONFIG_USB_GADGET_WESTBRIDGE
-    //Vova: Detection of USB attach/detach for WestBridge chip
-     //TBD - probaby need to be moved to gadget controller
-
-				if (intr1 & ATTACH)
-					curr_usb_status = 1;
-				else if (intr1 & DETACH)
-					curr_usb_status = 0;
-				if (intr1 & (ATTACH|DETACH))
-					batt_restart();
-				break;
-			case CRA_DEDICATED_CHG:
-				if (intr1 & ATTACH)
-					curr_ta_status = 1;
-				else if (intr1 & DETACH)
-					curr_ta_status = 0;
-				if (intr1 & (ATTACH|DETACH))
-					batt_restart();
-#endif//Vova: End of detection block:
-				break;
-			default:
-				break;
-		}
-	}
-
-	if (fsa9480_device2)
-	{
-		switch (fsa9480_device2)
-		{
-			default:
-				break;
-		}
-	}	 
-#endif
 
 	/* Device detached */
-	if ( (intr1 & DETACH) && !(intr1 & ATTACH) ) // workaround for intr1 = 0x03(ATTACH|DETACH)
-	{
-	 fsa9480_device1 = 0x0;
-	 fsa9480_device2 = 0x0;
+	if ( (intr1 & DETACH) && !(intr1 & ATTACH) ) { // workaround for intr1 = 0x03(ATTACH|DETACH)
+	 	fsa9480_device1 = 0x0;
+	 	fsa9480_device2 = 0x0;
 	}
 }
 
@@ -1383,10 +1211,7 @@ static irqreturn_t fsa9480_interrupt_handler(int irq, void *data)
 {
 	printk("[FSA9480]: interrupt called\n");
 
-#if defined(CONFIG_MACH_ARIESVE) || defined(CONFIG_MACH_ANCORA) || defined(CONFIG_MACH_ANCORA_TMO) || defined(CONFIG_MACH_APACHE)
-	if(!power_off_done)
-#endif
-	{
+	if(!power_off_done) {
 		fsa9480_read_interrupt_register();
 	}
 
@@ -1396,9 +1221,8 @@ static irqreturn_t fsa9480_interrupt_handler(int irq, void *data)
 static int fsa9480_probe(struct i2c_client *client, const struct i2c_device_id *id)
 {
 	struct fsa9480_data *mt;
-#if defined(CONFIG_MACH_ARIESVE) || defined(CONFIG_MACH_ANCORA) || defined(CONFIG_MACH_GODART) || defined(CONFIG_MACH_ANCORA_TMO) || defined(CONFIG_MACH_APACHE)	
+
 	int i;
-#endif
 	int err = -1;
 	printk("[FSA9480] fsa9480_probe \n");
 
@@ -1439,7 +1263,7 @@ static int fsa9480_probe(struct i2c_client *client, const struct i2c_device_id *
 	if (device_create_file(switch_dev, &dev_attr_otg_charger_type) < 0)
 		printk(KERN_ERR "[FSA9480]: Failed to create device file(%s)!\n", dev_attr_otg_charger_type.attr.name);
 
-    indicator_dev.name = DRIVER_NAME;
+    	indicator_dev.name = DRIVER_NAME;
 	indicator_dev.print_name = print_indicatorswitch_name;
 	indicator_dev.print_state = print_indicatorswitch_state;
 	switch_dev_register(&indicator_dev);
