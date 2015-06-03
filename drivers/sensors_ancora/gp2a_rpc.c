@@ -3,9 +3,7 @@
 #include <linux/atomic.h>
 #include <linux/err.h>
 
-#if defined(CONFIG_MACH_ARIESVE) || defined(CONFIG_MACH_ANCORA) || defined(CONFIG_MACH_GODART) || defined(CONFIG_MACH_ANCORA_TMO) || defined(CONFIG_MACH_APACHE)
 #define MSM_LIGHTSENSOR_ADC_READ 
-#endif
 
 #ifdef MSM_LIGHTSENSOR_ADC_READ
 
@@ -47,8 +45,6 @@ u32 lightsensor_get_adc(void)
 	int rc;
     static int cnt = 0; 
 
-    //printk("%s : cnt(%d)\n", __func__, cnt);
-
     cnt = cnt + 1;
     
 	struct msm_lightsensor_get_adc_ret_data rep;
@@ -64,8 +60,6 @@ u32 lightsensor_get_adc(void)
 		return 0;
 	}
 
-    //printk("%s : return(%d)\n", __func__, rep.lightsensor_adc);
-    
 	return rep.lightsensor_adc;
 }
 EXPORT_SYMBOL(lightsensor_get_adc);
@@ -100,17 +94,15 @@ static int msm_lightsensor_cb_func(struct msm_rpc_client *client,
 	if (rc)
 		pr_err("%s: FAIL: sending reply. rc=%d\n", __func__, rc);
 
-	/*if (accept_status == RPC_ACCEPTSTAT_SUCCESS)
-		msm_batt_update_psy_status();*/
-
 	return rc;
 }
 
 
 void msm_lightsensor_cleanup(void)
 {
-	if (light_client)
+	if (light_client) {
 		msm_rpc_unregister_client(light_client);
+	}
 }
 EXPORT_SYMBOL(msm_lightsensor_cleanup);
 

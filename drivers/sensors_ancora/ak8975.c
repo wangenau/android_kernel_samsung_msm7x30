@@ -81,8 +81,9 @@ static int akm8975_ecs_set_mode(struct akm8975_data *akm, char mode)
 		return -EINVAL;
 	}
 
-	if (ret < 0)
+	if (ret < 0) {
 		return ret;
+	}
 
 	/* Wait at least 300us after changing mode. */
 	udelay(300);
@@ -144,7 +145,7 @@ static int akm8975_wait_for_data_ready(struct akm8975_data *akm)
 
 	enable_irq(akm->irq);
 
-	err = wait_for_completion_timeout(&akm->data_ready, 5*HZ);
+	err = wait_for_completion_timeout(&akm->data_ready, 10*HZ);
 	if (err > 0)
 		return 0;
 
@@ -166,8 +167,7 @@ extern unsigned int get_hw_rev(void);
 static ssize_t akmd_read(struct file *file, char __user *buf,
 					size_t count, loff_t *pos)
 {
-	//struct akm8975_data *akm = container_of(file->private_data,
-		//	struct akm8975_data, akmd_device);
+
 	short x = 0, y = 0, z = 0;
 #if defined (CONFIG_JPN_MODEL_SC_02D)
 	short tmp = 0;
@@ -201,8 +201,7 @@ static ssize_t akmd_read(struct file *file, char __user *buf,
 		y = (data[4] << 8) + data[3];
 		z = (data[6] << 8) + data[5];
 #if defined (CONFIG_JPN_MODEL_SC_02D)
-		if (get_hw_rev() >= 0x00 ) // real 0.0
-		{
+		if (get_hw_rev() >= 0x00 ) { // real 0.0
 			tmp = x;
 			x = y;
 			y = tmp;
@@ -219,8 +218,6 @@ done:
 static long akmd_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 {
 	void __user *argp = (void __user *)arg;
-	//struct akm8975_data *akm = container_of(file->private_data,
-			//struct akm8975_data, akmd_device);
 	int ret;
 	union {
 		char raw[RWBUF_SIZE];
@@ -230,8 +227,9 @@ static long akmd_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 	} rwbuf;
 
 	ret = akmd_copy_in(cmd, argp, rwbuf.raw, sizeof(rwbuf));
-	if (ret)
+	if (ret) {
 		return ret;
+	}
 
 	switch (cmd) {
 	case ECS_IOCTL_WRITE:
@@ -285,8 +283,9 @@ static long akmd_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 		return -ENOTTY;
 	}
 
-	if (ret < 0)
+	if (ret < 0) {
 		return ret;
+	}
 
 	return akmd_copy_out(cmd, argp, rwbuf.raw, sizeof(rwbuf));
 }
@@ -331,8 +330,6 @@ static int akm8975_setup_irq(struct akm8975_data *akm)
 	goto done;
 
 err_request_irq:
-//err_gpio_direction_input:
-//	gpio_free(pdata->gpio_data_ready_int);
 done:
 	return rc;
 }
@@ -373,8 +370,9 @@ int akm8975_probe(struct i2c_client *client,
 	akm->this_client = client;
 
 	err = akm8975_ecs_set_mode_power_down(akm);
-	if (err < 0)
+	if (err < 0) {
 		goto exit_set_mode_power_down_failed;
+	}
 
 	err = akm8975_setup_irq(akm);
 	if (err) {
@@ -387,8 +385,9 @@ int akm8975_probe(struct i2c_client *client,
 	akm->akmd_device.fops = &akmd_fops;
 
 	err = misc_register(&akm->akmd_device);
-	if (err)
+	if (err) {
 		goto exit_akmd_device_register_failed;
+	}
 
 	init_waitqueue_head(&akm->state_wq);
 	gakm = akm;
@@ -398,7 +397,6 @@ int akm8975_probe(struct i2c_client *client,
 
 exit_akmd_device_register_failed:
 	free_irq(akm->irq, akm);
-//	gpio_free(akm->pdata->gpio_data_ready_int);
 exit_setup_irq:
 exit_set_mode_power_down_failed:
 	mutex_destroy(&akm->lock);
@@ -415,7 +413,6 @@ static int __devexit akm8975_remove(struct i2c_client *client)
 
 	misc_deregister(&akm->akmd_device);
 	free_irq(akm->irq, akm);
-//	gpio_free(akm->pdata->gpio_data_ready_int);
 	mutex_destroy(&akm->lock);
 	kfree(akm);
 	return 0;

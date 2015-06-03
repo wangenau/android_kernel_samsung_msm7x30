@@ -51,20 +51,7 @@
 #define GPIO_PS_VOUT 118
 #define PMIC_GPIO_PROX_EN	15 /* PMIC GPIO 16 */
 #define PM8058_GPIO_PM_TO_SYS(pm_gpio) (pm_gpio + NR_GPIO_IRQS)
-//#define PROX_MODE_A
 #define PROX_MODE_B
-
-#if defined(CONFIG_MACH_APACHE)
-//#define PROX_MODE_B_15 //B1.5 mode
-//#define PROX_MODE_B_20
-/*
-HYS reg setting
-
-            B1         B1.5	B2.0
-VO=0    0x40      0x2F	0x20
-VO=1    0x20      0x0F	0x00
-*/
-#endif
 
 #if defined(PROX_MODE_B)
 	#if defined(PROX_MODE_B_20)
@@ -501,8 +488,7 @@ static int gp2a_opt_probe( struct platform_device* pdev )
 
 	/* allocate driver_data */
 	gp2a = kzalloc(sizeof(struct gp2a_data),GFP_KERNEL);
-	if(!gp2a)
-	{
+	if(!gp2a) {
 		pr_err("kzalloc error\n");
 		return -ENOMEM;
 
@@ -534,7 +520,7 @@ static int gp2a_opt_probe( struct platform_device* pdev )
 	/* set platdata */
 	platform_set_drvdata(pdev, gp2a);
 
-    gp2a->uevent_kobj = &pdev->dev.kobj;
+    	gp2a->uevent_kobj = &pdev->dev.kobj;
 
 	/* wake lock init */
 	wake_lock_init(&prx_wake_lock, WAKE_LOCK_SUSPEND, "prx_wake_lock");
@@ -542,12 +528,10 @@ static int gp2a_opt_probe( struct platform_device* pdev )
 	/* init i2c */
 	opt_i2c_init();
 
-	if(opt_i2c_client == NULL)
-	{
+	if(opt_i2c_client == NULL) {
 		pr_err("opt_probe failed : i2c_client is NULL\n"); 
 		return -ENODEV;
-	}
-	else
+	} else
 		printk("opt_i2c_client : (0x%p)\n",opt_i2c_client);
 	
 
@@ -635,14 +619,12 @@ static int gp2a_opt_resume( struct platform_device* pdev )
 
 	gprintk("\n");
 
-	if(gp2a->enabled) //calling
-	{
+	if(gp2a->enabled) { //calling
 		err = irq_set_irq_wake(IRQ_GP2A_INT, 0);	  // enable : 1, disable : 0
 		printk("[TAEKS] irq_set_irq_wake = %d\n",err);
 		if (err) 
 			printk("[TAEKS] irq_set_irq_wake failed\n");
-	       if (device_may_wakeup(&pdev->dev))
-	   	{
+	        if (device_may_wakeup(&pdev->dev)) {
 			printk("[TAEKS] device_may_wakeup\n");	      		   	
 	   		disable_irq_wake(IRQ_GP2A_INT);
 		}
@@ -655,17 +637,13 @@ static int gp2a_opt_resume( struct platform_device* pdev )
 static int proximity_onoff(u8 onoff)
 {
 	u8 value;
-    int i;
+    	int i;
        
-	if(onoff)
-	{
-       	for(i=1;i<5;i++)
-       	{
-       		opt_i2c_write((u8)(i),&gp2a_original_image[i]);
-    	}
-	}
-	else
-	{
+	if(onoff) {
+       		for(i=1;i<5;i++) {
+       			opt_i2c_write((u8)(i),&gp2a_original_image[i]);
+    		}
+	} else {
 #ifdef PROX_MODE_A
 		value = 0x00;
 #else
@@ -690,7 +668,7 @@ static int opt_i2c_probe(struct i2c_client *client,  const struct i2c_device_id 
 {
 	struct opt_state *opt;
 
-    gprintk("\n");
+    	gprintk("\n");
 	opt = kzalloc(sizeof(struct opt_state), GFP_KERNEL);
 	if (opt == NULL) {		
 		printk("failed to allocate memory \n");
@@ -729,7 +707,7 @@ static struct i2c_driver opt_i2c_driver = {
 
 static struct platform_driver gp2a_opt_driver = {
 	.probe 	 = gp2a_opt_probe,
-    .remove = gp2a_opt_remove,
+    	.remove = gp2a_opt_remove,
 	.suspend = gp2a_opt_suspend,
 	.resume  = gp2a_opt_resume,
 	.driver  = {

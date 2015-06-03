@@ -152,24 +152,20 @@ struct bma_acc{
 
 struct bma_acc_private_data *gbma_acc;
 
-static int bma_acc_open(struct inode *inode, struct file *file)
+static int bma_acc_open(struct file *file)
 {
 	int err= 0 ;
-	//struct bma_acc_private_data* data = container_of(file -> private_data,
-	//											struct bma_acc_private_data,
-	//											bma_acc_device);
 	struct bma_acc_private_data* data = gbma_acc;
 
 	printk("yac_acc_open(%d)\n", data->ref_count);
-	if(data->ref_count++ == 0)
-	{
-	err = bma_acc_set_enable(data->driver, 1);
+	if(data->ref_count++ == 0) {
+		err = bma_acc_set_enable(data->driver, 1);
 	}
 
 	file -> private_data = data;
 	return err;
 }
-static int bma_acc_close(struct inode *inode, struct file *file)
+static int bma_acc_close(struct file *file)
 {
 	int err= 0 ;
 	struct bma_acc_private_data* data = gbma_acc;
@@ -191,14 +187,12 @@ static long bma_acc_ioctl(struct file *file, unsigned int cmd, unsigned long arg
 	struct bma_acc accel_data;
 	switch(cmd)	{
 	case BMA_IOCTL_SET_DELAY:
-	//	printk("[diony] BMA_IOCTL_SET_DELAY.\n");
 		if (copy_from_user(&delay_ns, (void __user *)arg,
 								sizeof(delay_ns)))
 				return -EFAULT;
 		err = bma_acc_set_delay(data->driver, (int)delay_ns);
 		break;
 	case BMA_IOCTL_GET_DELAY:
-	//	printk("[diony] BMA_IOCTL_GET_DELAY.\n");
 		delay_ns = (unsigned long)bma_acc_get_delay(data->driver);
 		if (put_user(&delay_ns, (s64 __user *) arg))
 				return -EFAULT;
@@ -433,9 +427,7 @@ static int bma_acc_set_enable(struct bma_acc_driver *driver, int enable)
     if (bma_acc_ischg_enable(driver, enable)) {
         if (enable) {
             driver->set_enable(enable);
-           // schedule_delayed_work(&data->work, delay_to_jiffies(delay) + 1);
         } else {
-          //  cancel_delayed_work_sync(&data->work);
             driver->set_enable(enable);
         }
     }
@@ -813,7 +805,6 @@ static ssize_t bma_acc_calibration_store(struct device *dev,
     struct input_dev *input = to_input_dev(dev);
     struct bma_acc_private_data *data = input_get_drvdata(input);
     struct bma_acc_data accel;
-    //unsigned long enable_test = 1;
     data_cal[0] = data_cal[1] = 0;
     data_cal[2] = 1;
 
@@ -1015,7 +1006,6 @@ static void bma_acc_work_func(struct work_struct *work)
     data->last = accel;
     mutex_unlock(&data->data_mutex);
 
-   // schedule_delayed_work(&data->work, delay);
 }
 
 static int bma_acc_probe(struct i2c_client *client, const struct i2c_device_id *id)
@@ -1109,7 +1099,6 @@ static int bma_acc_suspend(struct i2c_client *client, pm_message_t mesg)
     if (data->suspend == 0) {
         data->suspend_enable = bma_acc_get_enable(driver);
         if (data->suspend_enable) {
-         //   cancel_delayed_work_sync(&data->work);
             bma_acc_set_enable(driver, 0);
         }
     }
@@ -1131,7 +1120,6 @@ static int bma_acc_resume(struct i2c_client *client)
     if (data->suspend == 1) {
         if (data->suspend_enable) {
             delay = bma_acc_get_delay(driver);
-           // schedule_delayed_work(&data->work, delay_to_jiffies(delay) + 1);
             bma_acc_set_enable(driver, 1);
         }
     }

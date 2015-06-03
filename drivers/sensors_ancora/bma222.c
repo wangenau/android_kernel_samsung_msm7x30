@@ -96,30 +96,30 @@
 #define BMA222_COMP_TARGET_OFFSET_X__POS        1
 #define BMA222_COMP_TARGET_OFFSET_X__LEN        2
 #define BMA222_COMP_TARGET_OFFSET_X__MSK        0x06
-#define BMA222_COMP_TARGET_OFFSET_X__REG                       0x37
+#define BMA222_COMP_TARGET_OFFSET_X__REG        0x37
 #define BMA222_COMP_TARGET_OFFSET_Y__POS        3
 #define BMA222_COMP_TARGET_OFFSET_Y__LEN        2
 #define BMA222_COMP_TARGET_OFFSET_Y__MSK        0x18
-#define BMA222_COMP_TARGET_OFFSET_Y__REG                       0x37
+#define BMA222_COMP_TARGET_OFFSET_Y__REG        0x37
 #define BMA222_COMP_TARGET_OFFSET_Z__POS        5
 #define BMA222_COMP_TARGET_OFFSET_Z__LEN        2
 #define BMA222_COMP_TARGET_OFFSET_Z__MSK        0x60
-#define BMA222_COMP_TARGET_OFFSET_Z__REG                       0x37
+#define BMA222_COMP_TARGET_OFFSET_Z__REG        0x37
 #define BMA222_OFFSET_FILT_X_REG                0x38
 #define BMA222_OFFSET_FILT_Y_REG                0x39
 #define BMA222_OFFSET_FILT_Z_REG                0x3A
 #define BMA222_UNLOCK_EE_WRITE_SETTING__POS     0
 #define BMA222_UNLOCK_EE_WRITE_SETTING__LEN     1
 #define BMA222_UNLOCK_EE_WRITE_SETTING__MSK     0x01
-#define BMA222_UNLOCK_EE_WRITE_SETTING__REG               0x33
+#define BMA222_UNLOCK_EE_WRITE_SETTING__REG     0x33
 #define BMA222_START_EE_WRITE_SETTING__POS      1
 #define BMA222_START_EE_WRITE_SETTING__LEN      1
 #define BMA222_START_EE_WRITE_SETTING__MSK      0x02
-#define BMA222_START_EE_WRITE_SETTING__REG                 0x33
+#define BMA222_START_EE_WRITE_SETTING__REG      0x33
 #define BMA222_EE_WRITE_SETTING_S__POS          2
 #define BMA222_EE_WRITE_SETTING_S__LEN          1
 #define BMA222_EE_WRITE_SETTING_S__MSK          0x04
-#define BMA222_EEPROM_CTRL_REG                                      0x33
+#define BMA222_EEPROM_CTRL_REG                  0x33
 #define BMA222_EN_FAST_COMP__POS                5
 #define BMA222_EN_FAST_COMP__LEN                2
 #define BMA222_EN_FAST_COMP__MSK                0x60
@@ -843,34 +843,25 @@ static int bma222_measure(int *out_data, int *out_raw)
 static int bma222_set_calibration(signed char* data_cal, int cal_init)
 {
 	int count = 0;
-  // for debug
+
     printk("[diony] bma222_set_calibration!!!! .\n");
     signed char tmp;
     data_cal[0] = data_cal[1] = 0;
     data_cal[2]=1;
-    //bma222_write_reg_byte(BMA222_SOFT_RESET_REG, BMA222_SOFT_RESET_VAL);
-    //bma222_msleep(1);
-     /* Set axes range*/
-    //bma222_update_bits(BMA222_RANGE, BMA222_RANGE_2G);
-    //bma222_set_delay(acc_data.delay);
-    //bma222_update_bits(BMA222_DATA_ENBL, 1);
 
-	if (cal_init == 1)
-	{
+	if (cal_init == 1) {
 		printk(KERN_INFO "[HSS] Calibraion Init\n");
 		bma222_set_offset_filt_x(0);
 		bma222_set_offset_filt_y(0);
 		bma222_set_offset_filt_z(0);     
-	}
-	else
-	{    
+	} else {    
 #ifdef DEBUG
 		printk(KERN_INFO "%s\n",__FUNCTION__);
 		printk(KERN_INFO "data are %d,%d,%d\n",data_cal[0],data_cal[1],data_cal[2]);
 		printk(KERN_INFO "start x axis fast calibration\n");
 #endif
 		bma222_set_offset_target_x(data_cal[0]);
-		tmp=1;//selet x axis in cal_trigger
+		tmp=1; /*select x axis in cal_trigger*/
 		bma222_set_cal_trigger(tmp);
 		do
 		{
@@ -880,12 +871,11 @@ static int bma222_set_calibration(signed char* data_cal, int cal_init)
 #ifdef DEBUG
 			printk(KERN_INFO "wait 2ms and got cal ready flag is %d\n",tmp);
 #endif
-			if (count > 1500)
-			{
+			if (count > 1500) {
 				printk("[HSS] Calibration ready fail for x\n");
 				return -1;
 			}
-		}while(tmp==0);
+		} while(tmp==0);
    	
 #ifdef DEBUG
 		bma222_get_offset_filt_x(&tmp);
@@ -894,11 +884,7 @@ static int bma222_set_calibration(signed char* data_cal, int cal_init)
 		printk(KERN_INFO "start y axis fast calibration\n");
 #endif
 		bma222_set_offset_target_y(data_cal[1]);
-		//bma222_get_offset_target_y(&tmp);
-		//printk(KERN_INFO "y offset is %d\n",tmp);
-		//bma222_get_offset_filt_y(&tmp);
-		//printk(KERN_INFO "y offset filt is %d\n",tmp);
-		tmp=2;//selet y axis in cal_trigger
+		tmp=2; /*select y axis in cal_trigger*/
 		bma222_set_cal_trigger(tmp);
 		count = 0;
 		do
@@ -909,12 +895,11 @@ static int bma222_set_calibration(signed char* data_cal, int cal_init)
 #ifdef DEBUG
 			printk(KERN_INFO "wait 2ms and got cal ready flag is %d\n",tmp);
 #endif
-			if (count > 1500)
-			{
+			if (count > 1500) {
 				printk("[HSS] Calibration ready fail for y\n");
 				return -1;
 			}
-		}while(tmp==0);
+		} while(tmp==0);
    	
 #ifdef DEBUG
 		bma222_get_offset_filt_y(&tmp);
@@ -924,11 +909,7 @@ static int bma222_set_calibration(signed char* data_cal, int cal_init)
 #endif
 		bma222_set_offset_target_z(data_cal[2]);
 
-		//bma222_get_offset_target_z(&tmp);
-		//printk(KERN_INFO "z offset is %d\n",tmp);
-		//bma222_get_offset_filt_z(&tmp);
-		//printk(KERN_INFO "z offset filt is %d\n",tmp);
-		tmp=3;//selet z axis in cal_trigger
+		tmp=3; /*select z axis in cal_trigger*/
 		bma222_set_cal_trigger(tmp);
 		count = 0;
 		do
@@ -939,12 +920,11 @@ static int bma222_set_calibration(signed char* data_cal, int cal_init)
 #ifdef DEBUG
 			printk(KERN_INFO "wait 2ms and got cal ready flag is %d\n",tmp);
 #endif  
-			if (count > 1500)
-			{
+			if (count > 1500) {
 				printk("[HSS] Calibration ready fail for z\n");
 				return -1;
 			}
-		}while(tmp==0);
+		} while(tmp==0);
    	
 #ifdef DEBUG
 		bma222_get_offset_filt_z(&tmp);
@@ -966,12 +946,11 @@ static int bma222_set_calibration(signed char* data_cal, int cal_init)
 #ifdef DEBUG
 		printk(KERN_INFO "wait 2ms and got eeprom writing status is %d\n",tmp);
 #endif  
-		if (count > 1500)
-		{
+		if (count > 1500) {
 			printk("[HSS] Calibration eeprom writing fai\n");
 			return -1;
 		}
-	}while(tmp==0);
+	} while(tmp==0);
 	
 	tmp=0;//lock eemprom
 	bma222_set_ee_w(tmp);
@@ -1002,15 +981,13 @@ int bma222_set_offset_target_x(unsigned char offsettarget)
    /* Check initialize */
     if (acc_data.initialize == 0) {
         return BMA_ERROR_NOT_INITIALIZED;
-    }
-   else
-      {
+    } else {
       err = bma222_read_reg(BMA222_COMP_TARGET_OFFSET_X__REG, &data, 1);
 	  printk("[diony] bma222_set_offset_target_data  = %d .  (read)  \n",data);
       data = BMA222_SET_BITSLICE(data, BMA222_COMP_TARGET_OFFSET_X, offsettarget );
 	  printk("[diony] bma222_set_offset_target_data  = %d .  (after BITSLICE,write)  \n",data);
       err =bma222_write_reg(BMA222_COMP_TARGET_OFFSET_X__REG, &data, 1);
-      }
+    }
    return err;
 }
 /* EasyCASE ) */
@@ -1053,13 +1030,11 @@ int bma222_get_offset_target_x(unsigned char *offsettarget )
    /* Check initialize */
     if (acc_data.initialize == 0) {
         return BMA_ERROR_NOT_INITIALIZED;
-    }
-   else
-   {
+    } else {
       err = bma222_read_reg(BMA222_COMP_TARGET_OFFSET_X__REG, &data, 1);
       data = BMA222_GET_BITSLICE(data,BMA222_COMP_TARGET_OFFSET_X);
       *offsettarget = data;
-   }
+    }
    
    return err;
 }
@@ -1098,13 +1073,11 @@ int bma222_set_offset_target_y(unsigned char offsettarget)
    /* Check initialize */
     if (acc_data.initialize == 0) {
         return BMA_ERROR_NOT_INITIALIZED;
-    }
-   else
-   {
+    } else {
       err = bma222_read_reg(BMA222_COMP_TARGET_OFFSET_Y__REG, &data, 1);
       data = BMA222_SET_BITSLICE(data, BMA222_COMP_TARGET_OFFSET_Y, offsettarget );
       err = bma222_write_reg(BMA222_COMP_TARGET_OFFSET_Y__REG, &data, 1);
-   }
+    }
    return err;
 }
 
@@ -1144,13 +1117,11 @@ int bma222_get_offset_target_y(unsigned char *offsettarget )
    /* Check initialize */
     if (acc_data.initialize == 0) {
         return BMA_ERROR_NOT_INITIALIZED;
-    }
-   else
-   {
+    } else {
       err = bma222_read_reg(BMA222_COMP_TARGET_OFFSET_Y__REG, &data, 1);
       data = BMA222_GET_BITSLICE(data, BMA222_COMP_TARGET_OFFSET_Y);
       *offsettarget = data;
-   }
+    }
    return err;
 }
 /* EasyCASE ) */
@@ -1188,9 +1159,7 @@ int bma222_set_offset_target_z(unsigned char offsettarget)
    /* Check initialize */
     if (acc_data.initialize == 0) {
         return BMA_ERROR_NOT_INITIALIZED;
-    }
-   else
-   {
+    } else {
        err = bma222_read_reg(BMA222_COMP_TARGET_OFFSET_Z__REG, &data, 1);
       data = BMA222_SET_BITSLICE(data, BMA222_COMP_TARGET_OFFSET_Z, offsettarget );
        err = bma222_write_reg(BMA222_COMP_TARGET_OFFSET_Z__REG, &data, 1);
@@ -1232,13 +1201,11 @@ int bma222_get_offset_target_z(unsigned char *offsettarget )
    /* Check initialize */
     if (acc_data.initialize == 0) {
         return BMA_ERROR_NOT_INITIALIZED;
-    }
-   else
-   {
+    } else {
       err = bma222_read_reg(BMA222_COMP_TARGET_OFFSET_Z__REG, &data, 1);
       data =BMA222_GET_BITSLICE(data, BMA222_COMP_TARGET_OFFSET_Z);
       *offsettarget = data;
-   }
+    }
    return err;
 }
 
@@ -1251,15 +1218,13 @@ int bma222_set_cal_trigger(unsigned char caltrigger)
       /* Check initialize */
        if (acc_data.initialize == 0) {
            return BMA_ERROR_NOT_INITIALIZED;
-      }
-	else
-	{
+       } else {
 		err = bma222_read_reg(BMA222_EN_FAST_COMP__REG, &data, 1);
 		printk("[diony] bma222_set_cal_trigger  data = %d .  (read)  \n",data);
 	 	data = BMA222_SET_BITSLICE(data, BMA222_EN_FAST_COMP, caltrigger );
 		 printk("[diony] bma222_set_cal_trigger  data = %d .  (after BITSLICE,write)  \n",data);
 		err = bma222_write_reg(BMA222_EN_FAST_COMP__REG, &data, 1);
-	}
+        }
 	return err;
 }
 
@@ -1271,15 +1236,13 @@ int bma222_get_cal_ready(unsigned char *calrdy )
       /* Check initialize */
        if (acc_data.initialize == 0) {
            return BMA_ERROR_NOT_INITIALIZED;
-      }
-	else
-	{
+       } else {
 		err = bma222_read_reg(BMA222_OFFSET_CTRL_REG, &data, 1);
 		printk("[diony] bma222_get_cal_ready data= %d (read) \n",data);
 		data = BMA222_GET_BITSLICE(data, BMA222_FAST_COMP_RDY_S);
 		printk("[diony] bma222_get_cal_ready data = %d  (after BITSLICE)\n",data);
 		*calrdy = data;
-	}
+       }
 	
 	return err;
 }
@@ -1292,12 +1255,10 @@ int bma222_set_offset_filt_x(unsigned char offsetfilt)
       /* Check initialize */
        if (acc_data.initialize == 0) {
            return BMA_ERROR_NOT_INITIALIZED;
-      }
-   	else
-    {
+       } else {
     	data =  offsetfilt;
     	err = bma222_write_reg(BMA222_OFFSET_FILT_X_REG, &data, 1);
-    }
+       }
    	return err;
 }
 
@@ -1344,12 +1305,10 @@ int bma222_get_offset_filt_x(unsigned char *offsetfilt )
       /* Check initialize */
        if (acc_data.initialize == 0) {
            return BMA_ERROR_NOT_INITIALIZED;
-      }
-   	else
-    {
+       } else {
     	err = bma222_read_reg(BMA222_OFFSET_FILT_X_REG, &data, 1);
 		*offsetfilt =  data;
-    }
+       }
    	return err;
 }
 /* EasyCASE ) */
@@ -1393,14 +1352,12 @@ int bma222_set_offset_filt_y(unsigned char offsetfilt)
 	int err=0;
        unsigned char data;
       /* Check initialize */
-       if (acc_data.initialize == 0) {
+      if (acc_data.initialize == 0) {
            return BMA_ERROR_NOT_INITIALIZED;
-      }
-   	else
-    {
+      } else {
     	data =  offsetfilt;
     	err = bma222_write_reg(BMA222_OFFSET_FILT_Y_REG, &data, 1);
-    }
+      }
    	return err;
 }
 /* EasyCASE ) */
@@ -1444,14 +1401,12 @@ int bma222_get_offset_filt_y(unsigned char *offsetfilt )
 	int err=0;
        unsigned char data;
       /* Check initialize */
-       if (acc_data.initialize == 0) {
-           return BMA_ERROR_NOT_INITIALIZED;
-      }
-   	else
-    {
-    	err = bma222_read_reg(BMA222_OFFSET_FILT_Y_REG, &data, 1);
+	if (acc_data.initialize == 0) {
+        	return BMA_ERROR_NOT_INITIALIZED;
+	} else {
+    		err = bma222_read_reg(BMA222_OFFSET_FILT_Y_REG, &data, 1);
 		*offsetfilt =  data;
-    }
+	}
    	return err;
 }
 /* EasyCASE ) */
@@ -1495,14 +1450,12 @@ int bma222_set_offset_filt_z(unsigned char offsetfilt)
 	int err=0;
        unsigned char data;
       /* Check initialize */
-       if (acc_data.initialize == 0) {
-           return BMA_ERROR_NOT_INITIALIZED;
-      }
-   	else
-    {
-    	data =  offsetfilt;
-    	err = bma222_write_reg(BMA222_OFFSET_FILT_Z_REG, &data, 1);
-    }
+	if (acc_data.initialize == 0) {
+        	return BMA_ERROR_NOT_INITIALIZED;
+	} else {
+    		data =  offsetfilt;
+    		err = bma222_write_reg(BMA222_OFFSET_FILT_Z_REG, &data, 1);
+	}
    	return err;
 }
 /* EasyCASE ) */
@@ -1546,14 +1499,12 @@ int bma222_get_offset_filt_z(unsigned char *offsetfilt )
 	int err=0;
        unsigned char data;
       /* Check initialize */
-       if (acc_data.initialize == 0) {
-           return BMA_ERROR_NOT_INITIALIZED;
-      }
-   	else
-    {
+	if (acc_data.initialize == 0) {
+		return BMA_ERROR_NOT_INITIALIZED;
+	} else {
     	err = bma222_read_reg(BMA222_OFFSET_FILT_Z_REG, &data, 1);
 		*offsetfilt =  data;
-    }
+	}
    	return err;
 }
 int bma222_set_ee_w(unsigned char eew)
@@ -1561,11 +1512,9 @@ int bma222_set_ee_w(unsigned char eew)
 	int err=0;
        unsigned char data;
       /* Check initialize */
-       if (acc_data.initialize == 0) {
-           return BMA_ERROR_NOT_INITIALIZED;
-      }
-	else
-	{
+	if (acc_data.initialize == 0) {
+		return BMA_ERROR_NOT_INITIALIZED;
+	} else {
 		err =  bma222_read_reg(BMA222_UNLOCK_EE_WRITE_SETTING__REG, &data, 1);
 		data = BMA222_SET_BITSLICE(data, BMA222_UNLOCK_EE_WRITE_SETTING, eew);
 		err =  bma222_write_reg(BMA222_UNLOCK_EE_WRITE_SETTING__REG, &data, 1);
@@ -1576,15 +1525,13 @@ int bma222_set_ee_w(unsigned char eew)
 int bma222_set_ee_prog_trig(void)
 {
 	int err=0;
-       unsigned char data;
-	 unsigned char eeprog;
+        unsigned char data;
+	unsigned char eeprog;
 	eeprog = 0x01;
       /* Check initialize */
-       if (acc_data.initialize == 0) {
+        if (acc_data.initialize == 0) {
            return BMA_ERROR_NOT_INITIALIZED;
-      }
-	else
-	{
+        } else {
 		err =  bma222_read_reg(BMA222_START_EE_WRITE_SETTING__REG, &data, 1);
 		data = BMA222_SET_BITSLICE(data, BMA222_START_EE_WRITE_SETTING, eeprog);
 		err =  bma222_write_reg(BMA222_START_EE_WRITE_SETTING__REG, &data, 1);
@@ -1597,11 +1544,9 @@ int bma222_get_eeprom_writing_status(unsigned char *eewrite )
 	int err=0;
        unsigned char data;
       /* Check initialize */
-       if (acc_data.initialize == 0) {
+        if (acc_data.initialize == 0) {
            return BMA_ERROR_NOT_INITIALIZED;
-      }
-	else
-	{
+        } else {
 		err =  bma222_read_reg(BMA222_EEPROM_CTRL_REG, &data, 1);
 		data = BMA222_GET_BITSLICE(data, BMA222_EE_WRITE_SETTING_S);
 		*eewrite = data;
