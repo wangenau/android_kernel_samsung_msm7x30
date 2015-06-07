@@ -794,7 +794,7 @@ static int vnet_start_xmit(struct sk_buff *skb, struct net_device *net)
 	dev->vn_dev.stats.tx_bytes += skb->len;
 	dev->vn_dev.stats.tx_packets++;
 
-	skb2 = alloc_skb(skb->len, GFP_KERNEL);
+	skb2 = alloc_skb(skb->len, GFP_ATOMIC);
 	if (skb2 == NULL) {
 		DPRINTK(1, "alloc_skb() failed\n");
 		dev_kfree_skb_any(skb);
@@ -857,7 +857,7 @@ static int multipdp_vnet_recv(struct pdp_info *dev, char *buf, size_t len)
 		return -ENODEV;
 	}
 
-	skb = alloc_skb(len, GFP_KERNEL);
+	skb = alloc_skb(len, GFP_ATOMIC);
 
 	if (skb == NULL) {
 		DPRINTK(1, "alloc_skb() failed\n");
@@ -902,7 +902,7 @@ static int vnet_recv(struct pdp_info *dev, size_t len)
 		return -ENODEV;
 	}
 
-	skb = alloc_skb(len, GFP_KERNEL);
+	skb = alloc_skb(len, GFP_ATOMIC);
 
 	if (skb == NULL) {
 		DPRINTK(1, "alloc_skb() failed\n");
