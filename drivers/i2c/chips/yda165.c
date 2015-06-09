@@ -1709,19 +1709,7 @@ static struct i2c_driver yda165_driver = {
 	},
 };
 
-static int __init yda165_init(void)
-{
-	pr_info(MODULE_NAME ":%s\n",__func__);
-	return i2c_add_driver(&yda165_driver);
-}
-
-static void __exit yda165_exit(void)
-{
-	i2c_del_driver(&yda165_driver);
-}
-
-module_init(yda165_init);
-module_exit(yda165_exit);
+module_i2c_driver(yda165_driver);
 
 MODULE_AUTHOR("Jongcheol Park");
 MODULE_DESCRIPTION("YDA165 Driver");

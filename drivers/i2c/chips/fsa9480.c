@@ -1341,24 +1341,10 @@ static struct i2c_driver fsa9480_driver = {
 	},
 };
 
-static int __init fsa9480_init(void)
-{
-	printk("[FSA9480] fsa9480_init \n");
-
-	return i2c_add_driver(&fsa9480_driver);
-}
-
-static void __exit fsa9480_exit(void)
-{
-	i2c_del_driver(&fsa9480_driver);
-}
-
-
 EXPORT_SYMBOL(fsa9480_i2c_read);
 EXPORT_SYMBOL(fsa9480_i2c_write);
 
-module_init(fsa9480_init);
-module_exit(fsa9480_exit);
+module_i2c_driver(fsa9480_driver);
 
 MODULE_AUTHOR("");
 MODULE_DESCRIPTION("fsa9480 Driver");

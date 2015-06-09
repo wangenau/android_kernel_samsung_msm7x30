@@ -1231,18 +1231,7 @@ static struct i2c_driver smb328a_i2c_driver = {
 	.id_table	= smb328a_id,
 };
 
-static int __init smb328a_init(void)
-{
-	return i2c_add_driver(&smb328a_i2c_driver);
-}
-module_init(smb328a_init);
-
-static void __exit smb328a_exit(void)
-{
-	i2c_del_driver(&smb328a_i2c_driver);
-}
-module_exit(smb328a_exit);
-
+module_i2c_driver(smb328a_i2c_driver);
 
 MODULE_DESCRIPTION("SMB328A charger control driver");
 MODULE_AUTHOR("<jongmyeong.ko@samsung.com>");

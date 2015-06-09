@@ -716,22 +716,7 @@ static struct platform_driver gp2a_opt_driver = {
 	},
 };
 
-static int __init gp2a_opt_init(void)
-{
-	int ret;
-	
-	ret = platform_driver_register(&gp2a_opt_driver);
-	return ret;
-	
-	
-}
-static void __exit gp2a_opt_exit(void)
-{
-	platform_driver_unregister(&gp2a_opt_driver);
-}
-
-module_init( gp2a_opt_init );
-module_exit( gp2a_opt_exit );
+module_platform_driver(gp2a_opt_driver);
 
 MODULE_AUTHOR("SAMSUNG");
 MODULE_DESCRIPTION("Optical Sensor driver for GP2AP002A00F");
