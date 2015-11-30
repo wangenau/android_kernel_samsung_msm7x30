@@ -2390,10 +2390,8 @@ static int hub_port_reset(struct usb_hub *hub, int port1,
 		/* Check for disconnect or reset */
 		if (status == 0 || status == -ENOTCONN || status == -ENODEV) {
 
-            MYDBG("");
 			clear_port_feature(hub->hdev, port1,
 					USB_PORT_FEAT_C_RESET);
-			MYDBG("");
 
 			if (!hub_is_superspeed(hub->hdev))
 				goto done;
@@ -3193,9 +3191,7 @@ hub_port_init (struct usb_hub *hub, struct usb_device *udev, int port1,
 
 	/* Reset the device; full speed may morph to high speed */
 	/* FIXME a USB 2.0 device may morph into SuperSpeed on reset. */
-	MYDBG("");
 	retval = hub_port_reset(hub, port1, udev, delay, false);
-	MYDBG("");
 	if (retval < 0)		/* error or disconnect */
 		goto fail;
 	/* success, speed is known */
@@ -3672,10 +3668,8 @@ static void hub_port_connect_change(struct usb_hub *hub, int port1,
 		status = hub_port_init(hub, udev, port1, i);
 		if (status < 0)
 		{
-			MYDBG("");
 			goto loop;
 		}
-		MYDBG("");
 
 		usb_detect_quirks(udev);
 		if (udev->quirks & USB_QUIRK_DELAY_INIT)
