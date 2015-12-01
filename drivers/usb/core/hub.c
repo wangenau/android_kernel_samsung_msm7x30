@@ -3667,9 +3667,7 @@ static void hub_port_connect_change(struct usb_hub *hub, int port1,
 		/* reset (non-USB 3.0 devices) and get descriptor */
 		status = hub_port_init(hub, udev, port1, i);
 		if (status < 0)
-		{
 			goto loop;
-		}
 
 		usb_detect_quirks(udev);
 		if (udev->quirks & USB_QUIRK_DELAY_INIT)
