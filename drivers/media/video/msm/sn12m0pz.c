@@ -353,7 +353,6 @@ static int32_t sn12m0pz_i2c_write_b_sensor(unsigned short waddr, uint8_t bdata)
 	buf[0] = (waddr & 0xFF00) >> 8;
 	buf[1] = (waddr & 0x00FF);
 	buf[2] = bdata;
-	udelay(90);
 	CDBG("i2c_write_b addr = %x, val = %x\n", waddr, bdata);
 	rc = sn12m0pz_i2c_txdata(sn12m0pz_client->addr, buf, 3);
 
