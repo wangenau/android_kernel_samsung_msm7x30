@@ -186,6 +186,24 @@ int yaffs2_checkpt_open(struct yaffs_dev *dev, int writing)
 			dev->checkpt_block_list[i] = -1;
 	}
 
+	/* Opening for a read */
+	/* Set to a value that will kick off a read */
+	dev->checkpt_byte_offs = dev->data_bytes_per_chunk;
+	/* A checkpoint block list of 1 checkpoint block per 16 block is
+	 * (hopefully) going to be way more than we need */
+	dev->blocks_in_checkpt = 0;
+	dev->checkpt_max_blocks =
+	    (dev->internal_end_block - dev->internal_start_block) / 16 + 2;
+	if (!dev->checkpt_block_list)
+		dev->checkpt_block_list =
+		      kmalloc(sizeof(int) * dev->checkpt_max_blocks, GFP_NOFS);
+
+	if (!dev->checkpt_block_list)
+		return 0;
+
+	for (i = 0; i < dev->checkpt_max_blocks; i++)
+		dev->checkpt_block_list[i] = -1;
+
 	return 1;
 }
 
@@ -287,7 +305,6 @@ int yaffs2_checkpt_wr(struct yaffs_dev *dev, const void *data, int n_bytes)
 int yaffs2_checkpt_rd(struct yaffs_dev *dev, void *data, int n_bytes)
 {
 	int i = 0;
-	int ok = 1;
 	struct yaffs_ext_tags tags;
 
 	int chunk;
@@ -301,7 +318,7 @@ int yaffs2_checkpt_rd(struct yaffs_dev *dev, void *data, int n_bytes)
 	if (dev->checkpt_open_write)
 		return -1;
 
-	while (i < n_bytes && ok) {
+	while (i < n_bytes) {
 
 		if (dev->checkpt_byte_offs < 0 ||
 		    dev->checkpt_byte_offs >= dev->data_bytes_per_chunk) {
@@ -311,38 +328,40 @@ int yaffs2_checkpt_rd(struct yaffs_dev *dev, void *data, int n_bytes)
 				dev->checkpt_cur_chunk = 0;
 			}
 
+			/* Bail out if we can't find a checpoint block */
 			if (dev->checkpt_cur_block < 0)
-				ok = 0;
-			else {
-				chunk = dev->checkpt_cur_block *
-				    dev->param.chunks_per_block +
-				    dev->checkpt_cur_chunk;
+				break;
 
-				realigned_chunk = chunk - dev->chunk_offset;
+			chunk = dev->checkpt_cur_block *
+			    dev->param.chunks_per_block +
+			    dev->checkpt_cur_chunk;
 
-				dev->n_page_reads++;
+			offset_chunk = apply_chunk_offset(dev, chunk);
+			dev->n_page_reads++;
 
-				/* read in the next chunk */
-				dev->param.read_chunk_tags_fn(dev,
-							      realigned_chunk,
-							      dev->
-							      checkpt_buffer,
-							      &tags);
+			/* Read in the next chunk */
+			dev->tagger.read_chunk_tags_fn(dev,
+						offset_chunk,
+						dev->checkpt_buffer,
+						&tags);
 
-				if (tags.chunk_id != (dev->checkpt_page_seq + 1)
-				    || tags.ecc_result > YAFFS_ECC_RESULT_FIXED
-				    || tags.seq_number !=
-				    YAFFS_SEQUENCE_CHECKPOINT_DATA)
-					ok = 0;
+			/* Bail out if the chunk is corrupted. */
+			if (tags.chunk_id != (dev->checkpt_page_seq + 1) ||
+			    tags.ecc_result > YAFFS_ECC_RESULT_FIXED ||
+			    tags.seq_number != YAFFS_SEQUENCE_CHECKPOINT_DATA)
+				break;
 
-				dev->checkpt_byte_offs = 0;
-				dev->checkpt_page_seq++;
-				dev->checkpt_cur_chunk++;
+			/* Bail out if it is not a checkpoint chunk. */
+			if(!yaffs2_checkpt_check_chunk_hdr(dev))
+				break;
 
-				if (dev->checkpt_cur_chunk >=
-				    dev->param.chunks_per_block)
-					dev->checkpt_cur_block = -1;
-			}
+			dev->checkpt_page_seq++;
+			dev->checkpt_cur_chunk++;
+
+			if (dev->checkpt_cur_chunk >=
+					dev->param.chunks_per_block)
+				dev->checkpt_cur_block = -1;
+
 		}
 
 		if (ok) {
@@ -357,7 +376,7 @@ int yaffs2_checkpt_rd(struct yaffs_dev *dev, void *data, int n_bytes)
 		}
 	}
 
-	return i;
+	return i; /* Number of bytes read */
 }
 
 int yaffs_checkpt_close(struct yaffs_dev *dev)
@@ -382,8 +401,6 @@ int yaffs_checkpt_close(struct yaffs_dev *dev)
 				/* Todo this looks odd... */
 			}
 		}
-		kfree(dev->checkpt_block_list);
-		dev->checkpt_block_list = NULL;
 	}
 
 	dev->n_free_chunks -=
@@ -393,14 +410,10 @@ int yaffs_checkpt_close(struct yaffs_dev *dev)
 	yaffs_trace(YAFFS_TRACE_CHECKPOINT,"checkpoint byte count %d",
 		dev->checkpt_byte_count);
 
-	if (dev->checkpt_buffer) {
-		/* free the buffer */
-		kfree(dev->checkpt_buffer);
-		dev->checkpt_buffer = NULL;
+	if (dev->checkpt_buffer)
 		return 1;
-	} else {
+	else
 		return 0;
-        }
 }
 
 int yaffs2_checkpt_invalidate_stream(struct yaffs_dev *dev)

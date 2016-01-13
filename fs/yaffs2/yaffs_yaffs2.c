@@ -966,9 +966,7 @@ int yaffs2_scan_backwards(struct yaffs_dev *dev)
 	int chunk;
 	int result;
 	int c;
-	int deleted;
-	enum yaffs_block_state state;
-	struct yaffs_obj *hard_list = NULL;
+	LIST_HEAD(hard_list);
 	struct yaffs_block_info *bi;
 	u32 seq_number;
 	struct yaffs_obj_hdr *oh;
