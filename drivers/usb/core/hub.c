@@ -2396,7 +2396,7 @@ static int hub_port_reset(struct usb_hub *hub, int port1,
 			if (!hub_is_superspeed(hub->hdev))
 				goto done;
 
-            clear_port_feature(hub->hdev, port1,
+            		clear_port_feature(hub->hdev, port1,
 					USB_PORT_FEAT_C_BH_PORT_RESET);
 			clear_port_feature(hub->hdev, port1,
 					USB_PORT_FEAT_C_PORT_LINK_STATE);
@@ -3172,7 +3172,6 @@ hub_port_init (struct usb_hub *hub, struct usb_device *udev, int port1,
 	const char		*speed;
 	int			devnum = udev->devnum;
 
-	dump_stack();
 	/* root hub ports have a slightly longer reset period
 	 * (from USB 2.0 spec, section 7.1.7.5)
 	 */
