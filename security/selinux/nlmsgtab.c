@@ -78,8 +78,9 @@ static struct nlmsg_perm nlmsg_firewall_perms[] =
 
 static struct nlmsg_perm nlmsg_tcpdiag_perms[] =
 {
-	{ TCPDIAG_GETSOCK,	NETLINK_TCPDIAG_SOCKET__NLMSG_READ },
-	{ DCCPDIAG_GETSOCK,	NETLINK_TCPDIAG_SOCKET__NLMSG_READ },
+	{ TCPDIAG_GETSOCK,		NETLINK_TCPDIAG_SOCKET__NLMSG_READ },
+	{ DCCPDIAG_GETSOCK,		NETLINK_TCPDIAG_SOCKET__NLMSG_READ },
+	{ SOCK_DESTROY_BACKPORT,	NETLINK_TCPDIAG_SOCKET__NLMSG_WRITE },
 };
 
 static struct nlmsg_perm nlmsg_xfrm_perms[] =
