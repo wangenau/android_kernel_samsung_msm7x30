@@ -2963,7 +2963,7 @@ static struct platform_driver msm_batt_driver = {
 		   },
 };
 
-static int __devinit msm_batt_init_rpc(void)
+static int msm_batt_init_rpc(void)
 {
 	int rc;
 
