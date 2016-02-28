@@ -642,9 +642,7 @@ void cond_compute_av(struct avtab *ctab, struct avtab_key *key, struct av_decisi
 			avd->auditdeny &= node->datum.data;
 		if ((u16)(AVTAB_AUDITALLOW|AVTAB_ENABLED) ==
 		    (node->key.specified & (AVTAB_AUDITALLOW|AVTAB_ENABLED)))
-			avd->auditallow |= node->datum.u.data;
-		if (xperms && (node->key.specified & AVTAB_ENABLED) &&
-				(node->key.specified & AVTAB_XPERMS))
-			services_compute_xperms_drivers(xperms, node);
+			avd->auditallow |= node->datum.data;
+	}
 	return;
 }
