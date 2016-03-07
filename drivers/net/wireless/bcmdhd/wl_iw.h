@@ -33,13 +33,13 @@
 #include <proto/ethernet.h>
 #include <wlioctl.h>
 
-#define WL_SCAN_PARAMS_SSID_MAX 	10
+#define WL_SCAN_PARAMS_SSID_MAX		10
 #define GET_SSID			"SSID="
 #define GET_CHANNEL			"CH="
-#define GET_NPROBE 			"NPROBE="
-#define GET_ACTIVE_ASSOC_DWELL  	"ACTIVE="
-#define GET_PASSIVE_ASSOC_DWELL  	"PASSIVE="
-#define GET_HOME_DWELL  		"HOME="
+#define GET_NPROBE			"NPROBE="
+#define GET_ACTIVE_ASSOC_DWELL		"ACTIVE="
+#define GET_PASSIVE_ASSOC_DWELL		"PASSIVE="
+#define GET_HOME_DWELL			"HOME="
 #define GET_SCAN_TYPE			"TYPE="
 
 #define BAND_GET_CMD				"GETBAND"
@@ -52,14 +52,14 @@
 #define PNOSETUP_SET_CMD			"PNOSETUP " /* TLV command has extra end space */
 #define PNOENABLE_SET_CMD			"PNOFORCE"
 #define PNODEBUG_SET_CMD			"PNODEBUG"
-#define TXPOWER_SET_CMD			"TXPOWER"
+#define TXPOWER_SET_CMD				"TXPOWER"
 
 #define MAC2STR(a) (a)[0], (a)[1], (a)[2], (a)[3], (a)[4], (a)[5]
 #define MACSTR "%02x:%02x:%02x:%02x:%02x:%02x"
 
 /* Structure to keep global parameters */
 typedef struct wl_iw_extra_params {
-	int 	target_channel; /* target channel */
+	int	target_channel; /* target channel */
 } wl_iw_extra_params_t;
 
 struct cntry_locales_custom {
@@ -69,29 +69,29 @@ struct cntry_locales_custom {
 };
 /* ============================================== */
 /* Defines from wlc_pub.h */
-#define	WL_IW_RSSI_MINVAL	-200	/* Low value, e.g. for forcing roam */
-#define	WL_IW_RSSI_NO_SIGNAL	-98	/* NDIS RSSI link quality cutoffs */
-#define	WL_IW_RSSI_VERY_LOW	-87	/* Very low quality cutoffs */
-#define	WL_IW_RSSI_LOW		-77	/* Low quality cutoffs */
-#define	WL_IW_RSSI_GOOD		-75	/* Good quality cutoffs */
-#define	WL_IW_RSSI_VERY_GOOD	-65	/* Very good quality cutoffs */
-#define	WL_IW_RSSI_EXCELLENT	-64	/* Excellent quality cutoffs */
-#define	WL_IW_RSSI_INVALID	  0	/* invalid RSSI value */
-#define MAX_WX_STRING 		 87
+#define WL_IW_RSSI_MINVAL	-200	/* Low value, e.g. for forcing roam */
+#define WL_IW_RSSI_NO_SIGNAL	 -91	/* NDIS RSSI link quality cutoffs */
+#define WL_IW_RSSI_VERY_LOW	 -80	/* Very low quality cutoffs */
+#define WL_IW_RSSI_LOW		 -70	/* Low quality cutoffs */
+#define WL_IW_RSSI_GOOD		 -68	/* Good quality cutoffs */
+#define WL_IW_RSSI_VERY_GOOD	 -58	/* Very good quality cutoffs */
+#define WL_IW_RSSI_EXCELLENT	 -57	/* Excellent quality cutoffs */
+#define WL_IW_RSSI_INVALID	   0	/* invalid RSSI value */
+#define MAX_WX_STRING 80
 #define SSID_FMT_BUF_LEN	((4 * 32) + 1)
 #define isprint(c) bcm_isprint(c)
 #define WL_IW_SET_ACTIVE_SCAN	(SIOCIWFIRSTPRIV+1)
-#define WL_IW_GET_RSSI			(SIOCIWFIRSTPRIV+3)
+#define WL_IW_GET_RSSI		(SIOCIWFIRSTPRIV+3)
 #define WL_IW_SET_PASSIVE_SCAN	(SIOCIWFIRSTPRIV+5)
 #define WL_IW_GET_LINK_SPEED	(SIOCIWFIRSTPRIV+7)
 #define WL_IW_GET_CURR_MACADDR	(SIOCIWFIRSTPRIV+9)
-#define WL_IW_SET_STOP				(SIOCIWFIRSTPRIV+11)
-#define WL_IW_SET_START			(SIOCIWFIRSTPRIV+13)
+#define WL_IW_SET_STOP		(SIOCIWFIRSTPRIV+11)
+#define WL_IW_SET_START		(SIOCIWFIRSTPRIV+13)
 
-#define 		G_SCAN_RESULTS 8*1024
-#define 		WE_ADD_EVENT_FIX	0x80
-#define          G_WLAN_SET_ON	0
-#define          G_WLAN_SET_OFF	1
+#define          G_SCAN_RESULTS		8*1024
+#define          WE_ADD_EVENT_FIX	0x80
+#define          G_WLAN_SET_ON		0
+#define          G_WLAN_SET_OFF		1
 
 
 typedef struct wl_iw {
@@ -102,7 +102,7 @@ typedef struct wl_iw {
 	int spy_num;
 	uint32 pwsec;			/* pairwise wsec setting */
 	uint32 gwsec;			/* group wsec setting  */
-	bool privacy_invoked; 		/* IW_AUTH_PRIVACY_INVOKED setting */
+	bool privacy_invoked;		/* IW_AUTH_PRIVACY_INVOKED setting */
 	struct ether_addr spy_addr[IW_MAX_SPY];
 	struct iw_quality spy_qual[IW_MAX_SPY];
 	void  *wlinfo;
@@ -130,17 +130,17 @@ int wl_iw_send_priv_event(struct net_device *dev, char *flag);
 
 void wl_iw_detach(void);
 
-#define CSCAN_COMMAND				"CSCAN "
-#define CSCAN_TLV_PREFIX 			'S'
-#define CSCAN_TLV_VERSION			1
-#define CSCAN_TLV_SUBVERSION			0
-#define CSCAN_TLV_TYPE_SSID_IE          'S'
-#define CSCAN_TLV_TYPE_CHANNEL_IE   'C'
-#define CSCAN_TLV_TYPE_NPROBE_IE     'N'
-#define CSCAN_TLV_TYPE_ACTIVE_IE      'A'
-#define CSCAN_TLV_TYPE_PASSIVE_IE    'P'
-#define CSCAN_TLV_TYPE_HOME_IE         'H'
-#define CSCAN_TLV_TYPE_STYPE_IE        'T'
+#define CSCAN_COMMAND			"CSCAN "
+#define CSCAN_TLV_PREFIX 		'S'
+#define CSCAN_TLV_VERSION		1
+#define CSCAN_TLV_SUBVERSION		0
+#define CSCAN_TLV_TYPE_SSID_IE		'S'
+#define CSCAN_TLV_TYPE_CHANNEL_IE	'C'
+#define CSCAN_TLV_TYPE_NPROBE_IE	'N'
+#define CSCAN_TLV_TYPE_ACTIVE_IE	'A'
+#define CSCAN_TLV_TYPE_PASSIVE_IE	'P'
+#define CSCAN_TLV_TYPE_HOME_IE		'H'
+#define CSCAN_TLV_TYPE_STYPE_IE		'T'
 
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 27)
 #define IWE_STREAM_ADD_EVENT(info, stream, ends, iwe, extra) \
