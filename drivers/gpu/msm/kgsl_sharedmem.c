@@ -538,6 +538,9 @@ _kgsl_sharedmem_page_alloc(struct kgsl_memdesc *memdesc,
 	pgprot_t page_prot = pgprot_writecombine(PAGE_KERNEL);
 	void *ptr;
 	unsigned int align;
+	size = PAGE_ALIGN(size);
+	if (size == 0 || size > UINT_MAX)
+		return -EINVAL;
 
 	size = PAGE_ALIGN(size);
 	if (size == 0 || size > UINT_MAX)
