@@ -243,12 +243,10 @@ CONFIG_SHELL := $(shell if [ -x "$$BASH" ]; then echo $$BASH; \
 	  else if [ -x /bin/bash ]; then echo /bin/bash; \
 	  else echo sh; fi ; fi)
 
-GRAPHITE = -fgraphite -fgraphite-identity -floop-interchange -ftree-loop-distribution -floop-strip-mine -floop-block -ftree-loop-linear -floop-nest-optimize
-
 HOSTCC       = gcc
 HOSTCXX      = g++
-HOSTCFLAGS   = -Wall -Wmissing-prototypes -Wstrict-prototypes -Ofast -fgcse-las -fno-tree-vectorize -fomit-frame-pointer -pthread $(GRAPHITE)
-HOSTCXXFLAGS = -DNDEBUG -pipe -Ofast -fno-tree-vectorize -Wno-unused $(GRAPHITE)
+HOSTCFLAGS   = -Wall -Wmissing-prototypes -Wstrict-prototypes -Ofast -fgcse-las -fno-tree-vectorize -fomit-frame-pointer -pthread
+HOSTCXXFLAGS = -pipe -Ofast -fno-tree-vectorize -Wno-unused
 
 # Decide whether to build built-in, modular, or both.
 # Normally, just do built-in.
@@ -351,7 +349,7 @@ CHECKFLAGS     := -D__linux__ -Dlinux -D__STDC__ -Dunix -D__unix__ \
                   -Wbitwise -Wno-return-void $(CF)
 OPTIMIZATION_FLAGS = -march=armv7-a -mcpu=cortex-a8 -mtune=cortex-a8 -mfpu=neon \
                      -ffast-math -fsingle-precision-constant \
-                     -fgcse-lm -fgcse-sm -fsched-spec-load -fforce-addr
+                     -fgcse-lm -fgcse-sm -fgcse-las -fsched-spec-load -fforce-addr -munaligned-access 
 CFLAGS_MODULE   = $(OPTIMIZATION_FLAGS)
 AFLAGS_MODULE   = $(OPTIMIZATION_FLAGS)
 LDFLAGS_MODULE  =
@@ -369,14 +367,11 @@ LINUXINCLUDE    := -I$(srctree)/arch/$(hdr-arch)/include \
 
 KBUILD_CPPFLAGS := -D__KERNEL__
 
-KBUILD_CFLAGS   := -Wall -DNDEBUG -Wundef -Wstrict-prototypes -Wno-trigraphs \
+KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
                    -fno-strict-aliasing -fno-common \
                    -Werror-implicit-function-declaration \
                    -Wno-format-security \
-                   -fno-delete-null-pointer-checks \
-                   -march=armv7-a -mcpu=cortex-a8 -mtune=cortex-a8 -mfpu=neon \
-                   -ffast-math -fsingle-precision-constant \
-                   -fgcse-lm -fgcse-sm -fsched-spec-load -fforce-addr
+                   -fno-delete-null-pointer-checks
 KBUILD_AFLAGS_KERNEL :=
 KBUILD_CFLAGS_KERNEL :=
 KBUILD_AFLAGS   := -D__ASSEMBLY__
