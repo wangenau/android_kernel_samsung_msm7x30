@@ -97,7 +97,7 @@ config IOSCHED_SIO
 config IOSCHED_TEST
 	tristate "Test I/O scheduler"
 	depends on DEBUG_FS
-	default m
+	default n
 	---help---
 	  The test I/O scheduler is a duplicate of the noop scheduler with
 	  addition of test utlity.
