@@ -190,7 +190,7 @@ static struct attribute_group kernel_attr_group = {
 };
 
 
-static unsigned int Lgentle_fair_sleepers = 1;
+static unsigned int Lgentle_fair_sleepers = 0;
 extern void relay_gfs(unsigned int gfs);
 
 static ssize_t gentle_fair_sleepers_show(struct kobject *kobj, struct kobj_attribute *attr, char *buf)
@@ -222,7 +222,7 @@ static struct attribute_group gentle_fair_sleepers_attr_group = {
 .attrs = gentle_fair_sleepers_attrs,
 };
 
-/* Initialize fast charge sysfs folder */
+/* Initialize gentle fair sleepers sysfs folder */
 static struct kobject *gentle_fair_sleepers_kobj;
 
 static int __init ksysfs_init(void)
