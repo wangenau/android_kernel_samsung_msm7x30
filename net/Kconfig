@@ -87,7 +87,7 @@ config ANDROID_PARANOID_NETWORK
 
 config NET_ACTIVITY_STATS
 	bool "Network activity statistics tracking"
-	default y
+	default n
 	help
 	 Network activity statistics are useful for tracking wireless
 	 modem activity on 2G, 3G, 4G wireless networks. Counts number of
