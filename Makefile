@@ -247,7 +247,7 @@ GRAPHITE = -fgraphite -fgraphite-identity -floop-interchange -ftree-loop-distrib
 
 HOSTCC       = gcc
 HOSTCXX      = g++
-HOSTCFLAGS   = -Wall -Wmissing-prototypes -Wstrict-prototypes -Ofast -fgcse-las -fno-tree-vectorize -fomit-frame-pointer -pthread
+HOSTCFLAGS   = -Wall -Wmissing-prototypes -Wstrict-prototypes -Ofast -fgcse-las -fno-tree-vectorize -fomit-frame-pointer -pthread $(GRAPHITE)
 HOSTCXXFLAGS = -pipe -Ofast -fno-tree-vectorize -Wno-unused $(GRAPHITE)
 
 # Decide whether to build built-in, modular, or both.
