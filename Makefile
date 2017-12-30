@@ -243,11 +243,11 @@ CONFIG_SHELL := $(shell if [ -x "$$BASH" ]; then echo $$BASH; \
 	  else if [ -x /bin/bash ]; then echo /bin/bash; \
 	  else echo sh; fi ; fi)
 
-GRAPHITE = -fgraphite -fgraphite-identity -floop-interchange -ftree-loop-distribution -floop-strip-mine -floop-block -ftree-loop-linear -floop-nest-optimize
+GRAPHITE = -fgraphite-identity -floop-strip-mine -floop-block -ftree-loop-linear -floop-nest-optimize -floop-parallelize-all
 
 HOSTCC       = gcc
 HOSTCXX      = g++
-HOSTCFLAGS   = -Wall -Wmissing-prototypes -Wstrict-prototypes -Ofast -fno-tree-vectorize -fomit-frame-pointer $(GRAPHITE)
+HOSTCFLAGS   = -Wall -Wmissing-prototypes -Wstrict-prototypes -Ofast -fno-tree-vectorize $(GRAPHITE)
 HOSTCXXFLAGS = -Ofast -fno-tree-vectorize $(GRAPHITE)
 
 # Decide whether to build built-in, modular, or both.
