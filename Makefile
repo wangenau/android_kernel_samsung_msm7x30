@@ -247,8 +247,8 @@ GRAPHITE = -fgraphite -fgraphite-identity -floop-interchange -ftree-loop-distrib
 
 HOSTCC       = gcc
 HOSTCXX      = g++
-HOSTCFLAGS   = -Wall -Wmissing-prototypes -Wstrict-prototypes -Ofast -fgcse-las -fno-tree-vectorize -fomit-frame-pointer -pthread $(GRAPHITE)
-HOSTCXXFLAGS = -pipe -Ofast -fno-tree-vectorize -Wno-unused $(GRAPHITE)
+HOSTCFLAGS   = -Wall -Wmissing-prototypes -Wstrict-prototypes -Ofast -fno-tree-vectorize -fomit-frame-pointer $(GRAPHITE)
+HOSTCXXFLAGS = -Ofast -fno-tree-vectorize $(GRAPHITE)
 
 # Decide whether to build built-in, modular, or both.
 # Normally, just do built-in.
@@ -349,9 +349,9 @@ CHECK		= sparse
 
 CHECKFLAGS     := -D__linux__ -Dlinux -D__STDC__ -Dunix -D__unix__ \
                   -Wbitwise -Wno-return-void $(CF)
-OPTIMIZATION_FLAGS = -march=armv7-a -mcpu=cortex-a8 -mtune=cortex-a8 -mfpu=neon \
+OPTIMIZATION_FLAGS = -march=armv7-a -mcpu=cortex-a8 -mtune=cortex-a8 -mfpu=neon -mfloat-abi=softfp \
                      -ffast-math -fsingle-precision-constant \
-                     -fgcse-lm -fgcse-sm -fgcse-las -fsched-spec-load -fforce-addr -munaligned-access 
+                     -fgcse-lm -fgcse-sm -fsched-spec-load -fforce-addr
 CFLAGS_MODULE   = $(OPTIMIZATION_FLAGS)
 AFLAGS_MODULE   = $(OPTIMIZATION_FLAGS)
 LDFLAGS_MODULE  =
@@ -575,7 +575,7 @@ ifdef CONFIG_CC_OPTIMIZE_MORE
 KBUILD_CFLAGS += -O3 -fmodulo-sched -fmodulo-sched-allow-regmoves -fno-tree-vectorize -fno-inline-functions
 endif
 ifdef CONFIG_CC_OPTIMIZE_FAST
-KBUILD_CFLAGS += -Ofast -fmodulo-sched -fmodulo-sched-allow-regmoves -fno-tree-vectorize -fivopts -fno-inline-functions
+KBUILD_CFLAGS += -Ofast -fmodulo-sched -fmodulo-sched-allow-regmoves -fno-tree-vectorize -fno-inline-functions
 endif
 
 include $(srctree)/arch/$(SRCARCH)/Makefile
