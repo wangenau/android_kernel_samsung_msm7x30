@@ -96,30 +96,30 @@
 #define YAS_BMA222_COMP_TARGET_OFFSET_X__POS        1
 #define YAS_BMA222_COMP_TARGET_OFFSET_X__LEN        2
 #define YAS_BMA222_COMP_TARGET_OFFSET_X__MSK        0x06
-#define YAS_BMA222_COMP_TARGET_OFFSET_X__REG                       0x37
+#define YAS_BMA222_COMP_TARGET_OFFSET_X__REG        0x37
 #define YAS_BMA222_COMP_TARGET_OFFSET_Y__POS        3
 #define YAS_BMA222_COMP_TARGET_OFFSET_Y__LEN        2
 #define YAS_BMA222_COMP_TARGET_OFFSET_Y__MSK        0x18
-#define YAS_BMA222_COMP_TARGET_OFFSET_Y__REG                       0x37
+#define YAS_BMA222_COMP_TARGET_OFFSET_Y__REG        0x37
 #define YAS_BMA222_COMP_TARGET_OFFSET_Z__POS        5
 #define YAS_BMA222_COMP_TARGET_OFFSET_Z__LEN        2
 #define YAS_BMA222_COMP_TARGET_OFFSET_Z__MSK        0x60
-#define YAS_BMA222_COMP_TARGET_OFFSET_Z__REG                       0x37
+#define YAS_BMA222_COMP_TARGET_OFFSET_Z__REG        0x37
 #define YAS_BMA222_OFFSET_FILT_X_REG                0x38
 #define YAS_BMA222_OFFSET_FILT_Y_REG                0x39
 #define YAS_BMA222_OFFSET_FILT_Z_REG                0x3A
 #define YAS_BMA222_UNLOCK_EE_WRITE_SETTING__POS     0
 #define YAS_BMA222_UNLOCK_EE_WRITE_SETTING__LEN     1
 #define YAS_BMA222_UNLOCK_EE_WRITE_SETTING__MSK     0x01
-#define YAS_BMA222_UNLOCK_EE_WRITE_SETTING__REG               0x33
+#define YAS_BMA222_UNLOCK_EE_WRITE_SETTING__REG     0x33
 #define YAS_BMA222_START_EE_WRITE_SETTING__POS      1
 #define YAS_BMA222_START_EE_WRITE_SETTING__LEN      1
 #define YAS_BMA222_START_EE_WRITE_SETTING__MSK      0x02
-#define YAS_BMA222_START_EE_WRITE_SETTING__REG                 0x33
+#define YAS_BMA222_START_EE_WRITE_SETTING__REG      0x33
 #define YAS_BMA222_EE_WRITE_SETTING_S__POS          2
 #define YAS_BMA222_EE_WRITE_SETTING_S__LEN          1
 #define YAS_BMA222_EE_WRITE_SETTING_S__MSK          0x04
-#define YAS_BMA222_EEPROM_CTRL_REG                                      0x33
+#define YAS_BMA222_EEPROM_CTRL_REG                  0x33
 #define YAS_BMA222_EN_FAST_COMP__POS                5
 #define YAS_BMA222_EN_FAST_COMP__LEN                2
 #define YAS_BMA222_EN_FAST_COMP__MSK                0x60
@@ -839,33 +839,26 @@ static int yas_bma222_measure(int *out_data, int *out_raw)
 }
 static int yas_bma222_set_calibration(signed char* data_cal)
 {
-  // for debug
+
     printk("[diony] yas_bma222_set_calibration!!!! .\n");
     signed char tmp;
     data_cal[0] = data_cal[1] = 0;
     data_cal[2]=1;
-    //yas_bma222_write_reg_byte(YAS_BMA222_SOFT_RESET_REG, YAS_BMA222_SOFT_RESET_VAL);
-    //yas_bma222_msleep(1);
-     /* Set axes range*/
-    //yas_bma222_update_bits(YAS_BMA222_RANGE, YAS_BMA222_RANGE_2G);
-    //yas_bma222_set_delay(acc_data.delay);
-    //yas_bma222_update_bits(YAS_BMA222_DATA_ENBL, 1);
 #ifdef DEBUG
 	printk(KERN_INFO "%s\n",__FUNCTION__);
     printk(KERN_INFO "data are %d,%d,%d\n",data_cal[0],data_cal[1],data_cal[2]);
     printk(KERN_INFO "start x axis fast calibration\n");
 #endif
     yas_bma222_set_offset_target_x(data_cal[0]);
-    tmp=1;//selet x axis in cal_trigger
+    tmp=1; /*selet x axis in cal_trigger*/
     yas_bma222_set_cal_trigger(tmp);
-    do
-    {
+    do {
         mdelay(2);
        yas_bma222_get_cal_ready(&tmp);
 #ifdef DEBUG
         printk(KERN_INFO "wait 2ms and got cal ready flag is %d\n",tmp);
 #endif  
-    }while(tmp==0);
+    } while(tmp==0);
 	
 #ifdef DEBUG
    yas_bma222_get_offset_filt_x(&tmp);
@@ -874,20 +867,15 @@ static int yas_bma222_set_calibration(signed char* data_cal)
     printk(KERN_INFO "start y axis fast calibration\n");
 #endif
     yas_bma222_set_offset_target_y(data_cal[1]);
-    //bma222_get_offset_target_y(&tmp);
-    //printk(KERN_INFO "y offset is %d\n",tmp);
-    //bma222_get_offset_filt_y(&tmp);
-    //printk(KERN_INFO "y offset filt is %d\n",tmp);
-    tmp=2;//selet y axis in cal_trigger
+    tmp=2; /*selet y axis in cal_trigger*/
     yas_bma222_set_cal_trigger(tmp);
-    do
-    {
+    do {
         mdelay(2); 
         yas_bma222_get_cal_ready(&tmp);
 #ifdef DEBUG
         printk(KERN_INFO "wait 2ms and got cal ready flag is %d\n",tmp);
 #endif  
-    }while(tmp==0);
+    } while(tmp==0);
 	
 #ifdef DEBUG
     yas_bma222_get_offset_filt_y(&tmp);
@@ -897,20 +885,15 @@ static int yas_bma222_set_calibration(signed char* data_cal)
 #endif
     yas_bma222_set_offset_target_z(data_cal[2]);
 
-    //bma222_get_offset_target_z(&tmp);
-    //printk(KERN_INFO "z offset is %d\n",tmp);
-    //bma222_get_offset_filt_z(&tmp);
-    //printk(KERN_INFO "z offset filt is %d\n",tmp);
-    tmp=3;//selet z axis in cal_trigger
+    tmp=3; /*selet z axis in cal_trigger*/
     yas_bma222_set_cal_trigger(tmp);
-    do
-    {
+    do {
         mdelay(2);   //for test 
         yas_bma222_get_cal_ready(&tmp);
 #ifdef DEBUG
         printk(KERN_INFO "wait 2ms and got cal ready flag is %d\n",tmp);
 #endif  
-    }while(tmp==0);
+    } while(tmp==0);
 	
 #ifdef DEBUG
     yas_bma222_get_offset_filt_z(&tmp);
@@ -921,14 +904,13 @@ static int yas_bma222_set_calibration(signed char* data_cal)
     tmp=1;//unlock eeprom
     yas_bma222_set_ee_w(tmp);
     yas_bma222_set_ee_prog_trig();//update eeprom
-    do
-    {
+    do {
         mdelay(2); 
         yas_bma222_get_eeprom_writing_status(&tmp);
 #ifdef DEBUG
         printk(KERN_INFO "wait 2ms and got eeprom writing status is %d\n",tmp);
 #endif  
-    }while(tmp==0);
+    } while(tmp==0);
 	
     tmp=0;//lock eemprom
     yas_bma222_set_ee_w(tmp);
@@ -944,15 +926,13 @@ int yas_bma222_set_offset_target_x(unsigned char offsettarget)
    /* Check initialize */
     if (acc_data.initialize == 0) {
         return YAS_ERROR_NOT_INITIALIZED;
-    }
-   else
-      {
+    } else {
       err = yas_bma222_read_reg(YAS_BMA222_COMP_TARGET_OFFSET_X__REG, &data, 1);
 	  printk("[diony] yas_bma222_set_offset_target_data  = %d .  (read)  \n",data);
       data = YAS_BMA222_SET_BITSLICE(data, YAS_BMA222_COMP_TARGET_OFFSET_X, offsettarget );
 	  printk("[diony] yas_bma222_set_offset_target_data  = %d .  (after BITSLICE,write)  \n",data);
       err =yas_bma222_write_reg(YAS_BMA222_COMP_TARGET_OFFSET_X__REG, &data, 1);
-      }
+    }
    return err;
 }
 /* EasyCASE ) */
@@ -995,9 +975,7 @@ int yas_bma222_get_offset_target_x(unsigned char *offsettarget )
    /* Check initialize */
     if (acc_data.initialize == 0) {
         return YAS_ERROR_NOT_INITIALIZED;
-    }
-   else
-   {
+    } else {
       err = yas_bma222_read_reg(YAS_BMA222_COMP_TARGET_OFFSET_X__REG, &data, 1);
       data = YAS_BMA222_GET_BITSLICE(data,YAS_BMA222_COMP_TARGET_OFFSET_X);
       *offsettarget = data;
@@ -1040,13 +1018,11 @@ int yas_bma222_set_offset_target_y(unsigned char offsettarget)
    /* Check initialize */
     if (acc_data.initialize == 0) {
         return YAS_ERROR_NOT_INITIALIZED;
-    }
-   else
-   {
+    } else {
       err = yas_bma222_read_reg(YAS_BMA222_COMP_TARGET_OFFSET_Y__REG, &data, 1);
       data = YAS_BMA222_SET_BITSLICE(data, YAS_BMA222_COMP_TARGET_OFFSET_Y, offsettarget );
       err = yas_bma222_write_reg(YAS_BMA222_COMP_TARGET_OFFSET_Y__REG, &data, 1);
-   }
+    }
    return err;
 }
 
@@ -1086,13 +1062,11 @@ int yas_bma222_get_offset_target_y(unsigned char *offsettarget )
    /* Check initialize */
     if (acc_data.initialize == 0) {
         return YAS_ERROR_NOT_INITIALIZED;
-    }
-   else
-   {
+    } else {
       err = yas_bma222_read_reg(YAS_BMA222_COMP_TARGET_OFFSET_Y__REG, &data, 1);
       data = YAS_BMA222_GET_BITSLICE(data, YAS_BMA222_COMP_TARGET_OFFSET_Y);
       *offsettarget = data;
-   }
+    }
    return err;
 }
 /* EasyCASE ) */
@@ -1130,13 +1104,11 @@ int yas_bma222_set_offset_target_z(unsigned char offsettarget)
    /* Check initialize */
     if (acc_data.initialize == 0) {
         return YAS_ERROR_NOT_INITIALIZED;
-    }
-   else
-   {
+    } else {
        err = yas_bma222_read_reg(YAS_BMA222_COMP_TARGET_OFFSET_Z__REG, &data, 1);
       data = YAS_BMA222_SET_BITSLICE(data, YAS_BMA222_COMP_TARGET_OFFSET_Z, offsettarget );
        err = yas_bma222_write_reg(YAS_BMA222_COMP_TARGET_OFFSET_Z__REG, &data, 1);
-   }
+    }
    return err;
 }
 /* EasyCASE ) */
@@ -1174,13 +1146,11 @@ int yas_bma222_get_offset_target_z(unsigned char *offsettarget )
    /* Check initialize */
     if (acc_data.initialize == 0) {
         return YAS_ERROR_NOT_INITIALIZED;
-    }
-   else
-   {
+    } else {
       err = yas_bma222_read_reg(YAS_BMA222_COMP_TARGET_OFFSET_Z__REG, &data, 1);
       data =YAS_BMA222_GET_BITSLICE(data, YAS_BMA222_COMP_TARGET_OFFSET_Z);
       *offsettarget = data;
-   }
+    }
    return err;
 }
 
@@ -1193,9 +1163,7 @@ int yas_bma222_set_cal_trigger(unsigned char caltrigger)
       /* Check initialize */
        if (acc_data.initialize == 0) {
            return YAS_ERROR_NOT_INITIALIZED;
-      }
-	else
-	{
+        } else {
 		err = yas_bma222_read_reg(YAS_BMA222_EN_FAST_COMP__REG, &data, 1);
 		printk("[diony] yas_bma222_set_cal_trigger  data = %d .  (read)  \n",data);
 	 	data = YAS_BMA222_SET_BITSLICE(data, YAS_BMA222_EN_FAST_COMP, caltrigger );
@@ -1213,9 +1181,7 @@ int yas_bma222_get_cal_ready(unsigned char *calrdy )
       /* Check initialize */
        if (acc_data.initialize == 0) {
            return YAS_ERROR_NOT_INITIALIZED;
-      }
-	else
-	{
+        } else {
 		err = yas_bma222_read_reg(YAS_BMA222_OFFSET_CTRL_REG, &data, 1);
 		printk("[diony] yas_bma222_get_cal_ready data= %d (read) \n",data);
 		data = YAS_BMA222_GET_BITSLICE(data, YAS_BMA222_FAST_COMP_RDY_S);
@@ -1232,14 +1198,12 @@ int yas_bma222_set_offset_filt_x(unsigned char offsetfilt)
 	int err=0;
        unsigned char data;
       /* Check initialize */
-       if (acc_data.initialize == 0) {
+      if (acc_data.initialize == 0) {
            return YAS_ERROR_NOT_INITIALIZED;
-      }
-   	else
-    {
+      } else {
     	data =  offsetfilt;
     	err = yas_bma222_write_reg(YAS_BMA222_OFFSET_FILT_X_REG, &data, 1);
-    }
+      }
    	return err;
 }
 
@@ -1284,14 +1248,12 @@ int yas_bma222_get_offset_filt_x(unsigned char *offsetfilt )
 	int err=0;
        unsigned char data;
       /* Check initialize */
-       if (acc_data.initialize == 0) {
+      if (acc_data.initialize == 0) {
            return YAS_ERROR_NOT_INITIALIZED;
-      }
-   	else
-    {
+      } else {
     	data =  offsetfilt;
     	err = yas_bma222_read_reg(YAS_BMA222_OFFSET_FILT_X_REG, &data, 1);
-    }
+      }
    	return err;
 }
 /* EasyCASE ) */
@@ -1335,14 +1297,12 @@ int yas_bma222_set_offset_filt_y(unsigned char offsetfilt)
 	int err=0;
        unsigned char data;
       /* Check initialize */
-       if (acc_data.initialize == 0) {
+      if (acc_data.initialize == 0) {
            return YAS_ERROR_NOT_INITIALIZED;
-      }
-   	else
-    {
+      } else {
     	data =  offsetfilt;
     	err = yas_bma222_write_reg(YAS_BMA222_OFFSET_FILT_Y_REG, &data, 1);
-    }
+      }
    	return err;
 }
 /* EasyCASE ) */
@@ -1386,14 +1346,12 @@ int yas_bma222_get_offset_filt_y(unsigned char *offsetfilt )
 	int err=0;
        unsigned char data;
       /* Check initialize */
-       if (acc_data.initialize == 0) {
+      if (acc_data.initialize == 0) {
            return YAS_ERROR_NOT_INITIALIZED;
-      }
-   	else
-    {
+      } else {
     	data =  offsetfilt;
     	err = yas_bma222_read_reg(YAS_BMA222_OFFSET_FILT_Y_REG, &data, 1);
-    }
+      }
    	return err;
 }
 /* EasyCASE ) */
@@ -1437,14 +1395,12 @@ int yas_bma222_set_offset_filt_z(unsigned char offsetfilt)
 	int err=0;
        unsigned char data;
       /* Check initialize */
-       if (acc_data.initialize == 0) {
+      if (acc_data.initialize == 0) {
            return YAS_ERROR_NOT_INITIALIZED;
-      }
-   	else
-    {
+      } else {
     	data =  offsetfilt;
     	err = yas_bma222_write_reg(YAS_BMA222_OFFSET_FILT_Z_REG, &data, 1);
-    }
+      }
    	return err;
 }
 /* EasyCASE ) */
@@ -1488,14 +1444,12 @@ int yas_bma222_get_offset_filt_z(unsigned char *offsetfilt )
 	int err=0;
        unsigned char data;
       /* Check initialize */
-       if (acc_data.initialize == 0) {
+      if (acc_data.initialize == 0) {
            return YAS_ERROR_NOT_INITIALIZED;
-      }
-   	else
-    {
+      } else {
     	data =  offsetfilt;
     	err = yas_bma222_read_reg(YAS_BMA222_OFFSET_FILT_Z_REG, &data, 1);
-    }
+      }
    	return err;
 }
 int yas_bma222_set_ee_w(unsigned char eew)
@@ -1503,34 +1457,30 @@ int yas_bma222_set_ee_w(unsigned char eew)
 	int err=0;
        unsigned char data;
       /* Check initialize */
-       if (acc_data.initialize == 0) {
+      if (acc_data.initialize == 0) {
            return YAS_ERROR_NOT_INITIALIZED;
-      }
-	else
-	{
+      } else {
 		err =  yas_bma222_read_reg(YAS_BMA222_UNLOCK_EE_WRITE_SETTING__REG, &data, 1);
 		data = YAS_BMA222_SET_BITSLICE(data, YAS_BMA222_UNLOCK_EE_WRITE_SETTING, eew);
 		err =  yas_bma222_write_reg(YAS_BMA222_UNLOCK_EE_WRITE_SETTING__REG, &data, 1);
-	}
+      }
 	return err;
 }
 
 int yas_bma222_set_ee_prog_trig(void)
 {
 	int err=0;
-       unsigned char data;
-	 unsigned char eeprog;
+        unsigned char data;
+	unsigned char eeprog;
 	eeprog = 0x01;
       /* Check initialize */
-       if (acc_data.initialize == 0) {
+      if (acc_data.initialize == 0) {
            return YAS_ERROR_NOT_INITIALIZED;
-      }
-	else
-	{
+      } else {
 		err =  yas_bma222_read_reg(YAS_BMA222_START_EE_WRITE_SETTING__REG, &data, 1);
 		data = YAS_BMA222_SET_BITSLICE(data, YAS_BMA222_START_EE_WRITE_SETTING, eeprog);
 		err =  yas_bma222_write_reg(YAS_BMA222_START_EE_WRITE_SETTING__REG, &data, 1);
-	}
+      }
 	return err;
 }
 
@@ -1539,15 +1489,13 @@ int yas_bma222_get_eeprom_writing_status(unsigned char *eewrite )
 	int err=0;
        unsigned char data;
       /* Check initialize */
-       if (acc_data.initialize == 0) {
+      if (acc_data.initialize == 0) {
            return YAS_ERROR_NOT_INITIALIZED;
-      }
-	else
-	{
+      } else {
 		err =  yas_bma222_read_reg(YAS_BMA222_EEPROM_CTRL_REG, &data, 1);
 		data = YAS_BMA222_GET_BITSLICE(data, YAS_BMA222_EE_WRITE_SETTING_S);
 		*eewrite = data;
-	}
+      }
 	return err;
 }
 
