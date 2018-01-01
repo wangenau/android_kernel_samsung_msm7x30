@@ -335,9 +335,7 @@ static int pm8058_gpios_init(void)
 			return rc;
 		}
 		gpio_set_value_cansleep(sdc4_en.gpio, 0);
-	}
-	/* FFA -> gpio_25 controls vdd of sdcc4 */
-	else {
+	} else { /* FFA -> gpio_25 controls vdd of sdcc4 */
 		/* SCD4 gpio_25 */
 		rc = pm8xxx_gpio_config(sdc4_pwr_en.gpio, &sdc4_pwr_en.config);
 		if (rc) {
@@ -1578,8 +1576,9 @@ void msm_snddev_tx_route_config(void)
 			printk(KERN_ERR
 				"%s: gpio_tlmm_config(%#x)=%d\n",
 				__func__, audio_fluid_icodec_tx_config, rc);
-		} else
+		} else {
 			gpio_set_value(85, 0);
+		}
 	}
 }
 
@@ -1789,8 +1788,9 @@ int mi2s_config_data_gpio(u32 direction, u8 sd_line_mask)
 					 (mi2s_rx_data_lines_gpios + i)->label);
 					mi2s_unconfig_data_gpio(DIR_RX,
 						sd_config_done_mask);
-				} else
+				} else {
 					sd_config_done_mask |= (1 << i);
+				}
 			}
 			sd_line_mask = sd_line_mask >> 1;
 			i++;
@@ -3413,8 +3413,9 @@ static int msm_hsusb_ldo_init(int init)
 		if (IS_ERR(vreg_3p3))
 			return PTR_ERR(vreg_3p3);
 		regulator_set_voltage(vreg_3p3, def_vol, def_vol);
-	} else
+	} else {
 		regulator_put(vreg_3p3);
+	}
 
 	return 0;
 }
@@ -3562,10 +3563,11 @@ static void lcdc_config_gpios(int enable)
 		msm_gpios_request_enable(lcdc_gpio_config_data,
 					      ARRAY_SIZE(
 						      lcdc_gpio_config_data));
-	} else
+	} else {
 		msm_gpios_disable_free(lcdc_gpio_config_data,
 					    ARRAY_SIZE(
 						    lcdc_gpio_config_data));
+	}
 }
 #endif
 
@@ -4397,10 +4399,10 @@ static int display_common_power(int on)
 		if (machine_is_msm7x30_fluid()) {
 			rc = msm_gpios_request_enable(fluid_vee_reset_gpio,
 					ARRAY_SIZE(fluid_vee_reset_gpio));
-			if (rc)
+			if (rc) {
 				pr_err("%s gpio_request_enable failed rc=%d\n",
 							__func__, rc);
-			else {
+			} else {
 				/* assert vee reset_n */
 				gpio_set_value(20, 1);
 				gpio_set_value(20, 0);
@@ -5322,9 +5324,9 @@ static struct msm_gpio mdm2ap_status = {
 
 static int configure_mdm2ap_status(int on)
 {
-	if (on)
+	if (on) {
 		return msm_gpios_request_enable(&mdm2ap_status, 1);
-	else {
+	} else {
 		msm_gpios_disable_free(&mdm2ap_status, 1);
 		return 0;
 	}
@@ -5860,8 +5862,9 @@ static int mbp_config_gpios_pre_init(int enable)
 				"%s: Failed to turnon GPIOs for mbp chip(%d)\n",
 				__func__, rc);
 		}
-	} else
+	} else {
 		msm_gpios_disable_free(mbp_cfg_data, ARRAY_SIZE(mbp_cfg_data));
+	}
 	return rc;
 }
 

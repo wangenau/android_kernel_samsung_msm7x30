@@ -346,8 +346,9 @@ static int msm_device_put(struct snd_kcontrol *kcontrol,
 
 				if (set_freq == 0)
 					set_freq = dev_info->sample_rate;
-			} else
+			} else {
 				set_freq = dev_info->sample_rate;
+			}
 
 
 			MM_ERR("device freq =%d\n", set_freq);
@@ -639,9 +640,9 @@ static int msm_device_volume_put(struct snd_kcontrol *kcontrol,
 	MM_DBG("dev_name = %s dev_id = %d, volume = %d\n",
 				dev_info->name, dev_id, volume);
 
-	if (dev_info->dev_ops.set_device_volume)
+	if (dev_info->dev_ops.set_device_volume) {
 		rc = dev_info->dev_ops.set_device_volume(dev_info, volume);
-	else {
+	} else {
 		MM_INFO("device %s does not support device volume "
 				"control.", dev_info->name);
 		return -EPERM;
@@ -913,8 +914,9 @@ static int msm_new_mixer(struct snd_soc_codec *codec)
 				snd_ctl_new1(&snd_dev_controls[idx], NULL));
 			if (err < 0)
 				MM_ERR("ERR adding ctl\n");
-		} else
+		} else {
 			return 0;
+		}
 	}
 	simple_control = ARRAY_SIZE(snd_msm_controls);
 	device_index = simple_control + 1;
