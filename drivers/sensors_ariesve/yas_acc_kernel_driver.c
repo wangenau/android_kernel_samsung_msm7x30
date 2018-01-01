@@ -422,7 +422,7 @@ static int yas_acc_input_init(struct yas_acc_private_data *data)
     dev->id.bustype = BUS_I2C;
 
     input_set_capability(dev, EV_ABS, ABS_MISC);
-	input_set_abs_params(dev, ABS_MISC, 0, (1<<31), 0, 0);
+    input_set_abs_params(dev, ABS_MISC, 0, (1<<31), 0, 0);
     input_set_abs_params(dev, ABS_X, ABSMIN_2G, ABSMAX_2G, 0, 0);
     input_set_abs_params(dev, ABS_Y, ABSMIN_2G, ABSMAX_2G, 0, 0);
     input_set_abs_params(dev, ABS_Z, ABSMIN_2G, ABSMAX_2G, 0, 0);
@@ -691,7 +691,7 @@ static ssize_t yas_acc_debug_reg_show(struct device *dev,
     memset(reg, -1, ADR_MAX);
     for (i = 0; i < ADR_MAX; i++) {
         ret = data->driver->get_register(i, &reg[i]);
-        if(ret != 0) {
+        if (ret != 0) {
             dev_err(&client->dev, "get_register() erorr %d (%d)\n", ret, i);
         } else {
             count += sprintf(&buf[count], "%02x: %d\n", i, reg[i]);

@@ -2005,8 +2005,9 @@ int mi2s_config_data_gpio(u32 direction, u8 sd_line_mask)
 					 (mi2s_rx_data_lines_gpios + i)->label);
 					mi2s_unconfig_data_gpio(DIR_RX,
 						sd_config_done_mask);
-				} else
+				} else {
 					sd_config_done_mask |= (1 << i);
+				}
 			}
 			sd_line_mask = sd_line_mask >> 1;
 			i++;
@@ -3393,7 +3394,7 @@ static void touch_keypad_onoff(int onoff)
 		else
 			msleep(25);
 
-		if(gpio_get_value(_3_TOUCH_EN) == 1)
+		if (gpio_get_value(_3_TOUCH_EN) == 1)
 			break;
 
 		i++;
@@ -3835,8 +3836,9 @@ static int msm_hsusb_ldo_init(int init)
 		if (IS_ERR(vreg_3p3))
 			return PTR_ERR(vreg_3p3);
 		regulator_set_voltage(vreg_3p3, def_vol, def_vol);
-	} else
+	} else {
 		regulator_put(vreg_3p3);
+	}
 
 	return 0;
 }
@@ -5006,11 +5008,10 @@ static int bluetooth_power(int on)
 
         pr_info("bluetooth_power BT_WAKE:%d, HOST_WAKE:%d, REG_ON:%d\n", gpio_get_value(GPIO_BT_WAKE), gpio_get_value(GPIO_BT_HOST_WAKE), gpio_get_value(GPIO_BT_WLAN_REG_ON));   
         mdelay(150);
-    }
-    else {
+    } else {
         gpio_direction_output(GPIO_BT_RESET, GPIO_WLAN_LEVEL_LOW);/* BT_VREG_CTL */
 
-        if( gpio_get_value(WLAN_RESET) == GPIO_WLAN_LEVEL_LOW ) //SEC_BLUETOOTH : pjh_2010.06.30
+        if ( gpio_get_value(WLAN_RESET) == GPIO_WLAN_LEVEL_LOW ) //SEC_BLUETOOTH : pjh_2010.06.30
         {
             gpio_direction_output(GPIO_BT_WLAN_REG_ON, GPIO_WLAN_LEVEL_LOW);/* BT_RESET */
             mdelay(150);
@@ -5095,9 +5096,9 @@ static struct msm_gpio mdm2ap_status = {
 
 static int configure_mdm2ap_status(int on)
 {
-	if (on)
+	if (on) {
 		return msm_gpios_request_enable(&mdm2ap_status, 1);
-	else {
+	} else {
 		msm_gpios_disable_free(&mdm2ap_status, 1);
 		return 0;
 	}
@@ -5669,8 +5670,9 @@ static int mbp_config_gpios_pre_init(int enable)
 				"%s: Failed to turnon GPIOs for mbp chip(%d)\n",
 				__func__, rc);
 		}
-	} else
+	} else {
 		msm_gpios_disable_free(mbp_cfg_data, ARRAY_SIZE(mbp_cfg_data));
+        }
 	return rc;
 }
 
@@ -6828,7 +6830,7 @@ static void __init msm7x30_init(void)
 	platform_add_devices(msm_footswitch_devices,
 			     msm_num_footswitch_devices);
 	platform_add_devices(devices, ARRAY_SIZE(devices));
-	if(!no_console) {
+	if (!no_console) {
 		platform_add_devices(uart3_device, ARRAY_SIZE(uart3_device));
 	}
 #ifdef CONFIG_USB_EHCI_MSM_72K
@@ -6909,7 +6911,7 @@ static void __init msm7x30_init(void)
 #endif
 
 #ifdef CONFIG_SENSORS_YAS529_MAGNETIC
-   if(board_hw_revision >0) {
+   if (board_hw_revision > 0) {
       	i2c_register_board_info(12, mag_i2c_devices,
       		ARRAY_SIZE(mag_i2c_devices));
       	pr_info("i2c_register_board_info 12 \n");
@@ -6923,7 +6925,7 @@ static void __init msm7x30_init(void)
 #endif
 
 #ifdef CONFIG_SENSORS_BMA222_ACCEL
-	if(board_hw_revision >0) {
+	if (board_hw_revision > 0) {
 		i2c_register_board_info(8, acc_i2c_devices,
 				ARRAY_SIZE(acc_i2c_devices));
 		pr_info("i2c_register_board_info 8 \n");
@@ -6943,7 +6945,7 @@ static void __init msm7x30_init(void)
 #endif
 
 #ifdef CONFIG_OPTICAL_GP2A
-	if(board_hw_revision >0) {
+	if (board_hw_revision > 0) {
 		i2c_register_board_info(17, opt_i2c_borad_info,
 				ARRAY_SIZE(opt_i2c_borad_info));
 		pr_info("i2c_register_board_info 17 \n");
@@ -6990,7 +6992,7 @@ static void __init msm7x30_init(void)
 	}
 
 #ifdef CONFIG_SENSORS_YAS529_MAGNETIC
-   if(board_hw_revision >0)
+   if (board_hw_revision > 0)
 	magnetic_device_init();	// ak8975 nRST gpio pin configue
 #endif
 

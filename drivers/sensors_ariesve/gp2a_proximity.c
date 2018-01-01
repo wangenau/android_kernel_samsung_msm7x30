@@ -537,9 +537,10 @@ static int gp2a_opt_probe(struct platform_device *pdev)
 		pr_err("opt_probe failed : i2c_client is NULL\n");
 		err = -ENODEV;
 		goto err_no_device;
-	} else
+	} else {
 		pr_info("opt_i2c_client : (0x%p), address = %x\n",
 		       opt_i2c_client, opt_i2c_client->addr);
+	}
 
 
 	/* GP2A Regs INIT SETTINGS */

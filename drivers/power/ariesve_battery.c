@@ -182,8 +182,8 @@ const int temp_table[][2] =  {
 #define TEMP_TABLE_OFFSET		30
 #define BATT_TEMP_HIGH_BLOCK		348		//	65`C   +- 2
 #define BATT_TEMP_HIGH_RECOVER		623		//	43` C  +- 2
-#define BATT_TEMP_LOW_BLOCK		1708	// 	-3`C   +- 2
-#define BATT_TEMP_LOW_RECOVER		1670	//	0`C    +- 2
+#define BATT_TEMP_LOW_BLOCK		1708	        // 	-3`C   +- 2
+#define BATT_TEMP_LOW_RECOVER		1670	        //	0`C    +- 2
 
 #define BATT_FULL_CHARGING_VOLTAGE	4160
 #define BATT_FULL_CHARGING_CURRENT	180
@@ -262,9 +262,9 @@ enum chg_battery_status_type {
     BATTERY_STATUS_BAD_TEMP,
     /* The battery is bad         */
     BATTERY_STATUS_BAD,
-	/* The battery is removed     */
-	BATTERY_STATUS_REMOVED,		/* on v2.2 only */
-	BATTERY_STATUS_INVALID_v1 = BATTERY_STATUS_REMOVED,
+    /* The battery is removed     */
+    BATTERY_STATUS_REMOVED,		/* on v2.2 only */
+    BATTERY_STATUS_INVALID_v1 = BATTERY_STATUS_REMOVED,
     /* Invalid battery status.    */
     BATTERY_STATUS_INVALID
 };
@@ -801,9 +801,10 @@ static void fg_set_alert_ext(unsigned long arg)
 		pr_info("[BATT] %s: low battery, power off...\n", __func__);
 		is_alert = 1;
 		wake_lock_timeout(&vbus_wake_lock, 30 * TIME_UNIT_SECOND);
-	} else
+	} else {
 		is_alert = 0;
         }
+}
 
 static int fg_set_alert(int value)
 {
@@ -825,7 +826,7 @@ static void msm_batt_chg_en(chg_enable_type enable)
 {
 
 	if (enable == START_CHARGING) {
-		if (msm_batt_info.charging_source == NO_CHG) {	// *Note: DO NOT USE "&" operation for NO_CHG (0x0), it returns FALSE always.
+		if (msm_batt_info.charging_source == NO_CHG) { // *Note: DO NOT USE "&" operation for NO_CHG (0x0), it returns FALSE always.
 			pr_err("[BATT] %s: charging_source not defined!\n", __func__);
 			return ;
 		}
@@ -878,7 +879,7 @@ static int msm_batt_average_chg_current(int chg_current_adc)
 	if (chg_current_adc == 0)
 		return 0;
 
-	if (chg_current_adc < 0) {	// initialize all data
+	if (chg_current_adc < 0) { // initialize all data
 		count = 0;
 		index = 0;
 		for (i=0; i<AVERAGE_COUNT; i++)	history[i] = 0;
@@ -1035,8 +1036,9 @@ static int msm_batt_check_recharging(void)
 			msm_batt_chg_en(START_CHARGING);
 			return 1;
 		}
-	} else
+	} else {
 		time_after_vol1 = 0;
+        }
 
 	/* check 2nd voltage */
 	if (msm_batt_info.battery_voltage <= BATT_RECHARGING_VOLTAGE_2) {
@@ -1049,8 +1051,9 @@ static int msm_batt_check_recharging(void)
 			msm_batt_chg_en(START_CHARGING);
 			return 1;
 		}
-	} else
+	} else {
 		time_after_vol2 = 0;
+	}
 
 	return 0;
 }
@@ -1274,15 +1277,6 @@ static void msm_batt_update_psy_status(void)
 
 	u32 status_changed = 0;
 
-	/*
-	// Check LPM mode
-	if(charging_boot)
-	{
-		msm_batt_info.batt_voltage_now = charging_boot;
-		msm_batt_info.batt_status = 0;
-	}
-	*/
-
 	/* Get general status from CP by RPC */
 	if (msm_batt_get_batt_chg_status())
 		return;
@@ -1307,8 +1301,9 @@ static void msm_batt_update_psy_status(void)
 		pr_debug("[BATT] %s: chg_current_adc from CP = %d\n", __func__, chg_current_adc);
 		if (chg_current_adc < 30)
 			chg_current_adc = 0;
-	} else
+	} else {
 		chg_current_adc = 0;	// not charging
+	}
 
 #ifdef CONFIG_MAX17043_FUEL_GAUGE
 	battery_level = get_level_from_fuelgauge();
@@ -1326,7 +1321,6 @@ static void msm_batt_update_psy_status(void)
 	/* Check what is changed */
 
 	/* check temperature */
-//	msm_batt_info.battery_temp_adc = msm_batt_average_temperature(battery_temp_adc);
 	status_changed += msm_batt_control_temperature(msm_batt_info.battery_temp_adc);
 
 	/* check full charging */
@@ -1788,8 +1782,7 @@ static int msm_batt_get_wireless_status(void)
 	int charger_type = msm_batt_get_charger_type();
 
 
-	if (charger_type == CHARGER_TYPE_NONE)	// no cable inserted
-	{
+	if (charger_type == CHARGER_TYPE_NONE) { // no cable inserted
 		wc_detect = gpio_get_value_cansleep(GPIO_WC_DETECT);
 		return wc_detect;
 	}
@@ -1814,8 +1807,7 @@ static void msm_batt_cable_status_update(void)
 #ifdef CONFIG_WIRELESS_CHARGING
 	msm_batt_info.batt_wireless = msm_batt_get_wireless_status();
 
-	if (msm_batt_info.batt_wireless)
-	{
+	if (msm_batt_info.batt_wireless) {
 		charger_type = CHARGER_TYPE_WALL;
 	}
 #endif
@@ -1831,7 +1823,7 @@ static void msm_batt_cable_status_update(void)
 			msm_batt_info.charging_source = USB_CHG;
 			hsusb_chg_connected_ext(USB_CHG_TYPE__SDP);
 			power_supply_changed(&msm_psy_usb);
-		} else {	// TA and Wireless
+		} else { // TA and Wireless
 			msm_batt_info.charging_source = AC_CHG;
 			hsusb_chg_connected_ext(USB_CHG_TYPE__WALLCHARGER);
 			power_supply_changed(&msm_psy_ac);
@@ -1847,7 +1839,7 @@ static void msm_batt_cable_status_update(void)
 		}
 
 		wake_lock(&vbus_wake_lock);
-	} else {	// No charger
+	} else { // No charger
 		msm_batt_info.charging_source = NO_CHG;
 		msm_batt_info.batt_status = POWER_SUPPLY_STATUS_DISCHARGING;
 		msm_batt_chg_en(STOP_CHARGING);

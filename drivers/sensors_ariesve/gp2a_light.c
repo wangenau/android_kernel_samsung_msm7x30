@@ -73,7 +73,6 @@
 #endif
 
 #define SENSOR_ZEROVALUE_FIX	/* probably for some interference with light of display, the value of the sensor does not come to zero, in case of total darkness */
-//#define SENSOR_ENABLE_TESTMODE_ABS_Y
 
 struct sensor_data {
 	struct mutex mutex;
@@ -168,7 +167,7 @@ int IsChangedADC(int val)
 	adc_index = (adc_index_count)%4;
 	adc_index_count++;
 
-	if(pre_val == -1) { //ADC buffer initialize
+	if (pre_val == -1) { //ADC buffer initialize
 		for(j = 0; j<4; j++)
 			value_buf[j] = val;
 
@@ -181,7 +180,7 @@ int IsChangedADC(int val)
 		(value_buf[1] == value_buf[2])&& \
 		(value_buf[2] == value_buf[3]))? 1 : 0;
 
-	if(adc_index_count == 4)
+	if (adc_index_count == 4)
 		adc_index_count = 0;
 
 	return ret;
@@ -193,15 +192,15 @@ static int StateToLux(state_type state)
 {
 	int lux = 0;
 
-	if(state== LIGHT_LEVEL5) {
+	if (state== LIGHT_LEVEL5) {
 		lux = 15000;
-	} else if(state == LIGHT_LEVEL4) {
+	} else if (state == LIGHT_LEVEL4) {
 		lux = 9000;
-	} else if(state == LIGHT_LEVEL3) {
+	} else if (state == LIGHT_LEVEL3) {
 		lux = 5000;
-	} else if(state == LIGHT_LEVEL2) {
+	} else if (state == LIGHT_LEVEL2) {
 		lux = 1000;
-	} else if(state == LIGHT_LEVEL1) {
+	} else if (state == LIGHT_LEVEL1) {
 		lux = 6;
 	} else {
 		lux = 5000;
@@ -287,8 +286,7 @@ light_delay_store(struct device *dev,
 
 	mutex_lock(&data->mutex);
 
-	if( data->enabled)
-	{
+	if ( data->enabled) {
 		cancel_delayed_work_sync(&data->work);
 		queue_delayed_work(light_workqueue,&data->work,msecs_to_jiffies(delay));
 	}
@@ -397,7 +395,7 @@ static ssize_t light_autobrightness_show(struct device *dev, struct device_attri
 
 	gprintk("called %s \n", __func__);
 
-	if(data->enabled) {
+	if (data->enabled) {
 		for(i = 0; i < 10; i++) {
 			adc = lightsensor_get_adcvalue();
 			msleep(20);
@@ -419,14 +417,14 @@ static ssize_t light_autobrightness_store(struct device *dev,
 
 	gprintk("called %s \n", __func__);
 
-	if(value == 1) {
+	if (value == 1) {
 		autobrightness_mode = ON;
 		printk(KERN_DEBUG "[brightness_mode] BRIGHTNESS_MODE_SENSOR\n");
-	} else if(value == 0) {
+	} else if (value == 0) {
 		autobrightness_mode = OFF;
 		printk(KERN_DEBUG "[brightness_mode] BRIGHTNESS_MODE_USER\n");
 #ifdef MDNIE_TUNINGMODE_FOR_BACKLIGHT
-		if(pre_val == 1) {
+		if (pre_val == 1) {
 			mDNIe_Mode_set_for_backlight(pmDNIe_Gamma_set[2]);
 		}
 		pre_val = -1;
@@ -446,10 +444,10 @@ static ssize_t light_testmode_store(struct device *dev,
 
 	sscanf(buf, "%d", &value);
 
-	if(value == 1) {
+	if (value == 1) {
 		data->testmode = 1;
 		gprintk("lightsensor testmode ON.\n");
-	} else if(value == 0) {
+	} else if (value == 0) {
 		data->testmode = 0;
 		gprintk("lightsensor testmode OFF.\n");
 	}
@@ -567,7 +565,7 @@ int lightsensor_get_adcvalue(void)
 	
 	adc_index = (adc_index_count++)%ADC_BUFFER_NUM;		
 
-	if(cur_state == LIGHT_INIT) { //ADC buffer initialize (light sensor off ---> light sensor on)
+	if (cur_state == LIGHT_INIT) { //ADC buffer initialize (light sensor off ---> light sensor on)
 		for(j = 0; j < ADC_BUFFER_NUM; j++)
 			adc_value_buf[j] = value;
 	} else {
@@ -580,15 +578,15 @@ int lightsensor_get_adcvalue(void)
 	for(i = 0; i < ADC_BUFFER_NUM; i++) {
 		adc_total += adc_value_buf[i];
 
-		if(adc_max < adc_value_buf[i])
+		if (adc_max < adc_value_buf[i])
 			adc_max = adc_value_buf[i];
 					
-		if(adc_min > adc_value_buf[i])
+		if (adc_min > adc_value_buf[i])
 			adc_min = adc_value_buf[i];
 	}
 	adc_avr_value = (adc_total-(adc_max+adc_min))/(ADC_BUFFER_NUM-2);
 	
-	if(adc_index_count == ADC_BUFFER_NUM-1)
+	if (adc_index_count == ADC_BUFFER_NUM-1)
 		adc_index_count = 0;
 
 	return adc_avr_value;
@@ -636,7 +634,7 @@ static void gp2a_work_func_light(struct work_struct *work)
 		if (data->light_count++ == LIGHT_BUFFER_NUM) {
 
 #ifdef SENSOR_ENABLE_TESTMODE_ABS_Y
-			if(data->testmode == 1) {
+			if (data->testmode == 1) {
 				input_report_abs(this_data, ABS_Y, adc);
 				input_sync(this_data);
 				data->light_count = 0;
@@ -646,13 +644,12 @@ static void gp2a_work_func_light(struct work_struct *work)
 				input_report_abs(this_data, ABS_MISC, adc);
 				input_sync(this_data);
 				data->light_count = 0;
-				//gprintk("[LIGHT SENSOR] realmode : adc(%d)\n", adc);
 #ifdef SENSOR_ENABLE_TESTMODE_ABS_Y
 			}
 #endif
 		}
 #else
-		if(data->light_level_state <= i || data->light_first_level == true){
+		if (data->light_level_state <= i || data->light_first_level == true){
 			if (data->light_count++ == LIGHT_BUFFER_UP) {
                 if (LightSensor_Log_Cnt == 10) {
                     printk("[LIGHT SENSOR] lux up 0x%0X (%d)\n", adc, adc);
@@ -687,11 +684,11 @@ static void gp2a_work_func_light(struct work_struct *work)
 	}
 
 #ifdef SENSOR_ENABLE_TESTMODE_ABS_Y
-	if(data->testmode == 1)
+	if (data->testmode == 1)
 		data->light_data = adc;
 #endif
 
-	if(data->enabled)
+	if (data->enabled)
 		queue_delayed_work(light_workqueue,&data->work, msecs_to_jiffies(data->delay));
 }
 
@@ -858,8 +855,6 @@ static int lightsensor_remove(struct platform_device *pdev)
 		input_unregister_device(this_data);
 	}
 
-	//gprintk("\n");
-
 	return rt;
 }
 
@@ -883,8 +878,6 @@ lightsensor_shutdown(struct platform_device *pdev)
 		}
 		input_unregister_device(this_data);
 	}
-
-	//gprintk("\n");
 }
 
 

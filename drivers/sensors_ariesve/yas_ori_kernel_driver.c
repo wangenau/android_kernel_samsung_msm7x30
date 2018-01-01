@@ -371,8 +371,7 @@ err:
             }
             if (input_registered) {
                 input_unregister_device(input_data);
-            }
-            else {
+            } else {
                 input_free_device(input_data);
             }
             input_data = NULL;

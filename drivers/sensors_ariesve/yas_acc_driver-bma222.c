@@ -901,9 +901,9 @@ static int yas_bma222_set_calibration(signed char* data_cal)
     printk(KERN_INFO "z axis fast calibration finished\n");
     printk(KERN_INFO "store xyz offset to eeprom\n");
 #endif
-    tmp=1;//unlock eeprom
+    tmp=1; //unlock eeprom
     yas_bma222_set_ee_w(tmp);
-    yas_bma222_set_ee_prog_trig();//update eeprom
+    yas_bma222_set_ee_prog_trig(); //update eeprom
     do {
         mdelay(2); 
         yas_bma222_get_eeprom_writing_status(&tmp);
@@ -912,7 +912,7 @@ static int yas_bma222_set_calibration(signed char* data_cal)
 #endif  
     } while(tmp==0);
 	
-    tmp=0;//lock eemprom
+    tmp=0; //lock eemprom
     yas_bma222_set_ee_w(tmp);
 #ifdef DEBUG
     printk(KERN_INFO "eeprom writing is finished\n");
