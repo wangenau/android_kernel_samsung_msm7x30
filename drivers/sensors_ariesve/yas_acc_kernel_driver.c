@@ -464,7 +464,7 @@ static ssize_t yas_acc_enable_store(struct device *dev,
     struct input_dev *input = to_input_dev(dev);
     struct yas_acc_private_data *data = input_get_drvdata(input);
     unsigned long enable = simple_strtoul(buf, NULL, 10);
-
+   printk("[diony] yas_acc_set_enable = %d.\n",enable);
     yas_acc_set_enable(data->driver, enable);
 
     return count;
@@ -963,7 +963,20 @@ struct i2c_driver yas_acc_driver = {
     .id_table = yas_acc_id,
 };
 
-module_i2c_driver(yas_acc_driver);
+/* ---------------------------------------------------------------------------------------- *
+   Module init and exit
+ * ---------------------------------------------------------------------------------------- */
+static int __init yas_acc_init(void)
+{
+    return i2c_add_driver(&yas_acc_driver);
+}
+module_init(yas_acc_init);
+
+static void __exit yas_acc_exit(void)
+{
+    i2c_del_driver(&yas_acc_driver);
+}
+module_exit(yas_acc_exit);
 
 MODULE_DESCRIPTION("accelerometer kernel driver");
 MODULE_LICENSE("GPL");
