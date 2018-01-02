@@ -521,7 +521,8 @@ static int kgsl_pwrctrl_idle_timer_store(struct device *dev,
 	mutex_lock(&device->mutex);
 
 	/* Let the timeout be requested in jiffies */
-	pwr->interval_timeout = msecs_to_jiffies(val);
+	if (msecs_to_jiffies(val) >= org_interval_timeout)
+		pwr->interval_timeout = msecs_to_jiffies(val);
 
 	mutex_unlock(&device->mutex);
 
