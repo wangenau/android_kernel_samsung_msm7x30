@@ -243,7 +243,8 @@ CONFIG_SHELL := $(shell if [ -x "$$BASH" ]; then echo $$BASH; \
 	  else if [ -x /bin/bash ]; then echo /bin/bash; \
 	  else echo sh; fi ; fi)
 
-GRAPHITE = -fgraphite-identity -floop-strip-mine -floop-block -ftree-loop-linear -floop-parallelize-all -floop-unroll-and-jam
+GRAPHITE     = -fgraphite-identity -floop-block -floop-interchange -floop-parallelize-all \
+               -floop-strip-mine -floop-unroll-and-jam -ftree-loop-linear
 
 HOSTCC       = gcc
 HOSTCXX      = g++
