@@ -182,10 +182,10 @@ static struct platform_device ion_dev;
 #define PMIC_GPIO_INT		27
 #define PMIC_VREG_WLAN_LEVEL	2900
 #define PMIC_GPIO_SDC4_EN_N	17  /* PMIC GPIO Number 18 */
-#define PMIC_GPIO_HDMI_5V_EN_V3 32  /* PMIC GPIO for V3 H/W */
-#define PMIC_GPIO_HDMI_5V_EN_V2 39 /* PMIC GPIO for V2 H/W */
-#define PMIC_GPIO_MICBIAS_EN    14 // PM8058_GPIO(15)
-#define PMIC_GPIO_EARPATH_SEL   13 // PM8058_GPIO(14)
+#define PMIC_GPIO_HDMI_5V_EN_V3	32  /* PMIC GPIO for V3 H/W */
+#define PMIC_GPIO_HDMI_5V_EN_V2	39 /* PMIC GPIO for V2 H/W */
+#define PMIC_GPIO_MICBIAS_EN	14 // PM8058_GPIO(15)
+#define PMIC_GPIO_EARPATH_SEL	13 // PM8058_GPIO(14)
 
 #ifdef CONFIG_SENSORS_YAS529_MAGNETIC
 #define MSM_GPIO_MSENSE_RST	180  /* MSM GPIO Number 180 */
@@ -222,13 +222,13 @@ static struct platform_device ion_dev;
 #define OPTNAV_CHIP_SELECT	19
 
 /* Macros assume PMIC GPIOs start at 0 */
-#define PM8058_GPIO_PM_TO_SYS(pm_gpio)     (pm_gpio + NR_GPIO_IRQS)
-#define PM8058_GPIO_SYS_TO_PM(sys_gpio)    (sys_gpio - NR_GPIO_IRQS)
+#define PM8058_GPIO_PM_TO_SYS(pm_gpio)	   (pm_gpio + NR_GPIO_IRQS)
+#define PM8058_GPIO_SYS_TO_PM(sys_gpio)	   (sys_gpio - NR_GPIO_IRQS)
 #define PM8058_MPP_BASE			   PM8058_GPIO_PM_TO_SYS(PM8058_GPIOS)
 #define PM8058_MPP_PM_TO_SYS(pm_gpio)	   (pm_gpio + PM8058_MPP_BASE)
 
 #define PMIC_GPIO_FLASH_BOOST_ENABLE	15	/* PMIC GPIO Number 16 */
-#define PMIC_GPIO_HAP_ENABLE   16  /* PMIC GPIO Number 17 */
+#define PMIC_GPIO_HAP_ENABLE		16	/* PMIC GPIO Number 17 */
 
 #define BMA150_GPIO_INT 1
 
@@ -236,7 +236,7 @@ static struct platform_device ion_dev;
 
 #define PMIC_GPIO_QUICKVX_CLK 37 /* PMIC GPIO 38 */
 
-#define	PM_FLIP_MPP 5 /* PMIC MPP 06 */
+#define PM_FLIP_MPP 5 /* PMIC MPP 06 */
 
 #define DDR1_BANK_BASE 0X20000000
 #define DDR2_BANK_BASE 0X40000000
@@ -337,14 +337,14 @@ void sec_jack_gpio_init(void)
 static struct sec_jack_platform_data sec_jack_data = {
 	.set_micbias_state	  = sec_jack_set_micbias_state,
 	.get_adc_value		  = sec_jack_get_adc_value,
-	.zones			      = jack_zones,
-	.num_zones		      = ARRAY_SIZE(jack_zones),
+	.zones			  = jack_zones,
+	.num_zones		  = ARRAY_SIZE(jack_zones),
 	.buttons_zones		  = jack_buttons_zones,
 	.num_buttons_zones	  = ARRAY_SIZE(jack_buttons_zones),
-	.det_gpio 		      = MSM_GPIO_EAR_DET,
-	.det_active_high      = false,
+	.det_gpio 		  = MSM_GPIO_EAR_DET,
+	.det_active_high	  = false,
 	.send_end_gpio 		  = MSM_GPIO_SHORT_SENDEND,
-	.send_end_active_high = false,
+	.send_end_active_high	  = false,
 };
 
 static struct platform_device sec_device_jack = {
@@ -902,7 +902,7 @@ static struct pm8xxx_keypad_platform_data ariesve_keypad_data = {
 	.scan_delay_ms		= 32,
 	.row_hold_ns		= 91500,
 	.wakeup			= 1,
-	.keymap_data            = &ariesve_keymap_data,
+	.keymap_data		= &ariesve_keymap_data,
 };
 
 static struct pm8058_pwm_pdata pm8058_pwm_data = {
@@ -972,7 +972,7 @@ static struct pmic8058_leds_platform_data pm8058_fluid_leds_data = {
 static struct pm8xxx_irq_platform_data pm8xxx_irq_pdata = {
 	.irq_base		= PMIC8058_IRQ_BASE,
 	.devirq			= MSM_GPIO_TO_INT(PMIC_GPIO_INT),
-	.irq_trigger_flag       = IRQF_TRIGGER_LOW,
+	.irq_trigger_flag	= IRQF_TRIGGER_LOW,
 };
 
 static struct pm8xxx_gpio_platform_data pm8xxx_gpio_pdata = {
@@ -1128,10 +1128,10 @@ static uint32_t camera_off_gpio_table[] = {
 	GPIO_CFG(12, 0, GPIO_CFG_INPUT, GPIO_CFG_PULL_DOWN, GPIO_CFG_2MA), /* PCLK */
 	GPIO_CFG(13, 0, GPIO_CFG_INPUT, GPIO_CFG_PULL_DOWN, GPIO_CFG_2MA), /* HSYNC_IN */
 	GPIO_CFG(14, 0, GPIO_CFG_INPUT, GPIO_CFG_PULL_DOWN, GPIO_CFG_2MA), /* VSYNC_IN */
-	GPIO_CFG(15, 0, GPIO_CFG_OUTPUT, GPIO_CFG_NO_PULL, GPIO_CFG_2MA), /* MCLK */
+	GPIO_CFG(15, 0, GPIO_CFG_OUTPUT, GPIO_CFG_NO_PULL, GPIO_CFG_2MA),  /* MCLK */
 #else
 	/* parallel CAMERA interfaces */
-	GPIO_CFG(0,  0, GPIO_CFG_OUTPUT, GPIO_CFG_PULL_DOWN, GPIO_CFG_2MA), /* RST */
+	GPIO_CFG(0,  0, GPIO_CFG_OUTPUT, GPIO_CFG_PULL_DOWN, GPIO_CFG_2MA),/* RST */
 	GPIO_CFG(2,  0, GPIO_CFG_INPUT, GPIO_CFG_PULL_DOWN, GPIO_CFG_2MA), /* DAT2 */
 	GPIO_CFG(3,  0, GPIO_CFG_INPUT, GPIO_CFG_PULL_DOWN, GPIO_CFG_2MA), /* DAT3 */
 	GPIO_CFG(4,  0, GPIO_CFG_INPUT, GPIO_CFG_PULL_DOWN, GPIO_CFG_2MA), /* DAT4 */
@@ -1145,7 +1145,7 @@ static uint32_t camera_off_gpio_table[] = {
 	GPIO_CFG(12, 0, GPIO_CFG_INPUT, GPIO_CFG_PULL_DOWN, GPIO_CFG_2MA), /* PCLK */
 	GPIO_CFG(13, 0, GPIO_CFG_INPUT, GPIO_CFG_PULL_DOWN, GPIO_CFG_2MA), /* HSYNC_IN */
 	GPIO_CFG(14, 0, GPIO_CFG_INPUT, GPIO_CFG_PULL_DOWN, GPIO_CFG_2MA), /* VSYNC_IN */
-	GPIO_CFG(15, 0, GPIO_CFG_OUTPUT, GPIO_CFG_NO_PULL, GPIO_CFG_2MA), /* MCLK */
+	GPIO_CFG(15, 0, GPIO_CFG_OUTPUT, GPIO_CFG_NO_PULL, GPIO_CFG_2MA),  /* MCLK */
 #endif
 };
 
@@ -1182,10 +1182,10 @@ static uint32_t camera_on_gpio_table[] = {
 	GPIO_CFG(12, 1, GPIO_CFG_INPUT, GPIO_CFG_PULL_DOWN, GPIO_CFG_2MA), /* PCLK */
 	GPIO_CFG(13, 1, GPIO_CFG_INPUT, GPIO_CFG_PULL_DOWN, GPIO_CFG_2MA), /* HSYNC_IN */
 	GPIO_CFG(14, 1, GPIO_CFG_INPUT, GPIO_CFG_PULL_DOWN, GPIO_CFG_2MA), /* VSYNC_IN */
-	GPIO_CFG(15, 0, GPIO_CFG_OUTPUT, GPIO_CFG_NO_PULL, GPIO_CFG_2MA), /* MCLK */
+	GPIO_CFG(15, 0, GPIO_CFG_OUTPUT, GPIO_CFG_NO_PULL, GPIO_CFG_2MA),  /* MCLK */
 #else
 	/* parallel CAMERA interfaces */
-	GPIO_CFG(0,  0, GPIO_CFG_OUTPUT, GPIO_CFG_PULL_DOWN, GPIO_CFG_2MA), /* RST */
+	GPIO_CFG(0,  0, GPIO_CFG_OUTPUT, GPIO_CFG_PULL_DOWN, GPIO_CFG_2MA),/* RST */
 	GPIO_CFG(2,  1, GPIO_CFG_INPUT, GPIO_CFG_PULL_DOWN, GPIO_CFG_2MA), /* DAT2 */
 	GPIO_CFG(3,  1, GPIO_CFG_INPUT, GPIO_CFG_PULL_DOWN, GPIO_CFG_2MA), /* DAT3 */
 	GPIO_CFG(4,  1, GPIO_CFG_INPUT, GPIO_CFG_PULL_DOWN, GPIO_CFG_2MA), /* DAT4 */
@@ -1199,7 +1199,7 @@ static uint32_t camera_on_gpio_table[] = {
 	GPIO_CFG(12, 1, GPIO_CFG_INPUT, GPIO_CFG_PULL_DOWN, GPIO_CFG_2MA), /* PCLK */
 	GPIO_CFG(13, 1, GPIO_CFG_INPUT, GPIO_CFG_PULL_DOWN, GPIO_CFG_2MA), /* HSYNC_IN */
 	GPIO_CFG(14, 1, GPIO_CFG_INPUT, GPIO_CFG_PULL_DOWN, GPIO_CFG_2MA), /* VSYNC_IN */
-	GPIO_CFG(15, 1, GPIO_CFG_OUTPUT, GPIO_CFG_NO_PULL, GPIO_CFG_2MA), /* MCLK */
+	GPIO_CFG(15, 1, GPIO_CFG_OUTPUT, GPIO_CFG_NO_PULL, GPIO_CFG_2MA),  /* MCLK */
 #endif
 };
 
@@ -1252,7 +1252,7 @@ struct resource msm_camera_resources[] = {
 		.flags	= IORESOURCE_IRQ,
 	},
 	{
-		.flags  = IORESOURCE_DMA,
+		.flags	= IORESOURCE_DMA,
 	}
 };
 
@@ -1450,7 +1450,7 @@ static struct msm_camera_sensor_info msm_camera_sensor_vx6953_data = {
 	.sensor_reset   = 0,
 	.sensor_pwd     = 85,
 	.vcm_pwd        = 1,
-	.vcm_enable		= 0,
+	.vcm_enable     = 0,
 	.pdata          = &msm_camera_device_data,
 	.resource       = msm_camera_resources,
 	.num_resources  = ARRAY_SIZE(msm_camera_resources),
@@ -1537,7 +1537,7 @@ static struct msm_camera_sensor_info msm_camera_sensor_ce147_data = {
 	.sensor_reset   = 174,
 	.sensor_pwd     = 175,
 	.vcm_pwd        = 0,
-	.vcm_enable	= 2,
+	.vcm_enable     = 2,
 	.pdata          = &msm_camera_device_data,
 	.resource       = msm_camera_resources,
 	.num_resources  = ARRAY_SIZE(msm_camera_resources),
@@ -1564,7 +1564,7 @@ static struct msm_camera_sensor_info msm_camera_sensor_s5ka3dfx_data = {
 	.sensor_reset   = 0,
 	.sensor_pwd     = 85,
 	.vcm_pwd        = 1,
-	.vcm_enable		= 0,
+	.vcm_enable     = 0,
 	.pdata          = &msm_camera_device_data,
 	.resource       = msm_camera_resources,
 	.num_resources  = ARRAY_SIZE(msm_camera_resources),
@@ -2622,7 +2622,7 @@ static struct msm_ts_platform_data msm_ts_data = {
 	.max_press      = 255,
 	.inv_x          = 4096,
 	.inv_y          = 4096,
-	.can_wakeup	= false,
+	.can_wakeup     = false,
 };
 
 static struct marimba_tsadc_platform_data marimba_tsadc_pdata = {
@@ -2630,7 +2630,7 @@ static struct marimba_tsadc_platform_data marimba_tsadc_pdata = {
 	.init		     =  marimba_tsadc_init,
 	.exit		     =  marimba_tsadc_exit,
 	.tsadc_prechg_en = true,
-	.can_wakeup	= false,
+	.can_wakeup      = false,
 	.setup = {
 		.pen_irq_en	=	true,
 		.tsadc_en	=	true,
@@ -2700,7 +2700,7 @@ static struct marimba_codec_platform_data mariba_codec_pdata = {
 
 static struct marimba_platform_data marimba_pdata = {
 	.slave_id[MARIMBA_SLAVE_ID_FM]       = MARIMBA_SLAVE_ID_FM_ADDR,
-	.slave_id[MARIMBA_SLAVE_ID_CDC]	     = MARIMBA_SLAVE_ID_CDC_ADDR,
+	.slave_id[MARIMBA_SLAVE_ID_CDC]      = MARIMBA_SLAVE_ID_CDC_ADDR,
 	.slave_id[MARIMBA_SLAVE_ID_QMEMBIST] = MARIMBA_SLAVE_ID_QMEMBIST_ADDR,
 	.slave_id[SLAVE_ID_BAHAMA_FM]        = BAHAMA_SLAVE_ID_FM_ADDR,
 	.slave_id[SLAVE_ID_BAHAMA_QMEMBIST]  = BAHAMA_SLAVE_ID_QMEMBIST_ADDR,
@@ -2760,7 +2760,7 @@ static struct marimba_codec_platform_data timpani_codec_pdata = {
 };
 
 static struct marimba_platform_data timpani_pdata = {
-	.slave_id[MARIMBA_SLAVE_ID_CDC]	= MARIMBA_SLAVE_ID_CDC_ADDR,
+	.slave_id[MARIMBA_SLAVE_ID_CDC] = MARIMBA_SLAVE_ID_CDC_ADDR,
 	.slave_id[MARIMBA_SLAVE_ID_QMEMBIST] = MARIMBA_SLAVE_ID_QMEMBIST_ADDR,
 	.marimba_setup = msm_timpani_setup_power,
 	.marimba_shutdown = msm_timpani_shutdown_power,
@@ -3256,7 +3256,7 @@ static struct i2c_gpio_platform_data mag_i2c_gpio_data = {
 };
 static struct platform_device mag_i2c_gpio_device = {  
 	.name       = "i2c-gpio",
-	.id     	= 12,
+	.id         = 12,
 	.dev        = {
 		.platform_data  = &mag_i2c_gpio_data,
 	},
@@ -3376,7 +3376,7 @@ static void touch_keypad_gpio_init(void)
 				  GPIO_CFG_NO_PULL, GPIO_CFG_2MA), GPIO_CFG_ENABLE);
 	gpio_set_value(_3_TOUCH_EN, 1);
 
-	printk("touch_keypad_gpio_init.\n");	
+	printk("touch_keypad_gpio_init.\n");
 }
 
 static void touch_keypad_onoff(int onoff)
@@ -3400,7 +3400,7 @@ static void touch_keypad_onoff(int onoff)
 		i++;
 	}		
 
-	printk("touch_keypad_onoff %d , %d.\n",onoff, gpio_get_value(_3_TOUCH_EN));		
+	printk("touch_keypad_onoff %d , %d.\n",onoff, gpio_get_value(_3_TOUCH_EN));
 }
 
 static const int touch_keypad_code[] = {
@@ -3417,7 +3417,7 @@ static struct touchkey_platform_data touchkey_data = {
 static struct i2c_board_info touchkey_info[] __initdata = {
 	{
 		I2C_BOARD_INFO(CYPRESS_TOUCHKEY_DEV_NAME, 0x20),
-		.platform_data = &touchkey_data,			
+		.platform_data = &touchkey_data,
 		.irq = MSM_GPIO_TO_INT(_3_TOUCH_INT),
 	},
 };
@@ -3489,7 +3489,7 @@ static struct android_usb_platform_data android_usb_pdata = {
 };
 
 static struct platform_device android_usb_device = {
-	.name	    = "android_usb",
+	.name       = "android_usb",
 	.id         = -1,
 	.dev        = {
 		.platform_data = &android_usb_pdata,
@@ -3605,7 +3605,7 @@ static struct ofn_atlab_platform_data optnav_data = {
 		.invert_x		= true,
 		.swap_x_y		= false,
 		.hold_a_b_en		= true,
-		.motion_filter_en       = true,
+		.motion_filter_en	= true,
 	},
 };
 
@@ -3683,7 +3683,7 @@ static struct i2c_board_info bma150_board_info[] __initdata = {
 static struct i2c_board_info msm_i2c_board_info[] = {
 	{
 		I2C_BOARD_INFO("m33c01", OPTNAV_I2C_SLAVE_ADDR),
-		.irq		= MSM_GPIO_TO_INT(OPTNAV_IRQ),
+		.irq           = MSM_GPIO_TO_INT(OPTNAV_IRQ),
 		.platform_data = &optnav_data,
 	},
 };
@@ -3883,7 +3883,7 @@ static int msm_hsusb_ldo_set_voltage(int mV)
 static int msm_hsusb_pmic_notif_init(void (*callback)(int online), int init);
 #endif
 static struct msm_otg_platform_data msm_otg_pdata = {
-	.rpc_connect	= hsusb_rpc_connect,
+	.rpc_connect = hsusb_rpc_connect,
 
 #ifndef CONFIG_USB_EHCI_MSM_72K
 	.pmic_vbus_notif_init         = msm_hsusb_pmic_notif_init,
@@ -5042,10 +5042,10 @@ static int bluetooth_gpio_init(void)
 #endif
 
 static struct msm_psy_batt_pdata msm_psy_batt_data = {
-	.voltage_min_design 	= 3400,
+	.voltage_min_design	= 3400,
 	.voltage_max_design	= 4200,
-	.avail_chg_sources   	= AC_CHG | USB_CHG ,
-	.batt_technology        = POWER_SUPPLY_TECHNOLOGY_LION,
+	.avail_chg_sources	= AC_CHG | USB_CHG ,
+	.batt_technology 	= POWER_SUPPLY_TECHNOLOGY_LION,
 };
 
 static struct platform_device ariesve_batt_device = {
@@ -5122,8 +5122,8 @@ static struct sdio_al_platform_data sdio_al_pdata = {
 struct platform_device msm_device_sdio_al = {
 	.name = "msm_sdio_al",
 	.id = -1,
-	.dev		= {
-		.platform_data	= &sdio_al_pdata,
+	.dev = {
+		.platform_data = &sdio_al_pdata,
 	},
 };
 
@@ -5202,7 +5202,7 @@ static struct platform_device *devices[] __initdata = {
 #endif
 	&msm_device_adspdec,
 	&qup_device_i2c,
-#if defined (CONFIG_TOUCHSCREEN_QT602240)	
+#if defined (CONFIG_TOUCHSCREEN_QT602240)
 	&touchscreen_i2c_gpio_device,
 #endif	
 #ifdef CONFIG_KEYPAD_CYPRESS_TOUCH
@@ -5244,7 +5244,7 @@ static struct platform_device *devices[] __initdata = {
 	&msm_camera_sensor_ce147,
 #endif	
 #ifdef CONFIG_SENSOR_S5KA3DFX
-	&msm_camera_sensor_s5ka3dfx,		
+	&msm_camera_sensor_s5ka3dfx,
 #endif
 #ifdef CONFIG_MT9T013
 	&msm_camera_sensor_mt9t013,
@@ -5645,9 +5645,9 @@ out:
 #define MBP_MODE_CTRL_2 \
 	GPIO_CFG(34, 0, GPIO_CFG_OUTPUT, GPIO_CFG_NO_PULL, GPIO_CFG_2MA)
 #define TSIF_EN \
-	GPIO_CFG(35, 1, GPIO_CFG_INPUT, GPIO_CFG_PULL_DOWN,	GPIO_CFG_2MA)
+	GPIO_CFG(35, 1, GPIO_CFG_INPUT, GPIO_CFG_PULL_DOWN, GPIO_CFG_2MA)
 #define TSIF_DATA \
-	GPIO_CFG(36, 1, GPIO_CFG_INPUT, GPIO_CFG_PULL_DOWN,	GPIO_CFG_2MA)
+	GPIO_CFG(36, 1, GPIO_CFG_INPUT, GPIO_CFG_PULL_DOWN, GPIO_CFG_2MA)
 #define TSIF_CLK \
 	GPIO_CFG(34, 1, GPIO_CFG_INPUT, GPIO_CFG_PULL_DOWN, GPIO_CFG_2MA)
 
@@ -6059,8 +6059,8 @@ extern unsigned int wlan_status(struct device *dev);
 static struct mmc_platform_data msm7x30_sdc1_data = {
 	.ocr_mask	= MMC_VDD_165_195 | MMC_VDD_27_28 | MMC_VDD_28_29,
 	.translate_vdd	= msm_sdcc_setup_power_mbp,
-	.mmc_bus_width  = MMC_CAP_4_BIT_DATA,
-	.status	        = mbp_status,
+	.mmc_bus_width	= MMC_CAP_4_BIT_DATA,
+	.status		= mbp_status,
 	.register_status_notify = mbp_register_status_notify,
 	.msmsdcc_fmin	= 144000,
 	.msmsdcc_fmid	= 24576000,
@@ -6071,8 +6071,8 @@ static struct mmc_platform_data msm7x30_sdc1_data = {
 static struct mmc_platform_data msm7x30_sdc1_data = {
 	.ocr_mask	= MMC_VDD_165_195 | MMC_VDD_20_21 | MMC_VDD_21_22,
 	.translate_vdd	= msm_sdcc_setup_power,
-	.mmc_bus_width  = MMC_CAP_4_BIT_DATA,
-	.status	        = wlan_status,
+	.mmc_bus_width	= MMC_CAP_4_BIT_DATA,
+	.status		= wlan_status,
 	.register_status_notify = wlan_register_status_notify,
 	.msmsdcc_fmin	= 144000,
 	.msmsdcc_fmid	= 24576000,
@@ -6087,9 +6087,9 @@ static struct mmc_platform_data msm7x30_sdc2_data = {
 	.ocr_mask	= MMC_VDD_165_195 | MMC_VDD_27_28,
 	.translate_vdd	= msm_sdcc_setup_power,
 #ifdef CONFIG_MMC_MSM_SDC2_8_BIT_SUPPORT
-	.mmc_bus_width  = MMC_CAP_8_BIT_DATA,
+	.mmc_bus_width	= MMC_CAP_8_BIT_DATA,
 #else
-	.mmc_bus_width  = MMC_CAP_4_BIT_DATA,
+	.mmc_bus_width	= MMC_CAP_4_BIT_DATA,
 #endif
 	.msmsdcc_fmin	= 144000,
 	.msmsdcc_fmid	= 24576000,
@@ -6102,9 +6102,9 @@ static struct mmc_platform_data msm7x30_sdc2_data = {
 static struct mmc_platform_data msm7x30_sdc3_data = {
 	.ocr_mask	= MMC_VDD_27_28 | MMC_VDD_28_29,
 	.translate_vdd	= msm_sdcc_setup_power,
-	.mmc_bus_width  = MMC_CAP_4_BIT_DATA,
+	.mmc_bus_width	= MMC_CAP_4_BIT_DATA,
 #ifdef CONFIG_MMC_MSM_SDIO_SUPPORT
-	.sdiowakeup_irq = MSM_GPIO_TO_INT(118),
+	.sdiowakeup_irq	= MSM_GPIO_TO_INT(118),
 #endif
 	.msmsdcc_fmin	= 144000,
 	.msmsdcc_fmid	= 24576000,
@@ -6117,11 +6117,11 @@ static struct mmc_platform_data msm7x30_sdc3_data = {
 static struct mmc_platform_data msm7x30_sdc4_data = {
 	.ocr_mask	= MMC_VDD_27_28 | MMC_VDD_28_29,
 	.translate_vdd	= msm_sdcc_setup_power,
-	.mmc_bus_width  = MMC_CAP_4_BIT_DATA,
-	.status      = msm7x30_sdcc_slot_status,
-	.status_irq  = MSM_GPIO_TO_INT(116),
-	.irq_flags   = IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING,
-	.wpswitch    = msm_sdcc_get_wpswitch,
+	.mmc_bus_width	= MMC_CAP_4_BIT_DATA,
+	.status		= msm7x30_sdcc_slot_status,
+	.status_irq	= MSM_GPIO_TO_INT(116),
+	.irq_flags	= IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING,
+	.wpswitch	= msm_sdcc_get_wpswitch,
 	.msmsdcc_fmin	= 144000,
 	.msmsdcc_fmid	= 24576000,
 	.msmsdcc_fmax	= 49152000,
@@ -6490,7 +6490,7 @@ static struct tsc2007_platform_data tsc2007_ts_data = {
 static struct i2c_board_info tsc_i2c_board_info[] = {
 	{
 		I2C_BOARD_INFO("tsc2007", 0x48),
-		.irq		= MSM_GPIO_TO_INT(TSC2007_TS_PEN_INT),
+		.irq = MSM_GPIO_TO_INT(TSC2007_TS_PEN_INT),
 		.platform_data = &tsc2007_ts_data,
 	},
 };
@@ -6636,9 +6636,9 @@ static struct flip_switch_pdata flip_switch_data = {
 };
 
 static struct platform_device flip_switch_device = {
-	.name   = "kp_flip_switch",
+	.name	= "kp_flip_switch",
 	.id	= -1,
-	.dev    = {
+	.dev	= {
 		.platform_data = &flip_switch_data,
 	}
 };
@@ -6741,8 +6741,8 @@ static struct cy8c_ts_platform_data cy8ctma300_pdata = {
 	.dis_max_x = 479,
 	.dis_min_y = 0,
 	.dis_max_y = 799,
-	.res_x	 = 479,
-	.res_y	 = 1009,
+	.res_x = 479,
+	.res_y = 1009,
 	.min_tid = 1,
 	.max_tid = 255,
 	.min_touch = 0,
@@ -6921,7 +6921,7 @@ static void __init msm7x30_init(void)
 #ifdef CONFIG_KEYPAD_CYPRESS_TOUCH
 	/* Touch Key */
 	touch_keypad_gpio_init();
-	i2c_register_board_info(20, touchkey_info, ARRAY_SIZE(touchkey_info));	
+	i2c_register_board_info(20, touchkey_info, ARRAY_SIZE(touchkey_info));
 #endif
 
 #ifdef CONFIG_SENSORS_BMA222_ACCEL

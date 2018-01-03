@@ -845,7 +845,7 @@ static int yas_bma222_set_calibration(signed char* data_cal)
     data_cal[0] = data_cal[1] = 0;
     data_cal[2]=1;
 #ifdef DEBUG
-	printk(KERN_INFO "%s\n",__FUNCTION__);
+    printk(KERN_INFO "%s\n",__FUNCTION__);
     printk(KERN_INFO "data are %d,%d,%d\n",data_cal[0],data_cal[1],data_cal[2]);
     printk(KERN_INFO "start x axis fast calibration\n");
 #endif
@@ -859,7 +859,7 @@ static int yas_bma222_set_calibration(signed char* data_cal)
         printk(KERN_INFO "wait 2ms and got cal ready flag is %d\n",tmp);
 #endif  
     } while(tmp==0);
-	
+
 #ifdef DEBUG
    yas_bma222_get_offset_filt_x(&tmp);
     printk(KERN_INFO "x offset filt is %d\n",tmp);
@@ -876,7 +876,7 @@ static int yas_bma222_set_calibration(signed char* data_cal)
         printk(KERN_INFO "wait 2ms and got cal ready flag is %d\n",tmp);
 #endif  
     } while(tmp==0);
-	
+
 #ifdef DEBUG
     yas_bma222_get_offset_filt_y(&tmp);
     printk(KERN_INFO "y offset filt is %d\n",tmp);
@@ -894,7 +894,7 @@ static int yas_bma222_set_calibration(signed char* data_cal)
         printk(KERN_INFO "wait 2ms and got cal ready flag is %d\n",tmp);
 #endif  
     } while(tmp==0);
-	
+
 #ifdef DEBUG
     yas_bma222_get_offset_filt_z(&tmp);
     printk(KERN_INFO "z offset filt is %d\n",tmp);
@@ -911,7 +911,7 @@ static int yas_bma222_set_calibration(signed char* data_cal)
         printk(KERN_INFO "wait 2ms and got eeprom writing status is %d\n",tmp);
 #endif  
     } while(tmp==0);
-	
+
     tmp=0; //lock eemprom
     yas_bma222_set_ee_w(tmp);
 #ifdef DEBUG
@@ -928,9 +928,9 @@ int yas_bma222_set_offset_target_x(unsigned char offsettarget)
         return YAS_ERROR_NOT_INITIALIZED;
     } else {
       err = yas_bma222_read_reg(YAS_BMA222_COMP_TARGET_OFFSET_X__REG, &data, 1);
-	  printk("[diony] yas_bma222_set_offset_target_data  = %d .  (read)  \n",data);
+	 printk("[diony] yas_bma222_set_offset_target_data  = %d .  (read)  \n",data);
       data = YAS_BMA222_SET_BITSLICE(data, YAS_BMA222_COMP_TARGET_OFFSET_X, offsettarget );
-	  printk("[diony] yas_bma222_set_offset_target_data  = %d .  (after BITSLICE,write)  \n",data);
+	 printk("[diony] yas_bma222_set_offset_target_data  = %d .  (after BITSLICE,write)  \n",data);
       err =yas_bma222_write_reg(YAS_BMA222_COMP_TARGET_OFFSET_X__REG, &data, 1);
     }
    return err;
@@ -1166,8 +1166,8 @@ int yas_bma222_set_cal_trigger(unsigned char caltrigger)
         } else {
 		err = yas_bma222_read_reg(YAS_BMA222_EN_FAST_COMP__REG, &data, 1);
 		printk("[diony] yas_bma222_set_cal_trigger  data = %d .  (read)  \n",data);
-	 	data = YAS_BMA222_SET_BITSLICE(data, YAS_BMA222_EN_FAST_COMP, caltrigger );
-		 printk("[diony] yas_bma222_set_cal_trigger  data = %d .  (after BITSLICE,write)  \n",data);
+		data = YAS_BMA222_SET_BITSLICE(data, YAS_BMA222_EN_FAST_COMP, caltrigger );
+		printk("[diony] yas_bma222_set_cal_trigger  data = %d .  (after BITSLICE,write)  \n",data);
 		err = yas_bma222_write_reg(YAS_BMA222_EN_FAST_COMP__REG, &data, 1);
 	}
 	return err;

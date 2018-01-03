@@ -257,7 +257,7 @@ static int msm_voice_put(struct snd_kcontrol *kcontrol,
 	msm_set_voc_route(rx_dev_info, AUDIO_ROUTE_STREAM_VOICE_RX,
 				rx_dev_id);
 
-	session_mask =	0x1 << (8 * ((int)AUDDEV_CLNT_VOC-1));
+	session_mask = 0x1 << (8 * ((int)AUDDEV_CLNT_VOC-1));
 
 	broadcast_event(AUDDEV_EVT_DEV_CHG_VOICE, rx_dev_id, session_mask);
 
@@ -286,7 +286,7 @@ static int msm_voice_put(struct snd_kcontrol *kcontrol,
 	broadcast_event(AUDDEV_EVT_DEV_CHG_VOICE, tx_dev_id, session_mask);
 
 	if (rx_dev_info->opened)
-		broadcast_event(AUDDEV_EVT_DEV_RDY, rx_dev_id,	session_mask);
+		broadcast_event(AUDDEV_EVT_DEV_RDY, rx_dev_id, session_mask);
 
 	if (tx_dev_info->opened)
 		broadcast_event(AUDDEV_EVT_DEV_RDY, tx_dev_id, session_mask);
@@ -502,9 +502,9 @@ static int msm_route_put(struct snd_kcontrol *kcontrol,
 	route_cfg.dev_id = ucontrol->value.integer.value[1];
 
 	if (ucontrol->id.numid == 2)
-		route_cfg.stream_type =	AUDIO_ROUTE_STREAM_PLAYBACK;
+		route_cfg.stream_type = AUDIO_ROUTE_STREAM_PLAYBACK;
 	else
-		route_cfg.stream_type =	AUDIO_ROUTE_STREAM_REC;
+		route_cfg.stream_type = AUDIO_ROUTE_STREAM_REC;
 
 	MM_DBG("route cfg %d %d type for popp %d set value %d\n",
 		route_cfg.dev_id, route_cfg.stream_type, session_id, set);
@@ -971,8 +971,8 @@ static struct snd_soc_dai_link msm_dai[] = {
 };
 
 static struct snd_soc_card snd_soc_card_msm = {
-	.name		= "msm-audio",
-	.dai_link	= msm_dai,
+	.name = "msm-audio",
+	.dai_link = msm_dai,
 	.num_links = ARRAY_SIZE(msm_dai),
 };
 

@@ -79,8 +79,8 @@ static struct wake_lock vbus_wake_lock;
 #define BATTERY_RPC_PROG	0x30000089
 #define BATTERY_RPC_VER_1_1	0x00010001
 #define BATTERY_RPC_VER_2_1	0x00020001
-#define BATTERY_RPC_VER_4_1     0x00040001
-#define BATTERY_RPC_VER_5_1     0x00050001
+#define BATTERY_RPC_VER_4_1	0x00040001
+#define BATTERY_RPC_VER_5_1	0x00050001
 
 #define BATTERY_RPC_CB_PROG	(BATTERY_RPC_PROG | 0x01000000)
 
@@ -88,11 +88,11 @@ static struct wake_lock vbus_wake_lock;
 #define CHG_RPC_VER_1_1		0x00010001
 #define CHG_RPC_VER_1_3		0x00010003
 #define CHG_RPC_VER_2_2		0x00020002
-#define CHG_RPC_VER_3_1         0x00030001
-#define CHG_RPC_VER_4_1         0x00040001
+#define CHG_RPC_VER_3_1		0x00030001
+#define CHG_RPC_VER_4_1		0x00040001
 
-#define BATTERY_REGISTER_PROC                          	2
-#define BATTERY_MODIFY_CLIENT_PROC                     	4
+#define BATTERY_REGISTER_PROC				2
+#define BATTERY_MODIFY_CLIENT_PROC			4
 #define BATTERY_DEREGISTER_CLIENT_PROC			5
 #define BATTERY_READ_MV_PROC 				12
 #define BATTERY_ENABLE_DISABLE_FILTER_PROC 		14
@@ -100,14 +100,14 @@ static struct wake_lock vbus_wake_lock;
 #define VBATT_FILTER			2
 
 #define BATTERY_CB_TYPE_PROC 		1
-#define BATTERY_CB_ID_ALL_ACTIV       	1
+#define BATTERY_CB_ID_ALL_ACTIV		1
 #define BATTERY_CB_ID_LOW_VOL		2
 
-#define BATTERY_LOW            	3400	//2800
-#define BATTERY_HIGH           	4200	//4300
+#define BATTERY_LOW		3400	//2800
+#define BATTERY_HIGH		4200	//4300
 
-#define ONCRPC_CHG_GET_GENERAL_STATUS_PROC 	12
-#define ONCRPC_CHARGER_API_VERSIONS_PROC 	0xffffffff
+#define ONCRPC_CHG_GET_GENERAL_STATUS_PROC	12
+#define ONCRPC_CHARGER_API_VERSIONS_PROC	0xffffffff
 
 #define BATT_RPC_TIMEOUT    15000	/* 15 sec */
 
@@ -134,37 +134,37 @@ const int temp_table[][2] =  {
 	{ 1845,		-100 },
 	{ 1760,		-50  },
 	{ 1738,		-40  },
-	{ 1718, 	-30  },
-	{ 1696, 	-20  },
-	{ 1682, 	-10  },
+	{ 1718,		-30  },
+	{ 1696,		-20  },
+	{ 1682,		-10  },
 	{ 1658,		0    },
 	{ 1637,		10   },
-	{ 1590, 	30   },
-	{ 1542, 	50   },
-	{ 1483, 	70   },
-	{ 1424, 	100  },
-	{ 1364, 	130  },
-	{ 1303, 	150  },
-	{ 1235, 	170  },
-	{ 1167, 	200  },
-	{ 1100, 	230  },
-	{ 1034, 	250  },
-	{  973, 	270  },
-	{  911, 	300  },
-	{  855, 	330  },
-	{  800, 	350  },
-	{  741, 	370  },
-	{  689, 	400  },
-	{  654, 	420  },
-	{  632, 	430  },
-	{  615, 	440  },
-	{  601, 	450  },
-	{  517, 	500  },
-	{  468, 	550  },
-	{  390, 	600  },
-	{  352, 	640  },
-	{  345, 	650  },
-	{  333, 	660  },
+	{ 1590,		30   },
+	{ 1542,		50   },
+	{ 1483,		70   },
+	{ 1424,		100  },
+	{ 1364,		130  },
+	{ 1303,		150  },
+	{ 1235,		170  },
+	{ 1167,		200  },
+	{ 1100,		230  },
+	{ 1034,		250  },
+	{  973,		270  },
+	{  911,		300  },
+	{  855,		330  },
+	{  800,		350  },
+	{  741,		370  },
+	{  689,		400  },
+	{  654,		420  },
+	{  632,		430  },
+	{  615,		440  },
+	{  601,		450  },
+	{  517,		500  },
+	{  468,		550  },
+	{  390,		600  },
+	{  352,		640  },
+	{  345,		650  },
+	{  333,		660  },
 };
 
 
@@ -181,9 +181,9 @@ const int temp_table[][2] =  {
 
 #define TEMP_TABLE_OFFSET		30
 #define BATT_TEMP_HIGH_BLOCK		348		//	65`C   +- 2
-#define BATT_TEMP_HIGH_RECOVER		623		//	43` C  +- 2
-#define BATT_TEMP_LOW_BLOCK		1708	        // 	-3`C   +- 2
-#define BATT_TEMP_LOW_RECOVER		1670	        //	0`C    +- 2
+#define BATT_TEMP_HIGH_RECOVER		623		//	43`C   +- 2
+#define BATT_TEMP_LOW_BLOCK		1708		//	-3`C   +- 2
+#define BATT_TEMP_LOW_RECOVER		1670		//	0`C    +- 2
 
 #define BATT_FULL_CHARGING_VOLTAGE	4160
 #define BATT_FULL_CHARGING_CURRENT	180
@@ -346,7 +346,7 @@ struct msm_battery_info {
 	u32 batt_api_version;
 
 	u32 avail_chg_sources;
-	u32 current_chg_source;	// NC (charging_source)
+	u32 current_chg_source;		// NC (charging_source)
 
 	u32 batt_status;
 	u32 batt_health;
@@ -359,24 +359,24 @@ struct msm_battery_info {
 	u32 battery_status;		// NC
 	u32 battery_level;		// NC (batt_capacity)
 	u32 battery_voltage;
-	u32 battery_voltage_adc; // Voltage ADC
+	u32 battery_voltage_adc;	// Voltage ADC
 
-	u32 fg_soc;				// NC
+	u32 fg_soc;			// NC
 	u32 batt_vol;			// NC (battery_voltage)
 	u32 batt_temp_check;
 	u32 batt_full_check;
 	u32 charging_source;
 
 	u32 battery_temp;		/* in celsius */
-	u32 battery_temp_adc;	/* ADC code from CP */
-	u32 chg_current_adc;	// ICHG ADC code (charging current)
+	u32 battery_temp_adc;		/* ADC code from CP */
+	u32 chg_current_adc;		// ICHG ADC code (charging current)
 	u32 batt_recharging;
 
 	u32 batt_wireless;		// CONFIG_WIRELESS_CHARGING
-	u32 wc_adc;				// CONFIG_WIRELESS_CHARGING
+	u32 wc_adc;			// CONFIG_WIRELESS_CHARGING
 
 	u32 chargingblock_clear;
-	u32 batt_voltage_now;	// for low batt
+	u32 batt_voltage_now;		// for low batt
 
 	u32(*calculate_capacity) (u32 voltage);	// NC
 
@@ -2547,7 +2547,7 @@ static int __init msm_batt_init(void)
 		msm_batt_info.batt_api_version);
 
 	//Check jig status
-	if(fsa9480_get_jig_status())
+	if (fsa9480_get_jig_status())
 		batt_jig_on_status = 1;
 	else
 		batt_jig_on_status = 0;

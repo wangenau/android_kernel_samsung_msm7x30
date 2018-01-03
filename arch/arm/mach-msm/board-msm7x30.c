@@ -96,9 +96,9 @@
 
 #define MSM_PMEM_SF_SIZE	0x1700000
 #ifdef CONFIG_FB_MSM_TRIPLE_BUFFER
-#define MSM_FB_PRIM_BUF_SIZE   (864 * 480 * 4 * 3) /* 4bpp * 3 Pages */
+#define MSM_FB_PRIM_BUF_SIZE	(864 * 480 * 4 * 3) /* 4bpp * 3 Pages */
 #else
-#define MSM_FB_PRIM_BUF_SIZE   (864 * 480 * 4 * 2) /* 4bpp * 2 Pages */
+#define MSM_FB_PRIM_BUF_SIZE	(864 * 480 * 4 * 2) /* 4bpp * 2 Pages */
 #endif
 /*
  * Reserve space for double buffered full screen
@@ -121,10 +121,10 @@
 
 #define MSM_FB_SIZE roundup(MSM_FB_PRIM_BUF_SIZE + MSM_FB_EXT_BUF_SIZE, 4096)
 
-#define MSM_PMEM_ADSP_SIZE      0x1E00000
+#define MSM_PMEM_ADSP_SIZE		0x1E00000
 #define MSM_FLUID_PMEM_ADSP_SIZE	0x2800000
-#define PMEM_KERNEL_EBI0_SIZE   0x600000
-#define MSM_PMEM_AUDIO_SIZE     0x200000
+#define PMEM_KERNEL_EBI0_SIZE		0x600000
+#define MSM_PMEM_AUDIO_SIZE		0x200000
 
 #ifdef CONFIG_ION_MSM
 static struct platform_device ion_dev;
@@ -137,8 +137,8 @@ static struct platform_device ion_dev;
 #define PMIC_VREG_WLAN_LEVEL	2900
 #define PMIC_GPIO_SD_DET	36
 #define PMIC_GPIO_SDC4_EN_N	17  /* PMIC GPIO Number 18 */
-#define PMIC_GPIO_HDMI_5V_EN_V3 32  /* PMIC GPIO for V3 H/W */
-#define PMIC_GPIO_HDMI_5V_EN_V2 39 /* PMIC GPIO for V2 H/W */
+#define PMIC_GPIO_HDMI_5V_EN_V3	32  /* PMIC GPIO for V3 H/W */
+#define PMIC_GPIO_HDMI_5V_EN_V2	39  /* PMIC GPIO for V2 H/W */
 
 #define ADV7520_I2C_ADDR	0x39
 
@@ -148,18 +148,18 @@ static struct platform_device ion_dev;
 #define OPTNAV_I2C_SLAVE_ADDR	(0xB0 >> 1)
 #define OPTNAV_IRQ		20
 #define OPTNAV_CHIP_SELECT	19
-#define PMIC_GPIO_SDC4_PWR_EN_N 24  /* PMIC GPIO Number 25 */
+#define PMIC_GPIO_SDC4_PWR_EN_N	24  /* PMIC GPIO Number 25 */
 
 /* Macros assume PMIC GPIOs start at 0 */
-#define PM8058_GPIO_PM_TO_SYS(pm_gpio)     (pm_gpio + NR_GPIO_IRQS)
-#define PM8058_GPIO_SYS_TO_PM(sys_gpio)    (sys_gpio - NR_GPIO_IRQS)
+#define PM8058_GPIO_PM_TO_SYS(pm_gpio)	   (pm_gpio + NR_GPIO_IRQS)
+#define PM8058_GPIO_SYS_TO_PM(sys_gpio)	   (sys_gpio - NR_GPIO_IRQS)
 #define PM8058_MPP_BASE			   PM8058_GPIO_PM_TO_SYS(PM8058_GPIOS)
 #define PM8058_MPP_PM_TO_SYS(pm_gpio)	   (pm_gpio + PM8058_MPP_BASE)
 
-#define PMIC_GPIO_FLASH_BOOST_ENABLE	15	/* PMIC GPIO Number 16 */
-#define PMIC_GPIO_HAP_ENABLE   16  /* PMIC GPIO Number 17 */
+#define PMIC_GPIO_FLASH_BOOST_ENABLE	15  /* PMIC GPIO Number 16 */
+#define PMIC_GPIO_HAP_ENABLE		16  /* PMIC GPIO Number 17 */
 
-#define PMIC_GPIO_WLAN_EXT_POR  22 /* PMIC GPIO NUMBER 23 */
+#define PMIC_GPIO_WLAN_EXT_POR		22 /* PMIC GPIO NUMBER 23 */
 
 #define BMA150_GPIO_INT 1
 
@@ -167,7 +167,7 @@ static struct platform_device ion_dev;
 
 #define PMIC_GPIO_QUICKVX_CLK 37 /* PMIC GPIO 38 */
 
-#define	PM_FLIP_MPP 5 /* PMIC MPP 06 */
+#define PM_FLIP_MPP 5 /* PMIC MPP 06 */
 
 #define DDR1_BANK_BASE 0X20000000
 #define DDR2_BANK_BASE 0X40000000
@@ -993,22 +993,22 @@ static struct msm_camera_gpio_conf msm_7x30_back_cam_gpio_conf = {
 };
 
 static struct msm_camera_sensor_flash_data flash_vx6953 = {
-	.flash_type	= MSM_CAMERA_FLASH_NONE,
+	.flash_type = MSM_CAMERA_FLASH_NONE,
 };
 
 static struct msm_camera_sensor_platform_info sensor_board_info_vx6953 = {
-	.mount_angle	= 0,
+	.mount_angle = 0,
 	.cam_vreg = msm_7x30_back_cam_vreg,
 	.num_vreg = ARRAY_SIZE(msm_7x30_back_cam_vreg),
 	.gpio_conf = &msm_7x30_back_cam_gpio_conf,
 };
 
 static struct msm_camera_sensor_info msm_camera_sensor_vx6953_data = {
-	.sensor_name	= "vx6953",
-	.pdata	= &msm_camera_csi_device_data[0],
-	.flash_data	= &flash_vx6953,
+	.sensor_name = "vx6953",
+	.pdata = &msm_camera_csi_device_data[0],
+	.flash_data = &flash_vx6953,
 	.sensor_platform_info = &sensor_board_info_vx6953,
-	.csi_if	= 1,
+	.csi_if = 1,
 	.camera_type = BACK_CAMERA_2D,
 };
 
@@ -1079,7 +1079,7 @@ static struct i2c_board_info msm_camera_boardinfo[] __initdata = {
 };
 
 #ifdef CONFIG_MSM_CAMERA
-#define	CAM_STNDBY	143
+#define CAM_STNDBY	143
 static uint32_t camera_off_vcm_gpio_table[] = {
 GPIO_CFG(1, 0, GPIO_CFG_OUTPUT, GPIO_CFG_PULL_DOWN, GPIO_CFG_2MA), /* VCM */
 };
@@ -1237,7 +1237,7 @@ struct resource msm_camera_resources[] = {
 		.flags	= IORESOURCE_IRQ,
 	},
 	{
-		.flags  = IORESOURCE_DMA,
+		.flags	= IORESOURCE_DMA,
 	}
 };
 
@@ -1420,7 +1420,7 @@ static struct msm_camera_sensor_info msm_camera_sensor_vx6953_data = {
 	.sensor_reset   = 0,
 	.sensor_pwd     = 85,
 	.vcm_pwd        = 1,
-	.vcm_enable		= 0,
+	.vcm_enable     = 0,
 	.pdata          = &msm_camera_device_data,
 	.resource       = msm_camera_resources,
 	.num_resources  = ARRAY_SIZE(msm_camera_resources),
@@ -2261,8 +2261,8 @@ static struct marimba_fm_platform_data marimba_fm_pdata = {
 #define MARIMBA_SLAVE_ID_CDC_ADDR	0x77
 #define MARIMBA_SLAVE_ID_QMEMBIST_ADDR	0X66
 
-#define BAHAMA_SLAVE_ID_FM_ADDR         0x2A
-#define BAHAMA_SLAVE_ID_QMEMBIST_ADDR   0x7B
+#define BAHAMA_SLAVE_ID_FM_ADDR		0x2A
+#define BAHAMA_SLAVE_ID_QMEMBIST_ADDR	0x7B
 
 static const char *tsadc_id = "MADC";
 
@@ -2403,15 +2403,15 @@ static struct msm_ts_platform_data msm_ts_data = {
 	.max_press      = 255,
 	.inv_x          = 4096,
 	.inv_y          = 4096,
-	.can_wakeup	= false,
+	.can_wakeup     = false,
 };
 
 static struct marimba_tsadc_platform_data marimba_tsadc_pdata = {
 	.marimba_tsadc_power =  marimba_tsadc_power,
-	.init		     =  marimba_tsadc_init,
-	.exit		     =  marimba_tsadc_exit,
+	.init                =  marimba_tsadc_init,
+	.exit                =  marimba_tsadc_exit,
 	.tsadc_prechg_en = true,
-	.can_wakeup	= false,
+	.can_wakeup      = false,
 	.setup = {
 		.pen_irq_en	=	true,
 		.tsadc_en	=	true,
@@ -2480,7 +2480,7 @@ static struct marimba_codec_platform_data mariba_codec_pdata = {
 
 static struct marimba_platform_data marimba_pdata = {
 	.slave_id[MARIMBA_SLAVE_ID_FM]       = MARIMBA_SLAVE_ID_FM_ADDR,
-	.slave_id[MARIMBA_SLAVE_ID_CDC]	     = MARIMBA_SLAVE_ID_CDC_ADDR,
+	.slave_id[MARIMBA_SLAVE_ID_CDC]      = MARIMBA_SLAVE_ID_CDC_ADDR,
 	.slave_id[MARIMBA_SLAVE_ID_QMEMBIST] = MARIMBA_SLAVE_ID_QMEMBIST_ADDR,
 	.slave_id[SLAVE_ID_BAHAMA_FM]        = BAHAMA_SLAVE_ID_FM_ADDR,
 	.slave_id[SLAVE_ID_BAHAMA_QMEMBIST]  = BAHAMA_SLAVE_ID_QMEMBIST_ADDR,
@@ -2541,7 +2541,7 @@ static struct marimba_codec_platform_data timpani_codec_pdata = {
 };
 
 static struct marimba_platform_data timpani_pdata = {
-	.slave_id[MARIMBA_SLAVE_ID_CDC]	= MARIMBA_SLAVE_ID_CDC_ADDR,
+	.slave_id[MARIMBA_SLAVE_ID_CDC] = MARIMBA_SLAVE_ID_CDC_ADDR,
 	.slave_id[MARIMBA_SLAVE_ID_QMEMBIST] = MARIMBA_SLAVE_ID_QMEMBIST_ADDR,
 	.marimba_setup = msm_timpani_setup_power,
 	.marimba_shutdown = msm_timpani_shutdown_power,
@@ -2909,7 +2909,7 @@ static struct android_usb_platform_data android_usb_pdata = {
 };
 
 static struct platform_device android_usb_device = {
-	.name	= "android_usb",
+	.name		= "android_usb",
 	.id		= -1,
 	.dev		= {
 		.platform_data = &android_usb_pdata,
@@ -3025,7 +3025,7 @@ static struct ofn_atlab_platform_data optnav_data = {
 		.invert_x		= true,
 		.swap_x_y		= false,
 		.hold_a_b_en		= true,
-		.motion_filter_en       = true,
+		.motion_filter_en	= true,
 	},
 };
 
@@ -3120,7 +3120,7 @@ static struct i2c_board_info bma150_board_info[] __initdata = {
 static struct i2c_board_info msm_i2c_board_info[] = {
 	{
 		I2C_BOARD_INFO("m33c01", OPTNAV_I2C_SLAVE_ADDR),
-		.irq		= MSM_GPIO_TO_INT(OPTNAV_IRQ),
+		.irq = MSM_GPIO_TO_INT(OPTNAV_IRQ),
 		.platform_data = &optnav_data,
 	},
 	{
@@ -3208,27 +3208,27 @@ static struct msm_pm_boot_platform_data msm_pm_boot_pdata __initdata = {
 static struct resource qsd_spi_resources[] = {
 	{
 		.name   = "spi_irq_in",
-		.start	= INT_SPI_INPUT,
-		.end	= INT_SPI_INPUT,
-		.flags	= IORESOURCE_IRQ,
+		.start  = INT_SPI_INPUT,
+		.end    = INT_SPI_INPUT,
+		.flags  = IORESOURCE_IRQ,
 	},
 	{
 		.name   = "spi_irq_out",
-		.start	= INT_SPI_OUTPUT,
-		.end	= INT_SPI_OUTPUT,
-		.flags	= IORESOURCE_IRQ,
+		.start  = INT_SPI_OUTPUT,
+		.end    = INT_SPI_OUTPUT,
+		.flags  = IORESOURCE_IRQ,
 	},
 	{
 		.name   = "spi_irq_err",
-		.start	= INT_SPI_ERROR,
-		.end	= INT_SPI_ERROR,
-		.flags	= IORESOURCE_IRQ,
+		.start  = INT_SPI_ERROR,
+		.end    = INT_SPI_ERROR,
+		.flags  = IORESOURCE_IRQ,
 	},
 	{
 		.name   = "spi_base",
-		.start	= 0xA8000000,
-		.end	= 0xA8000000 + SZ_4K - 1,
-		.flags	= IORESOURCE_MEM,
+		.start  = 0xA8000000,
+		.end    = 0xA8000000 + SZ_4K - 1,
+		.flags  = IORESOURCE_MEM,
 	},
 	{
 		.name   = "spidm_channels",
@@ -3460,7 +3460,7 @@ static int msm_hsusb_ldo_set_voltage(int mV)
 static int msm_hsusb_pmic_notif_init(void (*callback)(int online), int init);
 #endif
 static struct msm_otg_platform_data msm_otg_pdata = {
-	.rpc_connect	= hsusb_rpc_connect,
+	.rpc_connect = hsusb_rpc_connect,
 
 #ifndef CONFIG_USB_EHCI_MSM_72K
 	.pmic_vbus_notif_init         = msm_hsusb_pmic_notif_init,
@@ -4207,7 +4207,7 @@ static unsigned char quickvx_mddi_client = 1, other_mddi_client = 1;
 static unsigned char quickvx_ldo_enabled;
 
 static unsigned quickvx_vlp_gpio =
-	GPIO_CFG(97, 0, GPIO_CFG_OUTPUT,  GPIO_CFG_NO_PULL,	GPIO_CFG_2MA);
+	GPIO_CFG(97, 0, GPIO_CFG_OUTPUT, GPIO_CFG_NO_PULL, GPIO_CFG_2MA);
 
 static struct pm8xxx_gpio_init_info pmic_quickvx_clk_gpio = {
 	PM8058_GPIO_PM_TO_SYS(PMIC_GPIO_QUICKVX_CLK),
@@ -5283,15 +5283,15 @@ static void __init bt_power_init(void)
 #endif
 
 static struct msm_psy_batt_pdata msm_psy_batt_data = {
-	.voltage_min_design 	= 2800,
+	.voltage_min_design	= 2800,
 	.voltage_max_design	= 4300,
-	.avail_chg_sources   	= AC_CHG | USB_CHG ,
-	.batt_technology        = POWER_SUPPLY_TECHNOLOGY_LION,
+	.avail_chg_sources	= AC_CHG | USB_CHG ,
+	.batt_technology	= POWER_SUPPLY_TECHNOLOGY_LION,
 };
 
 static struct platform_device msm_batt_device = {
-	.name 		    = "msm-battery",
-	.id		    = -1,
+	.name               = "msm-battery",
+	.id                 = -1,
 	.dev.platform_data  = &msm_psy_batt_data,
 };
 
@@ -5350,8 +5350,8 @@ static struct sdio_al_platform_data sdio_al_pdata = {
 struct platform_device msm_device_sdio_al = {
 	.name = "msm_sdio_al",
 	.id = -1,
-	.dev		= {
-		.platform_data	= &sdio_al_pdata,
+	.dev = {
+		.platform_data = &sdio_al_pdata,
 	},
 };
 
@@ -5837,9 +5837,9 @@ out:
 #define MBP_MODE_CTRL_2 \
 	GPIO_CFG(34, 0, GPIO_CFG_OUTPUT, GPIO_CFG_NO_PULL, GPIO_CFG_2MA)
 #define TSIF_EN \
-	GPIO_CFG(35, 1, GPIO_CFG_INPUT, GPIO_CFG_PULL_DOWN,	GPIO_CFG_2MA)
+	GPIO_CFG(35, 1, GPIO_CFG_INPUT, GPIO_CFG_PULL_DOWN, GPIO_CFG_2MA)
 #define TSIF_DATA \
-	GPIO_CFG(36, 1, GPIO_CFG_INPUT, GPIO_CFG_PULL_DOWN,	GPIO_CFG_2MA)
+	GPIO_CFG(36, 1, GPIO_CFG_INPUT, GPIO_CFG_PULL_DOWN, GPIO_CFG_2MA)
 #define TSIF_CLK \
 	GPIO_CFG(34, 1, GPIO_CFG_INPUT, GPIO_CFG_PULL_DOWN, GPIO_CFG_2MA)
 
@@ -6248,8 +6248,8 @@ static int msm_sdcc_get_wpswitch(struct device *dv)
 static struct mmc_platform_data msm7x30_sdc1_data = {
 	.ocr_mask	= MMC_VDD_165_195 | MMC_VDD_27_28 | MMC_VDD_28_29,
 	.translate_vdd	= msm_sdcc_setup_power_mbp,
-	.mmc_bus_width  = MMC_CAP_4_BIT_DATA,
-	.status	        = mbp_status,
+	.mmc_bus_width	= MMC_CAP_4_BIT_DATA,
+	.status		= mbp_status,
 	.register_status_notify = mbp_register_status_notify,
 	.msmsdcc_fmin	= 144000,
 	.msmsdcc_fmid	= 24576000,
@@ -6260,7 +6260,7 @@ static struct mmc_platform_data msm7x30_sdc1_data = {
 static struct mmc_platform_data msm7x30_sdc1_data = {
 	.ocr_mask	= MMC_VDD_165_195,
 	.translate_vdd	= msm_sdcc_setup_power,
-	.mmc_bus_width  = MMC_CAP_4_BIT_DATA,
+	.mmc_bus_width	= MMC_CAP_4_BIT_DATA,
 	.msmsdcc_fmin	= 144000,
 	.msmsdcc_fmid	= 24576000,
 	.msmsdcc_fmax	= 49152000,
@@ -6289,8 +6289,8 @@ static struct mmc_platform_data msm7x30_sdc2_data = {
 static struct mmc_platform_data msm7x30_sdc3_data = {
 	.ocr_mask	= MMC_VDD_27_28 | MMC_VDD_28_29,
 	.translate_vdd	= msm_sdcc_setup_power,
-	.mmc_bus_width  = MMC_CAP_4_BIT_DATA,
-	.sdiowakeup_irq = MSM_GPIO_TO_INT(118),
+	.mmc_bus_width	= MMC_CAP_4_BIT_DATA,
+	.sdiowakeup_irq	= MSM_GPIO_TO_INT(118),
 	.msmsdcc_fmin	= 144000,
 	.msmsdcc_fmid	= 24576000,
 	.msmsdcc_fmax	= 49152000,
@@ -6302,11 +6302,11 @@ static struct mmc_platform_data msm7x30_sdc3_data = {
 static struct mmc_platform_data msm7x30_sdc4_data = {
 	.ocr_mask	= MMC_VDD_27_28 | MMC_VDD_28_29,
 	.translate_vdd	= msm_sdcc_setup_power,
-	.mmc_bus_width  = MMC_CAP_4_BIT_DATA,
-	.status      = msm7x30_sdcc_slot_status,
-	.status_irq  = PM8058_GPIO_IRQ(PMIC8058_IRQ_BASE, PMIC_GPIO_SD_DET - 1),
-	.irq_flags   = IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING,
-	.wpswitch    = msm_sdcc_get_wpswitch,
+	.mmc_bus_width	= MMC_CAP_4_BIT_DATA,
+	.status		= msm7x30_sdcc_slot_status,
+	.status_irq	= PM8058_GPIO_IRQ(PMIC8058_IRQ_BASE, PMIC_GPIO_SD_DET - 1),
+	.irq_flags	= IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING,
+	.wpswitch	= msm_sdcc_get_wpswitch,
 	.msmsdcc_fmin	= 144000,
 	.msmsdcc_fmid	= 24576000,
 	.msmsdcc_fmax	= 49152000,
@@ -6644,28 +6644,28 @@ static int tsc2007_power_shutdown(bool enable)
 }
 
 static struct tsc2007_platform_data tsc2007_ts_data = {
-	.model = 2007,
-	.x_plate_ohms = 300,
+	.model		= 2007,
+	.x_plate_ohms	= 300,
 	.min_x		= 210,
 	.max_x		= 3832,
 	.min_y		= 150,
 	.max_y		= 3936,
-	.irq_flags    = IRQF_TRIGGER_LOW,
+	.irq_flags        = IRQF_TRIGGER_LOW,
 	.init_platform_hw = tsc2007_init,
 	.exit_platform_hw = tsc2007_exit,
-	.power_shutdown	  = tsc2007_power_shutdown,
-	.invert_x	  = true,
-	.invert_y	  = true,
+	.power_shutdown   = tsc2007_power_shutdown,
+	.invert_x         = true,
+	.invert_y         = true,
 	/* REVISIT: Temporary fix for reversed pressure */
-	.invert_z1	  = true,
-	.invert_z2	  = true,
+	.invert_z1        = true,
+	.invert_z2        = true,
 	.get_pendown_state = tsc2007_get_pendown_state,
 };
 
 static struct i2c_board_info tsc_i2c_board_info[] = {
 	{
 		I2C_BOARD_INFO("tsc2007", 0x48),
-		.irq		= MSM_GPIO_TO_INT(TSC2007_TS_PEN_INT),
+		.irq = MSM_GPIO_TO_INT(TSC2007_TS_PEN_INT),
 		.platform_data = &tsc2007_ts_data,
 	},
 };
@@ -7212,10 +7212,10 @@ static struct memtype_reserve msm7x30_reserve_table[] __initdata = {
 	[MEMTYPE_SMI] = {
 	},
 	[MEMTYPE_EBI0] = {
-		.flags	=	MEMTYPE_FLAGS_1M_ALIGN,
+		.flags = MEMTYPE_FLAGS_1M_ALIGN,
 	},
 	[MEMTYPE_EBI1] = {
-		.flags	=	MEMTYPE_FLAGS_1M_ALIGN,
+		.flags = MEMTYPE_FLAGS_1M_ALIGN,
 	},
 };
 

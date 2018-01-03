@@ -121,7 +121,7 @@ static struct resource resources_uart2[] = {
 		.start	= MSM7X30_UART2_PHYS,
 		.end	= MSM7X30_UART2_PHYS + MSM7X30_UART2_SIZE - 1,
 		.flags	= IORESOURCE_MEM,
-		.name  = "uart_resource"
+		.name	= "uart_resource"
 	},
 };
 
@@ -308,19 +308,19 @@ static struct resource msm_csic_resources[] = {
 
 struct resource msm_vfe_resources[] = {
 	{
-		.name   = "msm_vfe",
+		.name	= "msm_vfe",
 		.start	= 0xA6000000,
 		.end	= 0xA6000000 + SZ_1M - 1,
 		.flags	= IORESOURCE_MEM,
 	},
 	{
-		.name   = "msm_vfe",
+		.name	= "msm_vfe",
 		.start	= INT_VFE,
 		.end	= INT_VFE,
 		.flags	= IORESOURCE_IRQ,
 	},
 	{
-		.name   = "msm_camif",
+		.name	= "msm_camif",
 		.start	= 0xAB000000,
 		.end	= 0xAB000000 + SZ_1K - 1,
 		.flags	= IORESOURCE_MEM,
@@ -329,13 +329,13 @@ struct resource msm_vfe_resources[] = {
 
 static struct resource msm_vpe_resources[] = {
 	{
-		.name   = "vpe",
+		.name	= "vpe",
 		.start	= 0xAD200000,
 		.end	= 0xAD200000 + SZ_1M - 1,
 		.flags	= IORESOURCE_MEM,
 	},
 	{
-		.name   = "vpe",
+		.name	= "vpe",
 		.start	= INT_VPE,
 		.end	= INT_VPE,
 		.flags	= IORESOURCE_IRQ,
@@ -375,25 +375,25 @@ static struct resource resources_qup[] = {
 		.flags	= IORESOURCE_MEM,
 	},
 	{
-		.name   = "gsbi_qup_i2c_addr",
+		.name	= "gsbi_qup_i2c_addr",
 		.start	= MSM_GSBI_QUP_I2C_PHYS,
 		.end	= MSM_GSBI_QUP_I2C_PHYS + 4 - 1,
 		.flags	= IORESOURCE_MEM,
 	},
 	{
-		.name   = "qup_in_intr",
+		.name	= "qup_in_intr",
 		.start	= INT_PWB_QUP_IN,
 		.end	= INT_PWB_QUP_IN,
 		.flags	= IORESOURCE_IRQ,
 	},
 	{
-		.name   = "qup_out_intr",
+		.name	= "qup_out_intr",
 		.start	= INT_PWB_QUP_OUT,
 		.end	= INT_PWB_QUP_OUT,
 		.flags	= IORESOURCE_IRQ,
 	},
 	{
-		.name   = "qup_err_intr",
+		.name	= "qup_err_intr",
 		.start	= INT_PWB_QUP_ERR,
 		.end	= INT_PWB_QUP_ERR,
 		.flags	= IORESOURCE_IRQ,
@@ -632,9 +632,9 @@ struct platform_device asoc_mvs_dai1 = {
 static struct resource resources_nand[] = {
 	[0] = {
 		.name   = "msm_nand_dmac",
-		.start	= DMOV_NAND_CHAN,
-		.end	= DMOV_NAND_CHAN,
-		.flags	= IORESOURCE_DMA,
+		.start  = DMOV_NAND_CHAN,
+		.end    = DMOV_NAND_CHAN,
+		.flags  = IORESOURCE_DMA,
 	},
 	[1] = {
 		.name   = "msm_nand_phys",
@@ -782,8 +782,8 @@ static struct smd_platform smd_platform_data = {
 };
 
 struct platform_device msm_device_smd = {
-	.name	= "msm_smd",
-	.id	= -1,
+	.name = "msm_smd",
+	.id = -1,
 	.resource = smd_resource,
 	.num_resources = ARRAY_SIZE(smd_resource),
 	.dev = {
@@ -810,8 +810,8 @@ static struct msm_dmov_pdata msm_dmov_pdata = {
 };
 
 struct platform_device msm_device_dmov = {
-	.name	= "msm_dmov",
-	.id	= -1,
+	.name = "msm_dmov",
+	.id = -1,
 	.resource = msm_dmov_resource,
 	.num_resources = ARRAY_SIZE(msm_dmov_resource),
 	.dev = {
@@ -852,7 +852,7 @@ static struct resource resources_sdc1[] = {
 
 static struct resource resources_sdc2[] = {
 	{
-		.name   = "core_mem",
+		.name	= "core_mem",
 		.start	= MSM_SDC2_BASE,
 		.end	= MSM_SDC2_BASE + SZ_4K - 1,
 		.flags	= IORESOURCE_MEM,
@@ -879,7 +879,7 @@ static struct resource resources_sdc2[] = {
 
 static struct resource resources_sdc3[] = {
 	{
-		.name   = "core_mem",
+		.name	= "core_mem",
 		.start	= MSM_SDC3_BASE,
 		.end	= MSM_SDC3_BASE + SZ_4K - 1,
 		.flags	= IORESOURCE_MEM,
@@ -906,7 +906,7 @@ static struct resource resources_sdc3[] = {
 
 static struct resource resources_sdc4[] = {
 	{
-		.name   = "core_mem",
+		.name	= "core_mem",
 		.start	= MSM_SDC4_BASE,
 		.end	= MSM_SDC4_BASE + SZ_4K - 1,
 		.flags	= IORESOURCE_MEM,
@@ -1242,8 +1242,8 @@ static struct msm_rotator_platform_data rotator_pdata = {
 struct platform_device msm_rotator_device = {
 	.name		= "msm_rotator",
 	.id		= 0,
-	.num_resources  = ARRAY_SIZE(resources_msm_rotator),
-	.resource       = resources_msm_rotator,
+	.num_resources	= ARRAY_SIZE(resources_msm_rotator),
+	.resource	= resources_msm_rotator,
 	.dev = {
 		.platform_data = &rotator_pdata,
 	},

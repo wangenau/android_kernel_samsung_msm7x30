@@ -171,7 +171,7 @@
 /*                      Geomagnetic Filter Configuration                      */
 /*----------------------------------------------------------------------------*/
 
-#define YAS_MAG_I2C_SLAVEADDR               (0x2e)
+#define YAS_MAG_I2C_SLAVEADDR			(0x2e)
 
 #define YAS_MAG_MAX_FILTER_LEN			(30)
 #define YAS_MAG_DEFAULT_FILTER_NOISE_X		(144) /* sd: 1200 nT */

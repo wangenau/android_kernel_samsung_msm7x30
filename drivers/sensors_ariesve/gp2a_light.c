@@ -62,7 +62,7 @@
 #ifdef REALMODE_BUFFER
 #define LIGHT_BUFFER_NUM	14
 #else
-#define LIGHT_BUFFER_UP	5
+#define LIGHT_BUFFER_UP		5
 #define LIGHT_BUFFER_DOWN	5
 #endif
 
@@ -649,7 +649,7 @@ static void gp2a_work_func_light(struct work_struct *work)
 #endif
 		}
 #else
-		if (data->light_level_state <= i || data->light_first_level == true){
+		if (data->light_level_state <= i || data->light_first_level == true) {
 			if (data->light_count++ == LIGHT_BUFFER_UP) {
                 if (LightSensor_Log_Cnt == 10) {
                     printk("[LIGHT SENSOR] lux up 0x%0X (%d)\n", adc, adc);

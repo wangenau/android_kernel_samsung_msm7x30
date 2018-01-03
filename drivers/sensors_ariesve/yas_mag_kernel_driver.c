@@ -1710,12 +1710,12 @@ geomagnetic_probe(struct i2c_client *client, const struct i2c_device_id *id)
 	i2c_set_clientdata(client, data);
 
 	// [Hss]
-	gpio_set_value_cansleep(180, 0);	
+	gpio_set_value_cansleep(180, 0);
 	printk(KERN_ERR "Compass I: RST LOW\n");
 	
-	udelay(120);	
+	udelay(120);
 
-	gpio_set_value_cansleep(180, 1);	
+	gpio_set_value_cansleep(180, 1);
 	printk(KERN_ERR "Compass I: RST HIGH\n");
 
 	rt = yas_mag_driver_init(&hwdriver);
