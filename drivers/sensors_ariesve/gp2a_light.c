@@ -693,7 +693,7 @@ static void gp2a_work_func_light(struct work_struct *work)
 }
 
 #ifdef MSM_LIGHTSENSOR_ADC_READ
-void lightsensor_rpc_init(void)
+void __devinit lightsensor_rpc_init(void)
 {
   /* RPC initial sequence */
   int err = 1;
@@ -710,7 +710,7 @@ void lightsensor_rpc_init(void)
 #endif
 
 static int
-lightsensor_probe(struct platform_device *pdev)
+__devinit lightsensor_probe(struct platform_device *pdev)
 {
 	struct sensor_data *data = NULL;
 	struct input_dev *input_data = NULL;
