@@ -58,7 +58,7 @@
 #endif
 
 #ifdef CONFIG_FB_MSM_TRIPLE_BUFFER
-#define MSM_FB_NUM	3
+#define MSM_FB_NUM 3
 #endif
 
 static unsigned char *fbram;
@@ -3005,7 +3005,7 @@ static void msm_fb_ensure_memory_coherency_before_dma(struct fb_info *info,
 	 * only once, no matter how many requests there are.
 	 */
 	struct msm_fb_data_type *mfd = (struct msm_fb_data_type *)info->par;
-	switch (mfd->mdp_fb_page_protection)	{
+	switch (mfd->mdp_fb_page_protection) {
 	default:
 	case MDP_FB_PAGE_PROTECTION_NONCACHED:
 	case MDP_FB_PAGE_PROTECTION_WRITECOMBINE:
@@ -3079,7 +3079,7 @@ static void msm_fb_ensure_memory_coherency_after_dma(struct fb_info *info,
 	int i;
 
 	struct msm_fb_data_type *mfd = (struct msm_fb_data_type *)info->par;
-	switch (mfd->mdp_fb_page_protection)	{
+	switch (mfd->mdp_fb_page_protection) {
 	default:
 	case MDP_FB_PAGE_PROTECTION_NONCACHED:
 	case MDP_FB_PAGE_PROTECTION_WRITECOMBINE:
@@ -4196,7 +4196,7 @@ static int msm_fb_ioctl(struct fb_info *info, unsigned int cmd,
 				return ret;
 
 		/* Validate the proposed page protection settings. */
-		switch (fb_page_protection.page_protection)	{
+		switch (fb_page_protection.page_protection) {
 		case MDP_FB_PAGE_PROTECTION_NONCACHED:
 		case MDP_FB_PAGE_PROTECTION_WRITECOMBINE:
 		case MDP_FB_PAGE_PROTECTION_WRITETHROUGHCACHE:

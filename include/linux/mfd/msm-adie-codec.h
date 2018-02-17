@@ -40,7 +40,7 @@
 
 /* State to which client asks the drv to write the default values
  * to the registers */
-#define ADIE_CODEC_FLASH_IMAGE 					   0x0001
+#define ADIE_CODEC_FLASH_IMAGE                                     0x0001
 
 /* Path type */
 #define ADIE_CODEC_RX 0
@@ -97,7 +97,7 @@ struct adie_codec_anc_data {
 };
 
 struct adie_codec_operations {
-	int	 codec_id;
+	int codec_id;
 	int (*codec_open) (struct adie_codec_dev_profile *profile,
 				struct adie_codec_path **path_pptr);
 	int (*codec_close) (struct adie_codec_path *path_ptr);

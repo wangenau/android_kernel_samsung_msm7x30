@@ -52,7 +52,7 @@
 
 /* State to which client asks the drv to write the default values
  * to the registers */
-#define ADIE_CODEC_FLASH_IMAGE 					   0x0001
+#define ADIE_CODEC_FLASH_IMAGE                                     0x0001
 
 /* Path type */
 #define ADIE_CODEC_RX 0

@@ -39,7 +39,7 @@
 #define CLOCK_ON	1
 
 /* 3.57954545 Mhz */
-#define TVENC_CTL_TV_MODE_NTSC_M_PAL60  0
+#define TVENC_CTL_TV_MODE_NTSC_M_PAL60		0
 /* 3.57961149 Mhz */
 #define TVENC_CTL_TV_MODE_PAL_M			BIT(0)
 /*non-Argintina = 4.3361875 Mhz */

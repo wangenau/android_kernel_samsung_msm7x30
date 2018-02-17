@@ -281,21 +281,21 @@ static struct mfd_cell othc0_cell __devinitdata = {
 	.name		= "pm8058-othc",
 	.id		= 0,
 	.resources	= othc0_cell_resources,
-	.num_resources  = ARRAY_SIZE(othc0_cell_resources),
+	.num_resources	= ARRAY_SIZE(othc0_cell_resources),
 };
 
 static struct mfd_cell othc1_cell __devinitdata = {
 	.name		= "pm8058-othc",
 	.id		= 1,
 	.resources	= othc1_cell_resources,
-	.num_resources  = ARRAY_SIZE(othc1_cell_resources),
+	.num_resources	= ARRAY_SIZE(othc1_cell_resources),
 };
 
 static struct mfd_cell othc2_cell __devinitdata = {
 	.name		= "pm8058-othc",
 	.id		= 2,
 	.resources	= othc2_cell_resources,
-	.num_resources  = ARRAY_SIZE(othc2_cell_resources),
+	.num_resources	= ARRAY_SIZE(othc2_cell_resources),
 };
 
 static struct pm8xxx_batt_alarm_core_data batt_alarm_cdata = {
@@ -328,10 +328,10 @@ static struct mfd_cell nfc_cell __devinitdata = {
 static const struct resource rtc_cell_resources[] __devinitconst = {
 	[0] = SINGLE_IRQ_RESOURCE(NULL, PM8058_RTC_ALARM_IRQ),
 	[1] = {
-		.name   = "pmic_rtc_base",
-		.start  = PM8058_RTC_BASE,
-		.end    = PM8058_RTC_BASE,
-		.flags  = IORESOURCE_IO,
+		.name	= "pmic_rtc_base",
+		.start	= PM8058_RTC_BASE,
+		.end	= PM8058_RTC_BASE,
+		.flags	= IORESOURCE_IO,
 	},
 };
 
@@ -339,7 +339,7 @@ static struct mfd_cell rtc_cell __devinitdata = {
 	.name		= PM8XXX_RTC_DEV_NAME,
 	.id		= -1,
 	.resources	= rtc_cell_resources,
-	.num_resources  = ARRAY_SIZE(rtc_cell_resources),
+	.num_resources	= ARRAY_SIZE(rtc_cell_resources),
 };
 
 static const struct resource resources_pwrkey[] __devinitconst = {
@@ -367,7 +367,7 @@ static const struct resource resources_keypad[] = {
 static struct mfd_cell keypad_cell __devinitdata = {
 	.name		= PM8XXX_KEYPAD_DEV_NAME,
 	.id		= -1,
-	.num_resources  = ARRAY_SIZE(resources_keypad),
+	.num_resources	= ARRAY_SIZE(resources_keypad),
 	.resources	= resources_keypad,
 };
 
@@ -389,10 +389,10 @@ static struct mfd_cell mpp_cell __devinitdata = {
 
 static const struct resource gpio_cell_resources[] __devinitconst = {
 	[0] = {
-		.start = PM8058_IRQ_BLOCK_BIT(PM8058_GPIO_BLOCK_START, 0),
-		.end   = PM8058_IRQ_BLOCK_BIT(PM8058_GPIO_BLOCK_START, 0)
+		.start	= PM8058_IRQ_BLOCK_BIT(PM8058_GPIO_BLOCK_START, 0),
+		.end	= PM8058_IRQ_BLOCK_BIT(PM8058_GPIO_BLOCK_START, 0)
 			+ PM8058_GPIOS - 1,
-		.flags = IORESOURCE_IRQ,
+		.flags	= IORESOURCE_IRQ,
 	},
 };
 

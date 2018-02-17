@@ -18,8 +18,8 @@
 #define FCC_CC_COLS		5
 #define FCC_TEMP_COLS		8
 
-#define PC_CC_ROWS             29
-#define PC_CC_COLS             13
+#define PC_CC_ROWS		29
+#define PC_CC_COLS		13
 
 #define PC_TEMP_ROWS		29
 #define PC_TEMP_COLS		8

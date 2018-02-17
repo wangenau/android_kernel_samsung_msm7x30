@@ -48,7 +48,7 @@
 #define TSHK_STATUS		0x54
 #define TSHK_SETUP2		0x55
 #define TSHK_RSV1		0x56
-	#define TSHK_RSV1_PRECHARGE_EN	BIT(0)
+	#define TSHK_RSV1_PRECHARGE_EN BIT(0)
 #define TSHK_COMMAND		0x57
 #define TSHK_PARAM2		0x58
 	#define TSHK_INPUT_CLK_MASK	0x3F
@@ -76,11 +76,11 @@ struct marimba_tsadc {
 	struct marimba *marimba;
 	struct device *dev;
 	struct marimba_tsadc_platform_data *pdata;
-	struct clk	*codec_ssbi;
+	struct clk *codec_ssbi;
 	struct device *child_tssc;
 	bool clk_enabled;
 #if defined(CONFIG_HAS_EARLYSUSPEND)
-	struct early_suspend		early_suspend;
+	struct early_suspend early_suspend;
 #endif
 };
 

@@ -388,7 +388,7 @@ static inline struct device *add_child(unsigned chip, const char *name,
 static int marimba_add_child(struct marimba_platform_data *pdata,
 					u8 driver_data)
 {
-	struct device	*child;
+	struct device *child;
 
 	if (cur_adie_type == MARIMBA_ID) {
 		child = add_child(MARIMBA_SLAVE_ID_FM, "marimba_fm",

@@ -74,7 +74,7 @@ struct pm8038_platform_data {
 	struct pm8xxx_gpio_platform_data	*gpio_pdata;
 	struct pm8xxx_irq_platform_data		*irq_pdata;
 	struct pm8xxx_mpp_platform_data		*mpp_pdata;
-	struct pm8xxx_rtc_platform_data         *rtc_pdata;
+	struct pm8xxx_rtc_platform_data		*rtc_pdata;
 	struct pm8xxx_pwrkey_platform_data	*pwrkey_pdata;
 	struct pm8xxx_misc_platform_data	*misc_pdata;
 	struct pm8xxx_regulator_platform_data	*regulator_pdatas;

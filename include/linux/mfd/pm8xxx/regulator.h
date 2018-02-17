@@ -221,8 +221,8 @@ struct pm8xxx_regulator_core_platform_data {
 		.type		= PM8XXX_REGULATOR_TYPE_FTSMPS, \
 		.ctrl_addr	= _pwm_ctrl_addr, \
 		.test_addr	= _fts_cnfg1_addr, \
-		.pfm_ctrl_addr = _pfm_ctrl_addr, \
-		.pwr_cnfg_addr = _pwr_cnfg_addr, \
+		.pfm_ctrl_addr	= _pfm_ctrl_addr, \
+		.pwr_cnfg_addr	= _pwr_cnfg_addr, \
 		.hpm_min_load	= PM8XXX_VREG_##_hpm_min_load##_HPM_MIN_LOAD, \
 		.rdesc.name	= _name, \
 		.write_count	= 0, \

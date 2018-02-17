@@ -29,7 +29,7 @@ enum pm8921_chg_cold_thr {
 	PM_SMBC_BATT_TEMP_COLD_THR__HIGH
 };
 
-enum pm8921_chg_hot_thr	{
+enum pm8921_chg_hot_thr {
 	PM_SMBC_BATT_TEMP_HOT_THR__LOW,
 	PM_SMBC_BATT_TEMP_HOT_THR__HIGH
 };
@@ -144,7 +144,7 @@ enum pm8921_chg_led_src_config {
  *				restart charging upon expiry.
  */
 struct pm8921_charger_platform_data {
-	struct pm8xxx_charger_core_data	charger_cdata;
+	struct pm8xxx_charger_core_data charger_cdata;
 	unsigned int			ttrkl_time;
 	unsigned int			update_time;
 	unsigned int			max_voltage;

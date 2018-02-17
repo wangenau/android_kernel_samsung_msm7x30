@@ -22,14 +22,14 @@
 #include <linux/input/msm_ts.h>
 #include <mach/vreg.h>
 
-#define MARIMBA_NUM_CHILD			4
+#define MARIMBA_NUM_CHILD		4
 
 #define MARIMBA_SLAVE_ID_MARIMBA	0x00
-#define MARIMBA_SLAVE_ID_FM			0x01
+#define MARIMBA_SLAVE_ID_FM		0x01
 #define MARIMBA_SLAVE_ID_CDC		0x02
 #define MARIMBA_SLAVE_ID_QMEMBIST	0x03
 
-#define MARIMBA_ID_TSADC			0x04
+#define MARIMBA_ID_TSADC		0x04
 
 #define BAHAMA_SLAVE_ID_FM_ID		0x02
 #define SLAVE_ID_BAHAMA			0x05

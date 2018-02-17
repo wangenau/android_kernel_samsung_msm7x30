@@ -52,7 +52,7 @@ typedef enum {
 typedef enum {
 	DISPLAY_1 = 0,		/* attached as first device */
 	DISPLAY_2,		/* attached on second device */
-	DISPLAY_3,              /* attached on third writeback device */
+	DISPLAY_3,		/* attached on third writeback device */
 	MAX_PHYS_TARGET_NUM,
 } DISP_TARGET_PHYS;
 
@@ -116,7 +116,7 @@ struct mipi_panel_info {
 	char tx_eot_append;
 	char t_clk_post; /* 0xc0, DSI_CLKOUT_TIMING_CTRL */
 	char t_clk_pre;  /* 0xc0, DSI_CLKOUT_TIMING_CTRL */
-	char vc;	/* virtual channel */
+	char vc;         /* virtual channel */
 	struct mipi_dsi_phy_ctrl *dsi_phy_db;
 	/* video mode */
 	char pulse_mode_hsa_he;
@@ -133,7 +133,7 @@ struct mipi_panel_info {
 	char wr_mem_continue;
 	char wr_mem_start;
 	char te_sel;
-	char stream;	/* 0 or 1 */
+	char stream;     /* 0 or 1 */
 	char mdp_trigger;
 	char dma_trigger;
 	uint32 dsi_pclk_rate;

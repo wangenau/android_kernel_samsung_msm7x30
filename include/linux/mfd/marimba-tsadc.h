@@ -16,8 +16,8 @@
 
 struct marimba_tsadc_client;
 
-#define	TSSC_SUSPEND_LEVEL  1
-#define	TSADC_SUSPEND_LEVEL 2
+#define TSSC_SUSPEND_LEVEL  1
+#define TSADC_SUSPEND_LEVEL 2
 
 int marimba_tsadc_start(struct marimba_tsadc_client *client);
 
