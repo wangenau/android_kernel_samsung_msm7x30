@@ -352,7 +352,9 @@ CHECKFLAGS     := -D__linux__ -Dlinux -D__STDC__ -Dunix -D__unix__ \
                   -Wbitwise -Wno-return-void $(CF)
 OPTIMIZATION_FLAGS = -march=armv7-a -mcpu=cortex-a8 -mtune=cortex-a8 -mfpu=neon \
                      -ffast-math -fsingle-precision-constant \
-                     -fgcse-lm -fgcse-sm -fsched-spec-load -fforce-addr
+                     -fgcse-lm -fgcse-sm -fsched-spec-load -fforce-addr \
+                     --param l1-cache-size=32 --param l1-cache-line-size=32 \
+                     --param l2-cache-size=384
 CFLAGS_MODULE   = $(OPTIMIZATION_FLAGS)
 AFLAGS_MODULE   = $(OPTIMIZATION_FLAGS)
 LDFLAGS_MODULE  =
