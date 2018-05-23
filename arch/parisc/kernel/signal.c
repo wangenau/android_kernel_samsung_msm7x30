@@ -468,7 +468,7 @@ handle_signal(unsigned long sig, siginfo_t *info, struct k_sigaction *ka,
 	return 1;
 }
 
- /*
+/*
  * Check how the syscall number gets loaded into %r20 within
  * the delay branch in userspace and adjust as needed.
  */
