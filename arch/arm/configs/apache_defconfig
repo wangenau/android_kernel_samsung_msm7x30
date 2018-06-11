@@ -2959,7 +2959,6 @@ CONFIG_ZCACHE=y
 # CONFIG_FB_SM7XX is not set
 # CONFIG_USB_ENESTORAGE is not set
 # CONFIG_BCM_WIMAX is not set
-# CONFIG_FT1000 is not set
 
 #
 # Speakup console speech
@@ -2987,11 +2986,6 @@ CONFIG_ANDROID_LOW_MEMORY_KILLER_DO_NOT_KILL_PROCESS=y
 # CONFIG_ANDROID_INTF_ALARM_DEV is not set
 # CONFIG_PHONE is not set
 # CONFIG_USB_WPAN_HCD is not set
-
-#
-# Qualcomm Atheros Prima WLAN module
-#
-# CONFIG_PRIMA_WLAN is not set
 
 #
 # Qualcomm MSM specific device drivers
