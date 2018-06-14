@@ -2133,6 +2133,13 @@ extern __le16 ext4_group_desc_csum(struct ext4_sb_info *sbi, __u32 group,
 extern int ext4_group_desc_csum_verify(struct ext4_sb_info *sbi, __u32 group,
 				       struct ext4_group_desc *gdp);
 
+static inline int ext4_has_group_desc_csum(struct super_block *sb)
+{
+	return EXT4_HAS_RO_COMPAT_FEATURE(sb,
+		EXT4_FEATURE_RO_COMPAT_GDT_CSUM |
+		EXT4_FEATURE_RO_COMPAT_METADATA_CSUM);
+}
+
 static inline ext4_fsblk_t ext4_blocks_count(struct ext4_super_block *es)
 {
 	return ((ext4_fsblk_t)le32_to_cpu(es->s_blocks_count_hi) << 32) |
