@@ -22,7 +22,6 @@
 #endif
 #include <net/netns/xfrm.h>
 
-struct user_namespace;
 struct proc_dir_entry;
 struct net_device;
 struct sock;
@@ -113,12 +112,10 @@ struct net {
 extern struct net init_net;
 
 #ifdef CONFIG_NET
-extern struct net *copy_net_ns(unsigned long flags,
-		struct user_namespace *user_ns, struct net *net_ns);
+extern struct net *copy_net_ns(unsigned long flags, struct net *net_ns);
 
 #else /* CONFIG_NET */
-static inline struct net *copy_net_ns(unsigned long flags,
-		struct user_namespace *user_ns, struct net *net_ns)
+static inline struct net *copy_net_ns(unsigned long flags, struct net *net_ns)
 {
 	/* There is nothing to copy so this is a noop */
 	return net_ns;
