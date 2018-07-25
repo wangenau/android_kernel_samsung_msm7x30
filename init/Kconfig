@@ -362,6 +362,7 @@ config TASK_IO_ACCOUNTING
 config AUDIT
 	bool "Auditing support"
 	depends on NET
+	default y
 	help
 	  Enable auditing infrastructure that can be used with another
 	  kernel subsystem, such as SELinux (which requires this for
@@ -1197,8 +1198,7 @@ config ASHMEM
 	  file-based API.
 
 config AIO
-	bool "Enable AIO support" if EXPERT
-	default y
+	bool "Enable AIO support"
 	help
 	  This option enables POSIX asynchronous I/O which may by used
           by some high performance threaded applications. Disabling

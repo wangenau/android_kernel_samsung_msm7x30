@@ -84,9 +84,19 @@ config SECURITY_DMESG_RESTRICT
 
 	  If you are unsure how to answer this question, answer N.
 
+config SECURITY_PERF_EVENTS_RESTRICT
+	bool "Restrict unprivileged use of performance events"
+	depends on PERF_EVENTS
+	help
+	  If you say Y here, the kernel.perf_event_paranoid sysctl
+	  will be set to 3 by default, and no unprivileged use of the
+	  perf_event_open syscall will be permitted unless it is
+	  changed.
+
 config SECURITY
 	bool "Enable different security models"
 	depends on SYSFS
+	default y
 	help
 	  This allows you to choose different security modules to be
 	  configured into your kernel.
@@ -108,6 +118,7 @@ config SECURITYFS
 config SECURITY_NETWORK
 	bool "Socket and Networking Security Hooks"
 	depends on SECURITY
+	default y
 	help
 	  This enables the socket and networking security hooks.
 	  If enabled, a security module can use these hooks to

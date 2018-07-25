@@ -47,16 +47,7 @@ static char *policycap_names[] = {
 	"open_perms"
 };
 
-unsigned int selinux_checkreqprot = CONFIG_SECURITY_SELINUX_CHECKREQPROT_VALUE;
-
-static int __init checkreqprot_setup(char *str)
-{
-	unsigned long checkreqprot;
-	if (!strict_strtoul(str, 0, &checkreqprot))
-		selinux_checkreqprot = checkreqprot ? 1 : 0;
-	return 1;
-}
-__setup("checkreqprot=", checkreqprot_setup);
+const unsigned int selinux_checkreqprot;
 
 static DEFINE_MUTEX(sel_mutex);
 
@@ -635,10 +626,9 @@ static ssize_t sel_write_checkreqprot(struct file *file, const char __user *buf,
 		goto out;
 
 	length = -EINVAL;
-	if (sscanf(page, "%u", &new_value) != 1)
+	if (sscanf(page, "%u", &new_value) != 1 || new_value)
 		goto out;
 
-	selinux_checkreqprot = new_value ? 1 : 0;
 	length = count;
 out:
 	free_page((unsigned long) page);
