@@ -1,7 +1,7 @@
 #
 # Makefile for the linux arm-specific parts of the memory manager.
 #
-
+ccflags-y := -O3 -fgcse-sm -marm -mtune=cortex-a8 -mcpu=cortex-a8 -march=armv7-a -mfpu=neon
 obj-y				:= dma-mapping.o extable.o fault.o init.o \
 				   iomap.o
 
