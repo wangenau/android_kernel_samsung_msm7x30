@@ -25,6 +25,7 @@
 #include <linux/module.h>
 #include <media/msm_camera.h>
 #include <mach/gpio.h>
+#include <linux/semaphore.h>
 #include "mt9d112.h"
 
 /* Micron MT9D112 Registers and their values */
@@ -54,7 +55,7 @@ struct mt9d112_ctrl {
 static struct mt9d112_ctrl *mt9d112_ctrl;
 
 static DECLARE_WAIT_QUEUE_HEAD(mt9d112_wait_queue);
-DECLARE_MUTEX(mt9d112_sem);
+DEFINE_SEMAPHORE(mt9d112_sem);
 static int16_t mt9d112_effect = CAMERA_EFFECT_OFF;
 
 /*=============================================================

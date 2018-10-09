@@ -220,7 +220,7 @@ static int yas_acc_i2c_read(uint8_t slave, uint8_t adr, uint8_t *buf, int len)
 
     err = i2c_transfer(data->client->adapter, msg, 2);
     if (err != 2) {
-        printk(&data->client->dev,
+        dev_err(&data->client->dev,
                 "i2c_transfer() read error: slave_addr=%02x, reg_addr=%02x, err=%d\n", slave, adr, err);
         return err;
     }
@@ -399,7 +399,7 @@ static int yas_acc_fast_calibration(struct yas_acc_driver *driver, unsigned char
 {
     int err;
 
-    err = driver->set_calibration(&data_cal);
+    err = driver->set_calibration(data_cal);
     if (err != YAS_NO_ERROR) {
         return err;
     }
@@ -464,7 +464,7 @@ static ssize_t yas_acc_enable_store(struct device *dev,
     struct input_dev *input = to_input_dev(dev);
     struct yas_acc_private_data *data = input_get_drvdata(input);
     unsigned long enable = simple_strtoul(buf, NULL, 10);
-   printk("[diony] yas_acc_set_enable = %d.\n",enable);
+    printk("[diony] yas_acc_set_enable = %lu.\n",enable);
     yas_acc_set_enable(data->driver, enable);
 
     return count;

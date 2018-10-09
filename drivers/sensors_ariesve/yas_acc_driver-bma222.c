@@ -839,9 +839,8 @@ static int yas_bma222_measure(int *out_data, int *out_raw)
 }
 static int yas_bma222_set_calibration(signed char* data_cal)
 {
-
-    printk("[diony] yas_bma222_set_calibration!!!! .\n");
     signed char tmp;
+    printk("[diony] yas_bma222_set_calibration!!!! .\n");
     data_cal[0] = data_cal[1] = 0;
     data_cal[2]=1;
 #ifdef DEBUG
@@ -1251,7 +1250,7 @@ int yas_bma222_get_offset_filt_x(unsigned char *offsetfilt )
       if (acc_data.initialize == 0) {
            return YAS_ERROR_NOT_INITIALIZED;
       } else {
-    	data =  offsetfilt;
+    	data =  *offsetfilt;
     	err = yas_bma222_read_reg(YAS_BMA222_OFFSET_FILT_X_REG, &data, 1);
       }
    	return err;
@@ -1349,7 +1348,7 @@ int yas_bma222_get_offset_filt_y(unsigned char *offsetfilt )
       if (acc_data.initialize == 0) {
            return YAS_ERROR_NOT_INITIALIZED;
       } else {
-    	data =  offsetfilt;
+    	data =  *offsetfilt;
     	err = yas_bma222_read_reg(YAS_BMA222_OFFSET_FILT_Y_REG, &data, 1);
       }
    	return err;
@@ -1447,7 +1446,7 @@ int yas_bma222_get_offset_filt_z(unsigned char *offsetfilt )
       if (acc_data.initialize == 0) {
            return YAS_ERROR_NOT_INITIALIZED;
       } else {
-    	data =  offsetfilt;
+    	data =  *offsetfilt;
     	err = yas_bma222_read_reg(YAS_BMA222_OFFSET_FILT_Z_REG, &data, 1);
       }
    	return err;
@@ -1812,7 +1811,7 @@ static int yas_set_calibration(signed char* data_cal)
         return YAS_ERROR_NOT_INITIALIZED;
     }
     yas_bma222_lock();
-    err = yas_bma222_set_calibration(&data_cal);
+    err = yas_bma222_set_calibration(data_cal);
     yas_bma222_unlock();
     
     return err;

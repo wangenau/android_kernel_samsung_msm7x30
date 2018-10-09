@@ -30,6 +30,7 @@
 #include <mach/vreg.h>
 #include <linux/io.h>
 #include <linux/module.h>
+#include <linux/semaphore.h>
 
 #undef PCAM_ENABLE_DEBUG
 //#define PCAM_ENABLE_DEBUG
@@ -174,7 +175,7 @@ static struct s5k5ccaf_ctrl *s5k5ccaf_ctrl;
 static struct timer_list flashoff_timer;
 #endif
 static DECLARE_WAIT_QUEUE_HEAD(s5k5ccaf_wait_queue);
-DECLARE_MUTEX(s5k5ccaf_sem);
+DEFINE_SEMAPHORE(s5k5ccaf_sem);
 static int16_t s5k5ccaf_effect = CAMERA_EFFECT_OFF;
 
 static int s5k5ccaf_regs_table_init_for_antibanding(void);

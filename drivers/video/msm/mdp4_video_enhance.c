@@ -292,7 +292,6 @@ void free_cmap(struct fb_cmap *cmap)
 
 void lut_tune(int num, unsigned int *pLutTable )
 {
-			printk(KERN_ERR"[mDNIE WARNING] LUT TUNE PASSATO\n");
 //	int fb;
 	struct fb_info *info;
 	struct fb_cmap test_cmap;
@@ -303,7 +302,8 @@ void lut_tune(int num, unsigned int *pLutTable )
 //	fb = open("/dev/graphics/fb0", O_RDWR);
 	__u16 *r, *g, *b, i;
 	int j = 0;
-	
+
+	printk(KERN_ERR"[mDNIE WARNING] LUT TUNE PASSATO\n");	
 	info = registered_fb[0];
 	cmap = &test_cmap;
 	//=====================================
@@ -745,7 +745,7 @@ static DEVICE_ATTR(mode, 0664, mode_show, mode_store);
 static ssize_t mdnieset_init_file_cmd_show(struct device *dev,
 		struct device_attribute *attr, char *buf)
 {
-	char temp[15];
+	char temp[30];
 	
 	DPRINT("called %s \n", __func__);
 	sprintf(temp, "mdnieset_init_file_cmd_show \n");

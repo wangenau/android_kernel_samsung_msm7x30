@@ -4641,8 +4641,6 @@ uint8_t i2c_addresses[] =
     I2C_BOOT_ADDR_1,
 };
 
-static	void	__iomem		*gpio_pend_mask_mem;
-
 #define 	INT_PEND_BASE	0xE0200A44
 
 uint8_t QT_i2c_address;

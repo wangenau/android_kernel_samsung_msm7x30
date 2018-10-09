@@ -2,6 +2,7 @@
 #include <mach/msm_rpcrouter.h>
 #include <linux/atomic.h>
 #include <linux/err.h>
+#include <linux/export.h>
 
 #define MSM_LIGHTSENSOR_ADC_READ 
 
@@ -43,11 +44,10 @@ static int msm_lightsensor_get_adc_ret_func(struct msm_rpc_client *client,
 u32 lightsensor_get_adc(void)
 {
 	int rc;
-    static int cnt = 0; 
+	static int cnt = 0; 
+	struct msm_lightsensor_get_adc_ret_data rep;
 
     cnt = cnt + 1;
-    
-	struct msm_lightsensor_get_adc_ret_data rep;
 
 	rc = msm_rpc_client_req(light_client,
 			LIGHTSENSOR_READ_PROC,

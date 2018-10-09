@@ -583,27 +583,22 @@ ifdef CONFIG_CC_OPTIMIZE_FAST
 KBUILD_CFLAGS	+= -Ofast -fmodulo-sched -fmodulo-sched-allow-regmoves -fno-tree-vectorize -fno-inline-functions
 endif
 
-# Disable all maybe-uninitialized warnings
-KBUILD_CFLAGS	+= $(call cc-disable-warning,maybe-uninitialized,)
-
-# Disable unused-constant-variable warnings
-KBUILD_CFLAGS	+= $(call cc-disable-warning,unused-const-variable,)
-
-# Disable format-truncation warnings
-KBUILD_CFLAGS	+= $(call cc-disable-warning,format-truncation,)
-
-KBUILD_CFLAGS	+= $(call cc-disable-warning,format-overflow,)
-KBUILD_CFLAGS	+= $(call cc-disable-warning,int-in-bool-context,)
+KBUILD_CFLAGS	+= $(call cc-disable-warning, format-truncation)
+KBUILD_CFLAGS	+= $(call cc-disable-warning, format-overflow)
+KBUILD_CFLAGS	+= $(call cc-disable-warning, int-in-bool-context)
+KBUILD_CFLAGS	+= $(call cc-disable-warning, unused-function)
+KBUILD_CFLAGS	+= $(call cc-disable-warning, maybe-uninitialized)
 
 # Needed to unbreak GCC 7.x and above
-KBUILD_CFLAGS	+= $(call cc-option,-fno-store-merging,)
+KBUILD_CFLAGS	+= $(call cc-option,-fno-store-merging)
 
+# Enable coloured terminal output
 KBUILD_CFLAGS	+= -fdiagnostics-color=always
 
 include $(srctree)/arch/$(SRCARCH)/Makefile
 
 ifneq ($(CONFIG_FRAME_WARN),0)
-KBUILD_CFLAGS	+= $(call cc-option,-Wframe-larger-than=${CONFIG_FRAME_WARN})
+KBUILD_CFLAGS	+= $(call cc-option, -Wframe-larger-than=${CONFIG_FRAME_WARN})
 endif
 
 # Force gcc to behave correct even for buggy distributions
@@ -660,16 +655,16 @@ NOSTDINC_FLAGS += -nostdinc -isystem $(shell $(CC) -print-file-name=include)
 CHECKFLAGS     += $(NOSTDINC_FLAGS)
 
 # warn about C99 declaration after statement
-KBUILD_CFLAGS	+= $(call cc-option,-Wdeclaration-after-statement,)
+KBUILD_CFLAGS	+= $(call cc-option, -Wdeclaration-after-statement)
 
 # disable pointer signed / unsigned warnings in gcc 4.0
 KBUILD_CFLAGS	+= $(call cc-disable-warning, pointer-sign)
 
 # disable invalid "can't wrap" optimizations for signed / pointers
-KBUILD_CFLAGS	+= $(call cc-option,-fno-strict-overflow)
+KBUILD_CFLAGS	+= $(call cc-option, -fno-strict-overflow)
 
 # conserve stack if available
-KBUILD_CFLAGS	+= $(call cc-option,-fconserve-stack)
+KBUILD_CFLAGS	+= $(call cc-option, -fconserve-stack)
 
 # use the deterministic mode of AR if available
 KBUILD_ARFLAGS := $(call ar-option,D)

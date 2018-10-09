@@ -279,7 +279,6 @@ static int ce147_get_main_sw_fw_version(void)
     int main_sw_fw_prm_offset = 4;
     int main_sw_date_offset = 10;
     int err = 0;
-    int i;
 
     printk(KERN_DEBUG "ce147_get_main_sw_fw_version Enter \n");
     if((MAIN_SW_DATE_INFO[0] == 0x00) && (MAIN_SW_DATE_INFO[1] == 0x00) && (MAIN_SW_DATE_INFO[2] == 0x00))
@@ -292,7 +291,8 @@ static int ce147_get_main_sw_fw_version(void)
         }
         printk(KERN_ERR "[CAMDRV/CE147] CE147 :fw_size : %d \n", fw_size);
 
-#if 0 // kurtlee 
+#if 0 // kurtlee
+        int i;
         for(i = 0; i < fw_size; i++)
         {
             printk(KERN_ERR "[CAMDRV/CE147] CE147 :fw_data : %x \n", fw_data[i]);
@@ -578,7 +578,7 @@ static int ce147_update_fw(void)
     }
     msleep(100);
 
-    printk(KERN_ERR "[CAMDRV/CE147] CE147 :ce147_update_fw: i2c_write for 0xf2, fw_size[0]: %d, fw_buf[0]: 0x%02x\n", fw_size[0], fw_buf[0]);
+    printk(KERN_ERR "[CAMDRV/CE147] CE147 :ce147_update_fw: i2c_write for 0xf2, fw_size[0]: %d, fw_buf[0]: 0x%02x\n", fw_size[0], (unsigned int)(fw_buf[0]));
 
     packet_num = *(fw_buf[0]) + (*(fw_buf[0]+1)<<8);
 
@@ -1829,8 +1829,8 @@ static int ce147_set_jpeg_config(void)
     unsigned char ce147_regbuf_set_lump[2] = { 0x00, 0x04};
     unsigned int ce147_reglen_set_lump = 2;
 
-    unsigned char ce147_regbuf_set_lump2[1] = {0x00};
-    unsigned int ce147_reglen_set_lump2 = 1;
+    //unsigned char ce147_regbuf_set_lump2[1] = {0x00};
+    //unsigned int ce147_reglen_set_lump2 = 1;
 
     CAMDRV_DEBUG("%s\n", __func__);
     err = ce147_set_jpeg_quality();
@@ -2017,7 +2017,7 @@ static int ce147_set_capture_config(void)
     return 0;
 }
 
-static int ce147_set_capture_start()
+static int ce147_set_capture_start(void)
 {
     int err;
     
@@ -3552,7 +3552,7 @@ static int ce147_set_auto_focus(int val)
 
     if (val) {
         CAMDRV_DEBUG("%s: START AF\n", __func__);
-        if(ce147_status->aeawb = AE_LOCK_AWB_LOCK)err = ce147_set_ae_awb(AE_UNLOCK_AWB_UNLOCK);
+        if( (ce147_status->aeawb = AE_LOCK_AWB_LOCK) )err = ce147_set_ae_awb(AE_UNLOCK_AWB_UNLOCK);
         if(err < 0) {
             printk(KERN_ERR "[CAMDRV/CE147] CE147 :%s: failed: ce147_set_ae_awb, err %d\n", __func__, err);
             return -EIO;
@@ -3968,8 +3968,7 @@ static int ce147_sensor_init(const struct msm_camera_sensor_info *data)
         CDBG("mt9d112_sensor_init failed!\n");
         goto init_fail;
     }
-    
-init_done:
+
     return err;
 
 init_fail:
@@ -4003,7 +4002,7 @@ static int ce147_set_sensor_mode(int mode, int res)
     return rc;
 }
 
-bool ce147_get_vgacam_rotated()
+bool ce147_get_vgacam_rotated(void)
 {
     bool rotated = true;
 
@@ -4314,7 +4313,7 @@ static struct i2c_driver lp8720_i2c_driver = {
 static int ce147_i2c_probe(struct i2c_client *client,
     const struct i2c_device_id *id)
 {
-    int rc = 0;
+    //int rc = 0;
 
     printk(KERN_INFO "[CAMDRV/CE147] %s: E\n", __func__);
     if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C)) {

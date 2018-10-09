@@ -79,7 +79,7 @@ static info_block_t info_block_data;
 static info_block_t *info_block=&info_block_data;
 
 static report_id_map_t report_id_map_data[30]={0};
-static report_id_map_t *report_id_map=&report_id_map_data;
+static report_id_map_t *report_id_map=&report_id_map_data[0];
 
 static object_t info_object_table[25]={0};
 static object_t *info_object_ptr=&info_object_table[0];
@@ -3280,8 +3280,7 @@ extern int charging_boot;
 int qt602240_probe(struct i2c_client *client,
                const struct i2c_device_id *id)
 {
-    int ret;    
-    int key;
+    int ret;
 
 #if defined(CONFIG_MACH_ANCORA) || defined(CONFIG_MACH_GODART)
     touch_key_value = 0;

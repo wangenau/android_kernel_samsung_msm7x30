@@ -27,6 +27,7 @@
 #include <linux/slab.h>
 #include <mach/vreg.h>
 #include <mach/camera.h>
+#include <linux/semaphore.h>
 
 //#define SENSOR_DEBUG 0
 #undef CONFIG_LOAD_FILE 
@@ -99,7 +100,7 @@ static unsigned int probe_init_retry = 0;
 static struct sr130pc10_ctrl_t *sr130pc10_ctrl;
 
 static DECLARE_WAIT_QUEUE_HEAD(sr130pc10_wait_queue);
-DECLARE_MUTEX(sr130pc10_sem);
+DEFINE_SEMAPHORE(sr130pc10_sem);
 
 #ifdef CONFIG_LOAD_FILE
 static int sr130pc10_regs_table_write(char *name);

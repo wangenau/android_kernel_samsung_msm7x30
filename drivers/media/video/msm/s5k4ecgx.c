@@ -25,6 +25,7 @@
 #include <linux/module.h>
 #include <media/msm_camera.h>
 #include <linux/gpio.h>
+#include <linux/semaphore.h>
 
 #if defined(CONFIG_MACH_ANCORA)
 #include "s5k4ecgx.h"
@@ -190,7 +191,7 @@ static bool main_camera_is_on = false;
 #endif
 
 static DECLARE_WAIT_QUEUE_HEAD(s5k4ecgx_wait_queue);
-DECLARE_MUTEX(s5k4ecgx_sem);
+DEFINE_SEMAPHORE(s5k4ecgx_sem);
 
 /*=============================================================
     EXTERNAL DECLARATIONS

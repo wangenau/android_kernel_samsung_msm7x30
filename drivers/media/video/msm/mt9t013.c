@@ -28,6 +28,7 @@
 #include <mach/gpio.h>
 #include <mach/camera.h>
 #include <asm/mach-types.h>
+#include <linux/semaphore.h>
 #include "mt9t013.h"
 
 /*=============================================================
@@ -139,7 +140,7 @@ struct mt9t013_ctrl {
 
 static struct mt9t013_ctrl *mt9t013_ctrl;
 static DECLARE_WAIT_QUEUE_HEAD(mt9t013_wait_queue);
-DECLARE_MUTEX(mt9t013_sem);
+DEFINE_SEMAPHORE(mt9t013_sem);
 
 static int mt9t013_i2c_rxdata(unsigned short saddr,
 	unsigned char *rxdata, int length)

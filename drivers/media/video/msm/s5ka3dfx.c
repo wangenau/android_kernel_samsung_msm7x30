@@ -30,6 +30,7 @@
 #include <linux/slab.h>
 #include <linux/io.h>
 #include <mach/board.h>
+#include <linux/semaphore.h>
 #include "s5ka3dfx.h"
 
 #define S5KA3DFX_WRITE_LIST(A) \
@@ -58,7 +59,7 @@ struct s5ka3dfx_ctrl_t {
 
 static struct s5ka3dfx_ctrl_t *s5ka3dfx_ctrl;
 static DECLARE_WAIT_QUEUE_HEAD(s5ka3dfx_wait_queue);
-DECLARE_MUTEX(s5ka3dfx_sem);
+DEFINE_SEMAPHORE(s5ka3dfx_sem);
 
 #ifdef CONFIG_LOAD_FILE
 static int s5ka3dfx_regs_table_write(char *name);
@@ -73,15 +74,15 @@ static inline int lp8720_i2c_write(unsigned char addr, unsigned char data)
     int rc;
     unsigned char buf[2];
 
-    if(!lp8720_init)
-        return -EIO;
-
     struct i2c_msg msg = {
         .addr = lp8720_i2c_client->addr,
         .flags = 0,
         .len = 2,
         .buf = buf,
     };
+
+    if(!lp8720_init)
+        return -EIO;
 
     buf[0] = addr;
     buf[1] = data;
@@ -505,11 +506,7 @@ static int s5ka3dfx_set_flip(unsigned int flip_mode)
 }
 
 void s5ka3dfx_set_prevew(void)
-{
-    unsigned short value =0;
-    int shade_value = 0;
-    unsigned short agc_value = 0;
-    
+{    
     printk(KERN_ERR "[CAMDRV/S5KA3DFX] SENSOR_PREVIEW_MODE START\n");
 
     if(!s5ka3dfx_ctrl->dtp_mode) {
@@ -764,7 +761,6 @@ static int s5ka3dfx_set_blur(unsigned int vt_mode, unsigned int blurlevel)
 static int s5ka3dfx_start(void)
 {
     int rc = 0;
-    u8 data[2] = {0xEF, 0x01};
     u8 vender[1] = {0xC5};
     u8 version[1] = {0xC6};
     u8 vendor_id = 0xff, sw_ver = 0xff;    
@@ -790,9 +786,6 @@ static int s5ka3dfx_sensor_init_probe(struct msm_camera_sensor_info *data)
     s5ka3dfx_set_power(1);
     s5ka3dfx_start();
 
-    return rc;
-
-init_probe_fail:
     return rc;
 }
 

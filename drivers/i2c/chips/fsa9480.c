@@ -596,7 +596,7 @@ static ssize_t usb_switch_store(
 {
 	int fd;
 
-	char buffer[1]={0};
+	char buffer[2]={0};
 
 	mm_segment_t fs;
 

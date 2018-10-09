@@ -29,6 +29,7 @@
 #include <linux/clk.h>
 #include <linux/android_pmem.h>
 #include <mach/board.h>
+#include <linux/semaphore.h>
 
 static DEFINE_SPINLOCK(hw3d_lock);
 static DECLARE_WAIT_QUEUE_HEAD(hw3d_queue);
@@ -37,7 +38,7 @@ static int hw3d_disabled;
 
 static struct clk *grp_clk;
 static struct clk *imem_clk;
-DECLARE_MUTEX(hw3d_sem);
+DEFINE_SEMAPHORE(hw3d_sem);
 static unsigned int hw3d_granted;
 static struct file *hw3d_granted_file;
 

@@ -31,6 +31,7 @@
 #include <linux/io.h>
 #include <mach/board.h>
 #include <mach/vreg.h>
+#include <linux/semaphore.h>
 
 #ifdef CONFIG_SENSOR_SR030PC30_T679
 #include "sr030pc30_T679.h"
@@ -80,7 +81,7 @@ struct sr030pc30_ctrl_t {
 
 static struct sr030pc30_ctrl_t *sr030pc30_ctrl;
 static DECLARE_WAIT_QUEUE_HEAD(sr030pc30_wait_queue);
-DECLARE_MUTEX(sr030pc30_sem);
+DEFINE_SEMAPHORE(sr030pc30_sem);
 
 #ifdef CONFIG_LOAD_FILE
 static int sr030pc30_regs_table_write(char *name);
