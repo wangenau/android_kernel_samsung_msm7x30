@@ -85,7 +85,7 @@ static unsigned long up_sample_time_awake;
 /*
  * The minimum amount of time to spend at a frequency before we can step down.
  */
-#define DEFAULT_DOWN_SAMPLE_TIME 40000
+#define DEFAULT_DOWN_SAMPLE_TIME 45000
 static unsigned long down_sample_time;
 
 #define DEFAULT_DOWN_SAMPLE_TIME_SLEEP 40000
@@ -96,10 +96,10 @@ static unsigned long down_sample_time_awake;
  */
 static unsigned long debug_mode;
 enum {
-	LULZACTIVE_DEBUG_EARLY_SUSPEND=1,
-	LULZACTIVE_DEBUG_START_STOP=2,
-	LULZACTIVE_DEBUG_LOAD=4,
-	LULZACTIVE_DEBUG_SUSPEND=8,
+	LULZACTIVE_DEBUG_EARLY_SUSPEND = 1,
+	LULZACTIVE_DEBUG_START_STOP = 2,
+	LULZACTIVE_DEBUG_LOAD = 4,
+	LULZACTIVE_DEBUG_SUSPEND = 8,
 };
 //#define DEFAULT_DEBUG_MODE (LULZACTIVE_DEBUG_EARLY_SUSPEND | LULZACTIVE_DEBUG_START_STOP | LULZACTIVE_DEBUG_SUSPEND)
 #define DEFAULT_DEBUG_MODE (0)
@@ -142,7 +142,7 @@ static unsigned int suspending;
 static unsigned int early_suspended;
 
 #define SCREEN_OFF_LOWEST_STEP		0xffffffff
-#define DEFAULT_SCREEN_OFF_MIN_STEP 3
+#define DEFAULT_SCREEN_OFF_MIN_STEP	3
 static unsigned long screen_off_min_step;
 
 #define DEBUG 0
@@ -163,7 +163,7 @@ struct dbgln {
 static struct dbgln dbgbuf[NDBGLNS];
 static int dbgbufs;
 static int dbgbufe;
-static struct proc_dir_entry	*dbg_proc;
+static struct proc_dir_entry *dbg_proc;
 static spinlock_t dbgpr_lock;
 
 static u64 up_request_time;
@@ -1052,8 +1052,8 @@ static void lulzactive_late_resume(struct early_suspend *handler) {
 	early_suspended = 0;
 	up_sample_time = up_sample_time_awake;
 	down_sample_time = down_sample_time_awake;
-	inc_cpu_load = 	inc_cpu_load_awake;
-	dec_cpu_load = 	dec_cpu_load_awake;
+	inc_cpu_load = inc_cpu_load_awake;
+	dec_cpu_load = dec_cpu_load_awake;
 
 	if (debug_mode & LULZACTIVE_DEBUG_EARLY_SUSPEND) {
 		LOGI("%s\n", __func__);
