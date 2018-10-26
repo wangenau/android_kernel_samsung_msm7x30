@@ -57,6 +57,9 @@
 #include <asm/io.h>
 #include <asm/unistd.h>
 
+/* Hardening for Spectre-v1 */
+#include <linux/nospec.h>
+
 #include "../arch/arm/mach-msm/smd_private.h"
 #include "../arch/arm/mach-msm/include/mach/proc_comm.h"
 #include <mach/msm_iomap.h>
@@ -1442,6 +1445,7 @@ SYSCALL_DEFINE2(old_getrlimit, unsigned int, resource,
 	if (resource >= RLIM_NLIMITS)
 		return -EINVAL;
 
+	resource = array_index_nospec(resource, RLIM_NLIMITS);
 	task_lock(current->group_leader);
 	x = current->signal->rlim[resource];
 	task_unlock(current->group_leader);
