@@ -8129,7 +8129,7 @@ dhd_bus_devreset(dhd_pub_t *dhdp, uint8 flag)
 				bcmerror = BCME_SDIO_ERROR;
 
 #ifdef DHDTHREAD
-				dhd_os_sdunlock(dhdp);
+			dhd_os_sdunlock(dhdp);
 #endif /* DHDTHREAD */
 		} else {
 			bcmerror = BCME_SDIO_ERROR;
