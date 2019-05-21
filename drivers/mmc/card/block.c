@@ -2190,7 +2190,7 @@ static int mmc_blk_issue_rw_rq(struct mmc_queue *mq, struct request *rqc)
 	struct mmc_blk_request *brq = &mq->mqrq_cur->brq;
 	int ret = 1, disable_multi = 0, retry = 0, type;
 	enum mmc_blk_status status;
-	struct mmc_queue_req *mq_rq;
+	struct mmc_queue_req *mq_rq = NULL;
 	struct request *req;
 	struct mmc_async_req *areq;
 	const u8 packed_num = 2;

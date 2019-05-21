@@ -4513,6 +4513,7 @@ static ssize_t show_slab_objects(struct kmem_cache *s,
 
 			if (page) {
 				node = page_to_nid(page);
+				x = 0;
 				if (flags & SO_TOTAL)
 					WARN_ON_ONCE(1);
 				else if (flags & SO_OBJECTS)
@@ -4532,11 +4533,11 @@ static ssize_t show_slab_objects(struct kmem_cache *s,
 		for_each_node_state(node, N_NORMAL_MEMORY) {
 			struct kmem_cache_node *n = get_node(s, node);
 
-		if (flags & SO_TOTAL)
-			x = atomic_long_read(&n->total_objects);
-		else if (flags & SO_OBJECTS)
-			x = atomic_long_read(&n->total_objects) -
-				count_partial(n, count_free);
+		    if (flags & SO_TOTAL)
+			    x = atomic_long_read(&n->total_objects);
+		    else if (flags & SO_OBJECTS)
+			    x = atomic_long_read(&n->total_objects) -
+				    count_partial(n, count_free);
 
 			else
 				x = atomic_long_read(&n->nr_slabs);
