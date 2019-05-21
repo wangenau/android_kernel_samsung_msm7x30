@@ -7372,12 +7372,19 @@ static void __init msm7x30_fixup(struct tag *tags, char **cmdline,
 	}
 }
 
+static void __init msm7x30_init_late(void)
+{
+	smd_debugfs_init();
+	smsm_debugfs_init();
+}
+
 MACHINE_START(MSM7X30_SURF, "QCT MSM7X30 SURF")
 	.atag_offset = 0x100,
 	.map_io = msm7x30_map_io,
 	.reserve = msm7x30_reserve,
 	.init_irq = msm7x30_init_irq,
 	.init_machine = msm7x30_init,
+	.init_late = msm7x30_init_late,
 	.timer = &msm_timer,
 	.init_early = msm7x30_init_early,
 	.handle_irq = vic_handle_irq,
@@ -7390,6 +7397,7 @@ MACHINE_START(MSM7X30_FFA, "QCT MSM7X30 FFA")
 	.reserve = msm7x30_reserve,
 	.init_irq = msm7x30_init_irq,
 	.init_machine = msm7x30_init,
+	.init_late = msm7x30_init_late,
 	.timer = &msm_timer,
 	.init_early = msm7x30_init_early,
 	.handle_irq = vic_handle_irq,
@@ -7402,6 +7410,7 @@ MACHINE_START(MSM7X30_FLUID, "QCT MSM7X30 FLUID")
 	.reserve = msm7x30_reserve,
 	.init_irq = msm7x30_init_irq,
 	.init_machine = msm7x30_init,
+	.init_late = msm7x30_init_late,
 	.timer = &msm_timer,
 	.init_early = msm7x30_init_early,
 	.handle_irq = vic_handle_irq,
@@ -7414,6 +7423,7 @@ MACHINE_START(MSM8X55_SURF, "QCT MSM8X55 SURF")
 	.reserve = msm7x30_reserve,
 	.init_irq = msm7x30_init_irq,
 	.init_machine = msm7x30_init,
+	.init_late = msm7x30_init_late,
 	.timer = &msm_timer,
 	.init_early = msm7x30_init_early,
 	.handle_irq = vic_handle_irq,
@@ -7426,6 +7436,7 @@ MACHINE_START(MSM8X55_FFA, "QCT MSM8X55 FFA")
 	.reserve = msm7x30_reserve,
 	.init_irq = msm7x30_init_irq,
 	.init_machine = msm7x30_init,
+	.init_late = msm7x30_init_late,
 	.timer = &msm_timer,
 	.init_early = msm7x30_init_early,
 	.handle_irq = vic_handle_irq,
@@ -7437,6 +7448,7 @@ MACHINE_START(MSM8X55_SVLTE_SURF, "QCT MSM8X55 SVLTE SURF")
 	.reserve = msm7x30_reserve,
 	.init_irq = msm7x30_init_irq,
 	.init_machine = msm7x30_init,
+	.init_late = msm7x30_init_late,
 	.timer = &msm_timer,
 	.init_early = msm7x30_init_early,
 	.handle_irq = vic_handle_irq,
@@ -7448,6 +7460,7 @@ MACHINE_START(MSM8X55_SVLTE_FFA, "QCT MSM8X55 SVLTE FFA")
 	.reserve = msm7x30_reserve,
 	.init_irq = msm7x30_init_irq,
 	.init_machine = msm7x30_init,
+	.init_late = msm7x30_init_late,
 	.timer = &msm_timer,
 	.init_early = msm7x30_init_early,
 	.handle_irq = vic_handle_irq,
